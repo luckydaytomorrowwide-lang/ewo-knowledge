@@ -22,7 +22,7 @@ SWF生成の基準はここを正本とする。
 - branch: source
 - path: swf/source/
 - tag: v0.1
-- commit: TBD
+- commit: 34ba89002e71c73aa9bf2b202aae818d7bee2094
 ---
 
 ## 4. Test (Repro Assets)
