@@ -35,8 +35,7 @@ SWF生成の基準はここを正本とする。
 
 ## 5. Coverage (What is guaranteed)
 - guaranteed_examples:
-  - TBD
-
+  - ExampleGood01 (normal EWO)
 ---
 
 ## 6. Related Knowledge
