@@ -1,0 +1,4502 @@
+[
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 1,
+        "line_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "n_cat": "anchor",
+        "u_cat": "root",
+        "parent_id": null,
+        "dep_id": [],
+        "key": "root",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": "template"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 2,
+        "line_id": "01KJPPBRE7P8EP0JRVZV1GHPWY",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "baseinfo"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 3,
+        "line_id": "01KJPPBRE7DACGZ66AF02D304S",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "基本情報"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 4,
+        "line_id": "01KJPPBRE7FZEB11DSA23WF1K7",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 5,
+        "line_id": "01KJPPBRERJ0VT2DZ8KEYKRET9",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "addNode",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 6,
+        "line_id": "01KJPPBRER6WEE6RMBYZXW0VQN",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "cpyNode",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 7,
+        "line_id": "01KJPPBRER7R09XCT0DJCGNKWH",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 8,
+        "line_id": "01KJPPBRERDEHGT8NDT67DVZNZ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "nodeId",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 9,
+        "line_id": "01KJPPBRE79FVBWYZ8FC656NEG",
+        "n_cat": "anchor",
+        "u_cat": "button",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "buttonEditModeBtn",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 10,
+        "line_id": "01KJPPBRE7KP6AHH72W8D7EKY3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE79FVBWYZ8FC656NEG",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "editModeBtn"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 11,
+        "line_id": "01KJPPBRE7G6VHPWG0NNBTF6DP",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE79FVBWYZ8FC656NEG",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "編集モード"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 12,
+        "line_id": "01KJPPBRE7HAVE1AEGY3EK183E",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE79FVBWYZ8FC656NEG",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 13,
+        "line_id": "01KJPPBRE77EGPNQE7JB1JB2DX",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBRE79FVBWYZ8FC656NEG",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "編集モード"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 14,
+        "line_id": "01KJPPBRE73149J7DK5G48H005",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE79FVBWYZ8FC656NEG",
+        "dep_id": [],
+        "key": "jointIds",
+        "i_type": "direct",
+        "f_type": "array",
+        "value": "table: joint_struct_[rootId]|\r\nlineId: [lineId]|\r\nkey: value"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 15,
+        "line_id": "01KJPPBRE7QDDX9A9ZP7CM33JB",
+        "n_cat": "anchor",
+        "u_cat": "button",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "buttonViewModeBtn",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 16,
+        "line_id": "01KJPPBRE70CJN6ZB4GDCJQTMT",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7QDDX9A9ZP7CM33JB",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "viewModeBtn"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 17,
+        "line_id": "01KJPPBRE7Q6F6RKD6F33M55G2",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE7QDDX9A9ZP7CM33JB",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "表示モード"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 18,
+        "line_id": "01KJPPBRE76AP51EP3FJVP7RYC",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE7QDDX9A9ZP7CM33JB",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 19,
+        "line_id": "01KJPPBRE7BV0QE5HZEMJE1PZB",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBRE7QDDX9A9ZP7CM33JB",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "表示モード"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 20,
+        "line_id": "01KJPPBRE74ZSSK153BKK12XMB",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7QDDX9A9ZP7CM33JB",
+        "dep_id": [],
+        "key": "jointIds",
+        "i_type": "direct",
+        "f_type": "array",
+        "value": "table: joint_struct_[rootId]|\r\nlineId: [lineId]|\r\nkey: value"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 21,
+        "line_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBRE77GS53WVM55SNXWC7",
+        "dep_id": [],
+        "key": "sectionBaseinfo",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 22,
+        "line_id": "01KJPPBRE8ANR3306CX0XNND10",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "baseinfo"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 23,
+        "line_id": "01KJPPBRE834RRR4B41DRH4EB2",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "基本情報"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 24,
+        "line_id": "01KJPPBRE8CD5GNWM6M1DSD22S",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 25,
+        "line_id": "01KJPPBRE8HEKA7CA91N4FV0ZZ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 26,
+        "line_id": "01KJPPBRE8Y3Q7J9J24B47Q3B9",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 27,
+        "line_id": "01KJPPBRE8Z8Q1VZ14PKTDVRJW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 28,
+        "line_id": "01KJPPBRE8V7ZW1DWWFV0MBMHM",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 29,
+        "line_id": "01KJPPBRE82DS8DN8V6RFVRYWQ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 30,
+        "line_id": "01KJPPBRE8P09NJQZ4RQM5JWR6",
+        "n_cat": "anchor",
+        "u_cat": "button",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "buttonBulkUpdateBtn",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 31,
+        "line_id": "01KJPPBRE83DEN6613TQPE95MW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE8P09NJQZ4RQM5JWR6",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "bulkUpdateBtn"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 32,
+        "line_id": "01KJPPBRE8PGF5FYCPS08KP0B1",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE8P09NJQZ4RQM5JWR6",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "一括更新"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 33,
+        "line_id": "01KJPPBRE823SHTSDW0JFM453H",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE8P09NJQZ4RQM5JWR6",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 34,
+        "line_id": "01KJPPBRE9ABDAMXGBAPPR0AXA",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBRE8P09NJQZ4RQM5JWR6",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "一括更新"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 35,
+        "line_id": "01KJPPBRE95WH3FDTCABNDEYNA",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE8P09NJQZ4RQM5JWR6",
+        "dep_id": [],
+        "key": "jointIds",
+        "i_type": "direct",
+        "f_type": "array",
+        "value": "table: joint_struct_[rootId]|\r\nlineId: [lineId]|\r\nkey: value"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 36,
+        "line_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "sectionName",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 37,
+        "line_id": "01KJPPBRE914AN4YR2575KE9AZ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "name"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 38,
+        "line_id": "01KJPPBRE94D7FGPE2CNDZ6MVD",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "名前"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 39,
+        "line_id": "01KJPPBRE94GD83BYV0RA0K6NB",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 40,
+        "line_id": "01KJPPBRE9CDPFAY2ZE7V5XV52",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 41,
+        "line_id": "01KJPPBREA3N4FKCN94MB8N6GQ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 42,
+        "line_id": "01KJPPBREAHHDG8N9RN0K9HXP3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 43,
+        "line_id": "01KJPPBREAXS6DVK05JQHP0X6X",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 44,
+        "line_id": "01KJPPBREAKTED69D3VTGAXN7W",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 45,
+        "line_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "n_cat": "anchor",
+        "u_cat": "field",
+        "parent_id": "01KJPPBRE9MVK2KJ6RQMDVVT0B",
+        "dep_id": [],
+        "key": "fieldName",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 46,
+        "line_id": "01KJPPBREAV2DF24J1PV35JZKH",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "name"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 47,
+        "line_id": "01KJPPBREA24V27DW223R8RY5T",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "名前"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 48,
+        "line_id": "01KJPPBREAXRW7BPE6AW77JD5H",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 49,
+        "line_id": "01KJPPBREAZD9QM3CCPN0M70KQ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 50,
+        "line_id": "01KJPPBREA2R3AGRWMZ9STXRW9",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 51,
+        "line_id": "01KJPPBREA40YET6H3MAHA4EA0",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 52,
+        "line_id": "01KJPPBREA043MK50MYY274BWZ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "required",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 53,
+        "line_id": "01KJPPBREASWGM0XH79WNDQRAB",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "hint",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 54,
+        "line_id": "01KJPPBREAJFW7FZ2FPMDSHRZT",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "placeHolder",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "名前を入力してください"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 55,
+        "line_id": "01KJPPBREA8TAFKZ2QM0QCHAYW",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "fa-name",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 56,
+        "line_id": "01KJPPBREAW8AP1MDJVNG989Y0",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "digest",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 57,
+        "line_id": "01KJPPBREA32GDQ47633EJMHSG",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREAAEM9YDTGTNZ5W5DM",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "飯島愛"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 58,
+        "line_id": "01KJPPBREAP5PEWYMGRMWRKR4C",
+        "n_cat": "anchor",
+        "u_cat": "button",
+        "parent_id": null,
+        "dep_id": [],
+        "key": "buttonEditBtn",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 59,
+        "line_id": "01KJPPBREAWRAJ9JTA0DSZR11Q",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAP5PEWYMGRMWRKR4C",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "editBtn"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 60,
+        "line_id": "01KJPPBREAZ9FAT1KKWEX19J1C",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREAP5PEWYMGRMWRKR4C",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "編集"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 61,
+        "line_id": "01KJPPBREAYB58MGK8VASA1S4G",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREAP5PEWYMGRMWRKR4C",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 62,
+        "line_id": "01KJPPBREASYXWSCHYTEX41THC",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREAP5PEWYMGRMWRKR4C",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "編集"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 63,
+        "line_id": "01KJPPBREBDARWH4XFMVMA98W8",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREAP5PEWYMGRMWRKR4C",
+        "dep_id": [],
+        "key": "jointIds",
+        "i_type": "direct",
+        "f_type": "array",
+        "value": "table: joint_struct_[rootId]|\r\nlineId: [lineId]|\r\nkey: value"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 64,
+        "line_id": "01KJPPBREBJ11XQCY5EM684EX5",
+        "n_cat": "anchor",
+        "u_cat": "button",
+        "parent_id": null,
+        "dep_id": [],
+        "key": "buttonUpdateBtn",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 65,
+        "line_id": "01KJPPBREBQB085RYYWWMBV6AH",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBJ11XQCY5EM684EX5",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "updateBtn"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 66,
+        "line_id": "01KJPPBREBV91PH7S2R79K3ATV",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREBJ11XQCY5EM684EX5",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "更新"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 67,
+        "line_id": "01KJPPBREB8XVVPMY609347VX0",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREBJ11XQCY5EM684EX5",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 68,
+        "line_id": "01KJPPBREBC2TCV7KN84MP0VFR",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREBJ11XQCY5EM684EX5",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "更新"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 69,
+        "line_id": "01KJPPBREBMMB8AWNH4YCQN2SW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBJ11XQCY5EM684EX5",
+        "dep_id": [],
+        "key": "jointIds",
+        "i_type": "direct",
+        "f_type": "array",
+        "value": "table: joint_struct_[rootId]|\r\nlineId: [lineId]|\r\nkey: value"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 70,
+        "line_id": "01KJPPBREBRGSGQDEE1NQT3JRF",
+        "n_cat": "anchor",
+        "u_cat": "button",
+        "parent_id": null,
+        "dep_id": [],
+        "key": "buttonViewBtn",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 71,
+        "line_id": "01KJPPBREBE3MTE96MX2K5Q0P8",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBRGSGQDEE1NQT3JRF",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "viewBtn"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 72,
+        "line_id": "01KJPPBREBGARS6190K5Q9Q1G3",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREBRGSGQDEE1NQT3JRF",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "表示"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 73,
+        "line_id": "01KJPPBREB83M8GA8S2541YMRG",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREBRGSGQDEE1NQT3JRF",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 74,
+        "line_id": "01KJPPBREBSAX892SVY52F9RV7",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREBRGSGQDEE1NQT3JRF",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "表示"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 75,
+        "line_id": "01KJPPBREB2AJZ8ZRXZ0AGWD51",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBRGSGQDEE1NQT3JRF",
+        "dep_id": [],
+        "key": "jointIds",
+        "i_type": "direct",
+        "f_type": "array",
+        "value": "table: joint_struct_[rootId]|\r\nlineId: [lineId]|\r\nkey: value"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 76,
+        "line_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "sectionGender",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 77,
+        "line_id": "01KJPPBREBE0YKFQ96PQTWMWCA",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "gender"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 78,
+        "line_id": "01KJPPBREBM00PBMW5CX7H7HNE",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "性別"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 79,
+        "line_id": "01KJPPBREBAC96C6T62C5M2HP3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 2
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 80,
+        "line_id": "01KJPPBREBECXK824NH96PF7AR",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 81,
+        "line_id": "01KJPPBREBF4027P1J31Z2N1XW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 82,
+        "line_id": "01KJPPBRECK0BYJP14BV0R10BC",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 83,
+        "line_id": "01KJPPBRECXQCNBS3S19Y0XR1F",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 84,
+        "line_id": "01KJPPBRECQ6ZST12WJECQSY7Z",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 85,
+        "line_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "n_cat": "anchor",
+        "u_cat": "field",
+        "parent_id": "01KJPPBREBX1E46G706J8RCCNK",
+        "dep_id": [],
+        "key": "fieldGender",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 86,
+        "line_id": "01KJPPBREC74ZZ5R12R3SQZGKK",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "gender"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 87,
+        "line_id": "01KJPPBRECE9YCKXCWCP9F8NEK",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "性別"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 88,
+        "line_id": "01KJPPBRECV12QZV6QT7F48XBJ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 89,
+        "line_id": "01KJPPBRECD29X23N1YJ36S82K",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 90,
+        "line_id": "01KJPPBRECH8R99T8T5ESHSQ0M",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 91,
+        "line_id": "01KJPPBRECT3M442MYJW2W45BP",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 92,
+        "line_id": "01KJPPBREC4WSJR0SEV2F9C7SK",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "required",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 93,
+        "line_id": "01KJPPBRECES484H60951Z8GY8",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "hint",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 94,
+        "line_id": "01KJPPBRECPEESHQA13ZPT3T31",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "placeHolder",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "性別を選択してください"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 95,
+        "line_id": "01KJPPBRECTX6X8E53E4GNX8AW",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "fa-name",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 96,
+        "line_id": "01KJPPBREC6BTMTCPHR3YAZJPM",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "digest",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 97,
+        "line_id": "01KJPPBRECW7S6G6VFSKHPFFZN",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBRECCVV4BS65NB3MG7GP",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "radio",
+        "value": "女性"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 98,
+        "line_id": "01KJPPBREC5FTAW0KQ3XF3R9GN",
+        "n_cat": "anchor",
+        "u_cat": "option",
+        "parent_id": "01KJPPBRECW7S6G6VFSKHPFFZN",
+        "dep_id": [],
+        "key": "optionGender",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 99,
+        "line_id": "01KJPPBREC0EP5E2KVJF3F41WZ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREC5FTAW0KQ3XF3R9GN",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "gender"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 100,
+        "line_id": "01KJPPBRECWXTVTY0GJJJPWJQG",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREC5FTAW0KQ3XF3R9GN",
+        "dep_id": [],
+        "key": "display",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "normal"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 101,
+        "line_id": "01KJPPBRECMFJZ1DBDDSMRB0J5",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREC5FTAW0KQ3XF3R9GN",
+        "dep_id": [],
+        "key": "tableId",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 102,
+        "line_id": "01KJPPBRECSGC6JV2JGW16SBV8",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREC5FTAW0KQ3XF3R9GN",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "[男性,女性,その他]"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 103,
+        "line_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "sectionAddress",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 104,
+        "line_id": "01KJPPBRECCYQBGTBPXVCSAHYB",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "address"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 105,
+        "line_id": "01KJPPBRECP900DN8FV342SPDS",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "現住所"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 106,
+        "line_id": "01KJPPBREDDH7MKJM022828W52",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 3
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 107,
+        "line_id": "01KJPPBRED4KWSK1BQCXHQJ7JW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 108,
+        "line_id": "01KJPPBREDP0RDRVZSXVPDQX0M",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 109,
+        "line_id": "01KJPPBREDXJ49TR94TP78BG4C",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 110,
+        "line_id": "01KJPPBREDF1YTB7E8HFKR9W75",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 111,
+        "line_id": "01KJPPBRED6NWNCE4CASWNTR11",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 112,
+        "line_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBRECVF5Y85F23QBA89ZX",
+        "dep_id": [],
+        "key": "sectionPrefecture",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 113,
+        "line_id": "01KJPPBREDGJ9KQZHXT2FFV3S3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "prefecture"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 114,
+        "line_id": "01KJPPBREDFHEKV5PG24C31NTE",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "都道府県"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 115,
+        "line_id": "01KJPPBREDKR6ED7TTCG12E54N",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 116,
+        "line_id": "01KJPPBRED9A8FVCM49727H6FX",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 117,
+        "line_id": "01KJPPBREDDVS9BCGFX59BM3PW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 118,
+        "line_id": "01KJPPBRED0FP1522DW1QTF9JM",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 119,
+        "line_id": "01KJPPBRED0MG4FM29EJ9JQKQY",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 120,
+        "line_id": "01KJPPBREDA59PE3PWJJV1TGK3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 121,
+        "line_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "n_cat": "anchor",
+        "u_cat": "field",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "fieldPrefecture",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 122,
+        "line_id": "01KJPPBRED7D4QM639BYM6SYQ3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "prefecture"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 123,
+        "line_id": "01KJPPBREDGP8YRBERQ17F0RZ5",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "都道府県"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 124,
+        "line_id": "01KJPPBREDVPACPJPT4E77Q28A",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 125,
+        "line_id": "01KJPPBREDR1MNQMJVY3518GYD",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 126,
+        "line_id": "01KJPPBREDECVV0NKNWQTXPTPK",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 127,
+        "line_id": "01KJPPBREDAD56W01R6K9YJPAH",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 128,
+        "line_id": "01KJPPBREDKW4Q440N7VKBXXHB",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "required",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 129,
+        "line_id": "01KJPPBREE3M7MSGQQVPJ21HAS",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "hint",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 130,
+        "line_id": "01KJPPBREE3QKWASN1YFJC5QTP",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "placeHolder",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 131,
+        "line_id": "01KJPPBREE1BR23E9MRW0CZYV8",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "fa-name",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 132,
+        "line_id": "01KJPPBREEZ0PGDJ2RFQPP39WG",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "digest",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 133,
+        "line_id": "01KJPPBREE50W9RRA8HW905R0K",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREDYJ8P47G5G3H3RRBD",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "radio",
+        "value": "東京都"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 134,
+        "line_id": "01KJPPBREE64HXZFXQJ26K3VWM",
+        "n_cat": "anchor",
+        "u_cat": "option",
+        "parent_id": "01KJPPBREE50W9RRA8HW905R0K",
+        "dep_id": [],
+        "key": "optionPrefecture",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 135,
+        "line_id": "01KJPPBREEKSJ8ZEKM8Q3X1SSD",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREE64HXZFXQJ26K3VWM",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "prefecture"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 136,
+        "line_id": "01KJPPBREET9VCXQGECFHQP29D",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREE64HXZFXQJ26K3VWM",
+        "dep_id": [],
+        "key": "display",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "modal"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 137,
+        "line_id": "01KJPPBREE78SHNJ4J5QDP782J",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREE64HXZFXQJ26K3VWM",
+        "dep_id": [],
+        "key": "tableId",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "table:prefecture_struct_[] |\r\nlineId: |\r\nkey: "
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 138,
+        "line_id": "01KJPPBREEAXT3YR2NGFE2K8V4",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREE64HXZFXQJ26K3VWM",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 139,
+        "line_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBREDWQGEPBAKSR7RJN89",
+        "dep_id": [],
+        "key": "sectionCity",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 140,
+        "line_id": "01KJPPBREECQQGPXVRJP34MVT5",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "city"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 141,
+        "line_id": "01KJPPBREEE72BXFWM6MCQ5E1B",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "市区町村"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 142,
+        "line_id": "01KJPPBREFPXRYK0X8M32CH9F6",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 2
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 143,
+        "line_id": "01KJPPBREFHT2JYQ3S854B46A0",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 144,
+        "line_id": "01KJPPBREFKB86SGAARWACQT3R",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 145,
+        "line_id": "01KJPPBREFNNQ1HBRZ9QHFJAB3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 146,
+        "line_id": "01KJPPBREF76FE1E0MBQAKD5JG",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 147,
+        "line_id": "01KJPPBREF5CAFMM0GBF3VJA8X",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 148,
+        "line_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "n_cat": "anchor",
+        "u_cat": "field",
+        "parent_id": "01KJPPBREESCRYRPKTFPGWVB9B",
+        "dep_id": [],
+        "key": "fieldCity",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 149,
+        "line_id": "01KJPPBREFHEFFPNN17K3221KW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "city"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 150,
+        "line_id": "01KJPPBREF3BDSPSH87M044PTQ",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "市区町村"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 151,
+        "line_id": "01KJPPBREFF2MKDC9R2A282TMQ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 152,
+        "line_id": "01KJPPBREFMWDTYS2A9N068NPK",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 153,
+        "line_id": "01KJPPBREFKN3RJCJWS4C7ZHEY",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 154,
+        "line_id": "01KJPPBREF4NRADVY6AEB33MSF",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 155,
+        "line_id": "01KJPPBREFMHK39B8QSJN1SHME",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "required",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 156,
+        "line_id": "01KJPPBREGQY190QP72HG7BJZZ",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "hint",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 157,
+        "line_id": "01KJPPBREGGG133ER2JD9DTKNZ",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "placeHolder",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 158,
+        "line_id": "01KJPPBREGAR6BBME8F6KQYB21",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "fa-name",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 159,
+        "line_id": "01KJPPBREG8MCPYSSPG0QRV70N",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "digest",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 160,
+        "line_id": "01KJPPBREG4MENA270CEA2XK9P",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREFQNEVHWXQ6XEEE8HY",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "radio",
+        "value": "文京区"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 161,
+        "line_id": "01KJPPBREG9NFV5Q3MWRF13CDG",
+        "n_cat": "anchor",
+        "u_cat": "option",
+        "parent_id": "01KJPPBREG4MENA270CEA2XK9P",
+        "dep_id": [],
+        "key": "optionCity",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 162,
+        "line_id": "01KJPPBREG4NGMJPTA299BCSR0",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREG9NFV5Q3MWRF13CDG",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "city"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 163,
+        "line_id": "01KJPPBREGJZB289VHG7MY1M63",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREG9NFV5Q3MWRF13CDG",
+        "dep_id": [],
+        "key": "display",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "modal"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 164,
+        "line_id": "01KJPPBREGF9DVNS6XEP0QZM6A",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREG9NFV5Q3MWRF13CDG",
+        "dep_id": [],
+        "key": "tableId",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "table:city_struct_[] |\r\nlineId: |\r\nkey: "
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 165,
+        "line_id": "01KJPPBREG8RCAGP38MHDVXMQS",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREG9NFV5Q3MWRF13CDG",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 166,
+        "line_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "sectionOfficeAddress",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 167,
+        "line_id": "01KJPPBREG0505SDBGJZRWD7G9",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "officeAddress"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 168,
+        "line_id": "01KJPPBREG8N4BMBAF2TZJ1T2K",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "勤務先住所"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 169,
+        "line_id": "01KJPPBREG59TMGV7RJ1CZKCWC",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 4
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 170,
+        "line_id": "01KJPPBREGW4EQME94GTZQ9PZD",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 171,
+        "line_id": "01KJPPBREGHBTH8AH8H9STVSRV",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 172,
+        "line_id": "01KJPPBREGTFXQWZFZ0Q3R0TAW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 173,
+        "line_id": "01KJPPBREGWSNK3K8SGAE6Y551",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 174,
+        "line_id": "01KJPPBREGSTWY127Q3BKZG7D7",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 175,
+        "line_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBREGJEAESXH6KE23T3Z1",
+        "dep_id": [],
+        "key": "sectionPrefecture",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 176,
+        "line_id": "01KJPPBREHRM24ZDDBYPS0E19R",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "prefecture"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 177,
+        "line_id": "01KJPPBREH8QJR6P9X7G1GASH2",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "都道府県"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 178,
+        "line_id": "01KJPPBREHXV2ZR1FVB3S5D2W9",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 179,
+        "line_id": "01KJPPBREH52QGDQCTGC9R4CYK",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 180,
+        "line_id": "01KJPPBREHYRH9HRNH930N2PVN",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 181,
+        "line_id": "01KJPPBREHWWF8G33ME0N0E5VP",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 182,
+        "line_id": "01KJPPBREKDKY30F6BX66RYR09",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 183,
+        "line_id": "01KJPPBREKPDPH7H9S30QGYDFT",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 184,
+        "line_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "n_cat": "anchor",
+        "u_cat": "field",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "fieldPrefecture",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 185,
+        "line_id": "01KJPPBREMQ26FZ0DRV276A328",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "prefecture"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 186,
+        "line_id": "01KJPPBREMSZJSM36GMN4GQANE",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "都道府県"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 187,
+        "line_id": "01KJPPBREMDWAEH5HDC03ZETJ3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 188,
+        "line_id": "01KJPPBREM5A0FQK4V4448KC17",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 189,
+        "line_id": "01KJPPBREMRS8W5G42VEDSAXVW",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 190,
+        "line_id": "01KJPPBREMPWRP6BGMVVFWSVAA",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 191,
+        "line_id": "01KJPPBREMC4BTJ0YST41JKQCP",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "required",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 192,
+        "line_id": "01KJPPBREM6NM8ZB470T38ZAWX",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "hint",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 193,
+        "line_id": "01KJPPBREMHJMNRVXFWVWMVP5M",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "placeHolder",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 194,
+        "line_id": "01KJPPBREMMPS80CTA51BQRQMA",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "fa-name",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 195,
+        "line_id": "01KJPPBREMJZRTJWG8S8RW7Y3N",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "digest",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 196,
+        "line_id": "01KJPPBREMZNWKHQ68Z7V54HNG",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREMP0Y35T00VW6E5R46",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "radio",
+        "value": "神奈川県"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 197,
+        "line_id": "01KJPPBREMHZAEPWJRQYSVHDKW",
+        "n_cat": "anchor",
+        "u_cat": "option",
+        "parent_id": "01KJPPBREMZNWKHQ68Z7V54HNG",
+        "dep_id": [],
+        "key": "optionPrefecture",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 198,
+        "line_id": "01KJPPBREM13K1S200C799CM26",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMHZAEPWJRQYSVHDKW",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "prefecture"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 199,
+        "line_id": "01KJPPBREMW4ARCJEH7G2V9N4J",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREMHZAEPWJRQYSVHDKW",
+        "dep_id": [],
+        "key": "display",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "modal"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 200,
+        "line_id": "01KJPPBREMADA2FE6RE2GMDQTK",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMHZAEPWJRQYSVHDKW",
+        "dep_id": [],
+        "key": "tableId",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "table:prefecture_struct_[] |\r\nlineId: |\r\nkey: "
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 201,
+        "line_id": "01KJPPBREM4F7APK06QNPGYFB4",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREMHZAEPWJRQYSVHDKW",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 202,
+        "line_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBREH65D05J3V4BSC4PZ8",
+        "dep_id": [],
+        "key": "sectionCity",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 203,
+        "line_id": "01KJPPBRENC8BHKW39XGT4Q2CC",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "city"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 204,
+        "line_id": "01KJPPBRENAMPRV50A5XA3MKXZ",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "市区町村"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 205,
+        "line_id": "01KJPPBRENQXMN6FM5YW7DBHZX",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 2
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 206,
+        "line_id": "01KJPPBREN32YTMQ7YG32M41RR",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 207,
+        "line_id": "01KJPPBREN3MDBNCY5F7KMDJXS",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 208,
+        "line_id": "01KJPPBREN6A7ME0H6HWZ7WYT1",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 209,
+        "line_id": "01KJPPBRENN9W6DPMGND9T9TB8",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 210,
+        "line_id": "01KJPPBRENFX0E5NDQK6QQFYFZ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 211,
+        "line_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "n_cat": "anchor",
+        "u_cat": "field",
+        "parent_id": "01KJPPBREM2DRZ6VZHGZHSX61A",
+        "dep_id": [],
+        "key": "fieldCity",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 212,
+        "line_id": "01KJPPBRENGTRE0FP3M2BRYFQC",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "city"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 213,
+        "line_id": "01KJPPBRENTP963X17QAV8KE9B",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "市区町村"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 214,
+        "line_id": "01KJPPBRENKHY6SEMAKB34KZ5J",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 215,
+        "line_id": "01KJPPBRENHQNKE5XH3JAN1KJH",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 216,
+        "line_id": "01KJPPBRENF95K80RX4FQY4K8W",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 217,
+        "line_id": "01KJPPBREN9AAPNQH5X07XPQ93",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 218,
+        "line_id": "01KJPPBREN7TSZSFN4716W6WSJ",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "required",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 219,
+        "line_id": "01KJPPBRENTG92EYH95P3HEXY0",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "hint",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 220,
+        "line_id": "01KJPPBREN931KV2BVN692M8RN",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "placeHolder",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 221,
+        "line_id": "01KJPPBREN9K20MZAJ2TT4VEF3",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "fa-name",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 222,
+        "line_id": "01KJPPBRENHV1BKDDA3WP9TNB8",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "digest",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 223,
+        "line_id": "01KJPPBREPB3EDBV02ZQKHMQSQ",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREND9YFCS28YRSMA33M",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "radio",
+        "value": "横浜市"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 224,
+        "line_id": "01KJPPBREP88XWP8Z6Y2BQ97MW",
+        "n_cat": "anchor",
+        "u_cat": "option",
+        "parent_id": "01KJPPBREPB3EDBV02ZQKHMQSQ",
+        "dep_id": [],
+        "key": "optionCity",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 225,
+        "line_id": "01KJPPBREPHW88NYD58YMS0JXK",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP88XWP8Z6Y2BQ97MW",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "city"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 226,
+        "line_id": "01KJPPBREPX552GBCH7AK4BJTV",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREP88XWP8Z6Y2BQ97MW",
+        "dep_id": [],
+        "key": "display",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "modal"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 227,
+        "line_id": "01KJPPBREPTDR1V2E2Z43AB3YH",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP88XWP8Z6Y2BQ97MW",
+        "dep_id": [],
+        "key": "tableId",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "table:city_struct_[] |\r\nlineId: |\r\nkey: "
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 228,
+        "line_id": "01KJPPBREPMWG5HT5K7J2ND2CS",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP88XWP8Z6Y2BQ97MW",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 229,
+        "line_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "n_cat": "anchor",
+        "u_cat": "section",
+        "parent_id": "01KJPPBRE7GK57V91W5W71BWFH",
+        "dep_id": [],
+        "key": "sectionSalary",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 230,
+        "line_id": "01KJPPBREPBXEC86E034APXJSY",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "salary"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 231,
+        "line_id": "01KJPPBREPRAHD6T8RNJ03726J",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "単金"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 232,
+        "line_id": "01KJPPBREP1XYX9SN37EYWYD6V",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 5
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 233,
+        "line_id": "01KJPPBREPZ8KW5BV6HNEKB2XG",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 234,
+        "line_id": "01KJPPBREP8C2KHD5E8DWC8XH4",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 235,
+        "line_id": "01KJPPBREPZC2D92EK7J7ABRE3",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 236,
+        "line_id": "01KJPPBREP62M2DVBSGYF7GH32",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "fold",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 237,
+        "line_id": "01KJPPBREPG2CTH2RDE37CVJ7A",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 238,
+        "line_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "n_cat": "anchor",
+        "u_cat": "field",
+        "parent_id": "01KJPPBREP7FSB1GHTN2RAWA54",
+        "dep_id": [],
+        "key": "fieldSalary",
+        "i_type": "direct",
+        "f_type": "group",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 239,
+        "line_id": "01KJPPBREQVYQAR7NWCBZRANER",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "varName",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "salary"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 240,
+        "line_id": "01KJPPBREQ8DPP0EG3YRRAYPQZ",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "label",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "単金"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 241,
+        "line_id": "01KJPPBREQXZD5XAVNC1F1RX4S",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "order",
+        "i_type": "direct",
+        "f_type": "number",
+        "value": 1
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 242,
+        "line_id": "01KJPPBREQ1JGP6VW6QYYAKPZY",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "addBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 243,
+        "line_id": "01KJPPBREQAQS9PWER845KH2AF",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "delBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 244,
+        "line_id": "01KJPPBREQY3ZZABE5SHNMVMS1",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "cpyBlock",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 245,
+        "line_id": "01KJPPBREQ39VPBKZF09MYQT0H",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "required",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 246,
+        "line_id": "01KJPPBREQ0W0BHJH9H9A042QD",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "hint",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 247,
+        "line_id": "01KJPPBREQPYTE7SF1KR5ZFRN5",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "placeHolder",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "単金を入力してください"
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 248,
+        "line_id": "01KJPPBREQ6K122HDE8DGTB754",
+        "n_cat": "line",
+        "u_cat": "display",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "icon",
+        "i_type": "direct",
+        "f_type": "fa-name",
+        "value": ""
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 249,
+        "line_id": "01KJPPBREQS3FB4HXSTN0VZ75E",
+        "n_cat": "line",
+        "u_cat": "config",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "digest",
+        "i_type": "direct",
+        "f_type": "boolean",
+        "value": true
+      }
+    }
+  },
+  {
+    "_custom": {
+      "type": "reactive",
+      "stateTypeName": "Reactive",
+      "value": {
+        "id": 250,
+        "line_id": "01KJPPBREQ7WXBH80EJQZFKZWW",
+        "n_cat": "line",
+        "u_cat": "feed",
+        "parent_id": "01KJPPBREPWBZEBS4Z03Z0E7YX",
+        "dep_id": [],
+        "key": "value",
+        "i_type": "direct",
+        "f_type": "text",
+        "value": "50万円"
+      }
+    }
+  }
+]
