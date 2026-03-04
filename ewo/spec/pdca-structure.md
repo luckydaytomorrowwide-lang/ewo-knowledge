@@ -2,72 +2,81 @@
 
 EWO Factory は次の工程で運用する。
 
+PLAN  
+DO  
+CHECK  
+ACTION
+
 ---
 
-## PLAN
+# PLAN（EWO作成）
 
-EWOの設計を行う工程。
+## 目的
 
-### 作業
+新しいEWOを設計する。
+
+## 作業
 
 - 新しいEWO.jsonを作成する
-- 作成対象のworkflowを定義する
-- 入力条件を整理する
+- テストケースを作成する
+- テスト資材一式を準備する
 
-### 成果物
+## 成果物
 
 - EWO.json
-- 作業計画
-- 入力条件
+- テストケース
+- テスト資材
 
 ---
 
-## DO
+# DO（WF Running）
 
-workflowを実行する工程。
+## 目的
 
-### 作業
+workflowを実行する。
+
+## 作業
 
 - sourceブランチのworkflowを実行する
 
-参照
-
-source / ewo / source / workflows  
-source / ewo / source / activities
-
-### 成果物
+## 成果物
 
 - workflow実行結果
 - 実行ログ
 
 ---
 
-## CHECK
+# CHECK（log解析）
 
-workflow実行結果を検証する工程。
+## 目的
 
-### 作業
+workflow実行結果を検証する。
+
+## 作業
 
 - 実行ログを解析する
 - 想定結果との差分を確認する
 
-### 成果物
+## 成果物
 
 - 解析結果
 - 問題点整理
 
 ---
 
-## ACTION
+# ACTION（解析結果の対応）
 
-解析結果に対して改善を行う工程。
+## 目的
 
-### 作業
+解析結果に基づき改善を行う。
 
-- 修正EWO.jsonを作成する
+## 作業
+
+- EWO.jsonを修正する
 - 必要に応じてworkflowを修正する
+- GitHubに反映する
 
-### 成果物
+## 成果物
 
 - 修正EWO.json
 - 修正PR
