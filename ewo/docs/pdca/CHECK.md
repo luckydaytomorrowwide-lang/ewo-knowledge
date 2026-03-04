@@ -1,15 +1,21 @@
 # CHECK
 
-検証フェーズ
+ログ解析工程。
 
-目的
-- 実行結果を検証する
-- expected と一致するか確認する
+---
 
-参照
+## 参照
 
-spec
-../../spec/
+PDCA構造
+../../spec/pdca-structure.md
 
-examples
-../../examples/
+checklists
+../../checklists/
+
+---
+
+## 作業概要
+
+1 実行ログを解析する
+2 想定結果との差分を確認する
+3 問題点を整理する
