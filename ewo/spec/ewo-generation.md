@@ -1,119 +1,59 @@
 # EWO Generation Specification
 
-このドキュメントは
+このドキュメントは  
 EWO生成の基本仕様を定義する。
 
 ---
 
-# EWO生成の位置づけ
+# EWOとは
+
+EWO は workflow 実行を定義するファイルである。
+
+EWO は **EWO.json** として定義する。
+
+---
+
+# EWO生成
 
 EWO生成は **PLAN工程**で行う。
 
-PLAN工程では
+PLAN工程では  
 新しい **EWO.json** を作成する。
+
+---
+
+# 実装参照
+
+workflow実行の実装は  
+sourceブランチを参照する。
+
+source / ewo / source / activities  
+source / ewo / source / workflows  
+
+これらが実装の正本である。
 
 ---
 
 # examples
 
 examples は  
-実績のある EWO の例を保存するディレクトリである。
+実績のあるEWOの例を保存する。
 
 EWO生成時の参考として使用する。
 
----
+examples には次の種類がある。
 
-## ディレクトリ構造
+good  
+良いEWOの例
 
-examples は次の構造で管理する。
-
-examples/
-
-good/  
-bad/
-
----
-
-## good
-
-実績のある良いEWOの例。
-
-EWO生成時の参考として使用する。
-
----
-
-## bad
-
-問題のあるEWOの例。
-
-失敗例として  
-EWO生成時の参考にする。
-
----
-
-# EWO生成の成果物
-
-EWO生成の成果物は次である。
-
-* EWO.json
-
-EWO.json は
-workflow実行の定義を持つ。
-
----
-
-# 実行（DO工程）
-
-EWO.json に基づき
-workflow を実行する。
-
-workflow 実装は
-sourceブランチを参照する。
-
-```
-source / ewo / source / activities
-source / ewo / source / workflows
-```
-
-これらが実装の正本である。
-
----
-
-# テストケース
-
-EWO生成は
-テストケースとともに作成する。
-
-テスト資材は次の構造で管理する。
-
-```
-test/
-  case-xxx/
-    test-xxx/
-```
-
-例
-
-```
-test/case-001/test-001/
-```
-
-このディレクトリには
-当該テストで使用する資材一式を保存する。
-
-例
-
-* EWO.json
-* Layout.json
-* Data.json
-* Template.json
-* その他必要資材
+bad  
+悪いEWOの例
 
 ---
 
 # 情報不足時
 
-ユーザー依頼だけでは
+ユーザー依頼だけでは  
 EWO生成内容が確定できない場合
 
 推測で補完してはならない。
