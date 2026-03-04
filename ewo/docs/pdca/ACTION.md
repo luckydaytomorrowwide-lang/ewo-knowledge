@@ -1,16 +1,24 @@
 # ACTION
 
-結果対応フェーズ
+解析結果対応工程。
 
-目的
-- 問題の原因を分析する
-- 再発防止策を決める
-- 標準に反映する
+---
 
-参照
+## 参照
+
+PDCA構造
+../../spec/pdca-structure.md
 
 decisions
 ../../decisions/
 
-checklists
-../../checklists/
+templates
+../../templates/
+
+---
+
+## 作業概要
+
+1 修正EWOを作成する
+2 必要に応じてworkflowを修正する
+3 PRでGitHubへ反映する
