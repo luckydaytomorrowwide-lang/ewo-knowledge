@@ -1,12 +1,14 @@
-# Repository Reference
+# リポジトリ参照ルール
 
-## Canonical Branch
+## 正式参照ブランチ
 main
 
-## Working Branch
+## 作業ブランチ
 source
 
-## Branch Policy
-- All verification and analysis are based on main.
-- source is referenced only when explicitly specified in Issue or PR.
-- Never auto-switch branches.
+## ブランチ運用ルール
+
+- 生成・検証・解析はすべて main を基準とする。
+- source は Issue または PR で明示された場合のみ参照する。
+- 自動的にブランチを推測・切替しない。
+- PR が main にマージされた時点で正式仕様とみなす。
