@@ -1,3 +1,7 @@
+## Entry Point
+
+START.md を最初に参照すること
+
 # EWO Knowledge Entry Point
 
 このリポジトリは EWO Factory の知識ベースです。
