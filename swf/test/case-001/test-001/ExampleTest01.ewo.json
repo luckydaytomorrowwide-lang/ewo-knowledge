@@ -1,0 +1,1308 @@
+{
+  "id": "ExampleTest01",
+  "version": "1.0.0",
+  "name": "ExampleTest01",
+  "inputs": {
+    "tableId": {
+      "schema": "string"
+    },
+    "rootId": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "SearchLineAC",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "parentId": {
+            "sourceAcId": "$input",
+            "sourcePort": "rootId"
+          },
+          "nCat": {
+            "literal": "anchor"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "SearchLineAC_2",
+        "operation": "SearchLineAC",
+        "deps": {
+          "parentId": {
+            "sourceAcId": "FirstRowAC",
+            "sourcePort": "_result"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "nCat": {
+            "literal": "anchor"
+          },
+          "key": {
+            "literal": "sectionName"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "SearchLineAC_3",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "parentId": {
+            "sourceAcId": "FirstRowAC_2",
+            "sourcePort": "_result"
+          },
+          "uCat": {
+            "literal": "field"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "FirstRowAC",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchLineAC",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "_result": {}
+        }
+      },
+      {
+        "id": "FirstRowAC_2",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchLineAC_2",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "_result": {}
+        }
+      },
+      {
+        "id": "FirstRowAC_3",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchLineAC_3",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "_result": {}
+        }
+      },
+      {
+        "id": "FirstRowAC_4",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchLineAC_4",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "_result": {}
+        }
+      },
+      {
+        "id": "SearchLineAC_4",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "parentId": {
+            "sourceAcId": "FirstRowAC_3",
+            "sourcePort": "_result"
+          },
+          "key": {
+            "literal": "value"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "RetrieveColumnAC",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "lineId": {
+            "sourceAcId": "FirstRowAC_4",
+            "sourcePort": "_result"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "column": {
+            "literal": "value"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstRowAC_5",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveColumnAC",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "_result": {}
+        }
+      }
+    ],
+    "outputs": {
+      "nameValue": "FirstRowAC_5._result"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-FirstRowAC",
+        "when": {
+          "type": "FirstRowAC.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "SearchLineAC_2.parentId",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstRowAC_2",
+        "when": {
+          "type": "FirstRowAC_2.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "SearchLineAC_3.parentId",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchLineAC",
+        "when": {
+          "type": "SearchLineAC.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstRowAC.rows",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchLineAC_2",
+        "when": {
+          "type": "SearchLineAC_2.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstRowAC_2.rows",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchLineAC_3",
+        "when": {
+          "type": "SearchLineAC_3.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstRowAC_3.rows",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchLineAC_4",
+        "when": {
+          "type": "SearchLineAC_4.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstRowAC_4.rows",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstRowAC_3",
+        "when": {
+          "type": "FirstRowAC_3.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "SearchLineAC_4.parentId",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstRowAC_4",
+        "when": {
+          "type": "FirstRowAC_4.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "RetrieveColumnAC.lineId",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveColumnAC",
+        "when": {
+          "type": "RetrieveColumnAC.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstRowAC_5.rows",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstRowAC_5",
+        "when": {
+          "type": "FirstRowAC_5.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "ExampleTest01",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": -2160.721384048462,
+      "y": 253.85981896482872,
+      "zoom": 0.8
+    },
+    "nodes": [
+      {
+        "id": "node-0",
+        "type": "ewoStart",
+        "position": {
+          "x": 38.71423006057739,
+          "y": -161.8560237060359
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "rootId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-1",
+        "type": "ewoEnd",
+        "position": {
+          "x": 3883.8704800605774,
+          "y": -65.6060237060359
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "nameValue"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-2",
+        "type": "ewoAc",
+        "position": {
+          "x": 401.2142300605774,
+          "y": 100.6439762939641
+        },
+        "data": {
+          "label": "SearchLineAC",
+          "operation": "SearchLineAC",
+          "functionRef": "SearchLineAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "searchType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableType",
+              "type": "number",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableId",
+              "type": "string",
+              "required": true,
+              "description": ""
+            },
+            {
+              "name": "lineId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "parentId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "nCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "uCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "table",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "mode",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "key",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "depId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "iType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "fType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "value",
+              "type": "any",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "configId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "array",
+              "description": ""
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-3",
+        "type": "ewoAc",
+        "position": {
+          "x": 1027.4642300605774,
+          "y": 78.1439762939641
+        },
+        "data": {
+          "label": "SearchLineAC",
+          "operation": "SearchLineAC",
+          "functionRef": "SearchLineAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "searchType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableType",
+              "type": "number",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableId",
+              "type": "string",
+              "required": true,
+              "description": ""
+            },
+            {
+              "name": "lineId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "parentId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "nCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "uCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "table",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "mode",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "key",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "depId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "iType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "fType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "value",
+              "type": "any",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "configId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "array",
+              "description": ""
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-4",
+        "type": "ewoAc",
+        "position": {
+          "x": 1743.7142300605774,
+          "y": 36.8939762939641
+        },
+        "data": {
+          "label": "SearchLineAC",
+          "operation": "SearchLineAC",
+          "functionRef": "SearchLineAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "searchType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableType",
+              "type": "number",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableId",
+              "type": "string",
+              "required": true,
+              "description": ""
+            },
+            {
+              "name": "lineId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "parentId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "nCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "uCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "table",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "mode",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "key",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "depId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "iType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "fType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "value",
+              "type": "any",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "configId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "array",
+              "description": ""
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-6",
+        "type": "ewoAc",
+        "position": {
+          "x": 700.1204800605774,
+          "y": 440.1752262939641
+        },
+        "data": {
+          "label": "FirstRowAC",
+          "operation": "FirstRowAC",
+          "functionRef": "FirstRowAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "array",
+              "required": true,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "_result",
+              "type": "any",
+              "description": "Raw return value (no structured Result interface defined)"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-7",
+        "type": "ewoAc",
+        "position": {
+          "x": 1322.6204800605774,
+          "y": 399.3939762939641
+        },
+        "data": {
+          "label": "FirstRowAC",
+          "operation": "FirstRowAC",
+          "functionRef": "FirstRowAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "array",
+              "required": true,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "_result",
+              "type": "any",
+              "description": "Raw return value (no structured Result interface defined)"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-8",
+        "type": "ewoAc",
+        "position": {
+          "x": 2081.3704800605774,
+          "y": 394.3939762939641
+        },
+        "data": {
+          "label": "FirstRowAC",
+          "operation": "FirstRowAC",
+          "functionRef": "FirstRowAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "array",
+              "required": true,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "_result",
+              "type": "any",
+              "description": "Raw return value (no structured Result interface defined)"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-9",
+        "type": "ewoAc",
+        "position": {
+          "x": 2795.1204800605774,
+          "y": 291.8939762939641
+        },
+        "data": {
+          "label": "FirstRowAC",
+          "operation": "FirstRowAC",
+          "functionRef": "FirstRowAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "array",
+              "required": true,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "_result",
+              "type": "any",
+              "description": "Raw return value (no structured Result interface defined)"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-10",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 91.21423006057739,
+          "y": 169.3939762939641
+        },
+        "data": {
+          "value": "anchor",
+          "valueType": "string"
+        }
+      },
+      {
+        "id": "node-11",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 684.9642300605774,
+          "y": 209.3939762939641
+        },
+        "data": {
+          "value": "anchor",
+          "valueType": "string"
+        }
+      },
+      {
+        "id": "node-12",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 683.7142300605774,
+          "y": 298.1439762939641
+        },
+        "data": {
+          "value": "sectionName",
+          "valueType": "string"
+        }
+      },
+      {
+        "id": "node-13",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 1399.9642300605774,
+          "y": 205.6439762939641
+        },
+        "data": {
+          "value": "field",
+          "valueType": "string"
+        }
+      },
+      {
+        "id": "node-14",
+        "type": "ewoAc",
+        "position": {
+          "x": 2480.9017300605774,
+          "y": 7.675226293964101
+        },
+        "data": {
+          "label": "SearchLineAC",
+          "operation": "SearchLineAC",
+          "functionRef": "SearchLineAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "searchType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableType",
+              "type": "number",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableId",
+              "type": "string",
+              "required": true,
+              "description": ""
+            },
+            {
+              "name": "lineId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "parentId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "nCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "uCat",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "table",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "mode",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "key",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "depId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "iType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "fType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "value",
+              "type": "any",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "configId",
+              "type": "string",
+              "required": false,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "array",
+              "description": ""
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-16",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 2189.6517300605774,
+          "y": 225.1752262939641
+        },
+        "data": {
+          "value": "value",
+          "valueType": "string"
+        }
+      },
+      {
+        "id": "node-17",
+        "type": "ewoAc",
+        "position": {
+          "x": 3205.5892300605774,
+          "y": -98.5747737060359
+        },
+        "data": {
+          "label": "RetrieveColumnAC",
+          "operation": "RetrieveColumnAC",
+          "functionRef": "RetrieveColumnAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "searchType",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableType",
+              "type": "number",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "tableId",
+              "type": "string",
+              "required": true,
+              "description": ""
+            },
+            {
+              "name": "lineId",
+              "type": "string",
+              "required": true,
+              "description": ""
+            },
+            {
+              "name": "column",
+              "type": "string",
+              "required": true,
+              "description": ""
+            },
+            {
+              "name": "mode",
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            {
+              "name": "keys",
+              "type": "string",
+              "required": false,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "array",
+              "description": ""
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-18",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 2869.3392300605774,
+          "y": 32.6752262939641
+        },
+        "data": {
+          "value": "value",
+          "valueType": "string"
+        }
+      },
+      {
+        "id": "node-19",
+        "type": "ewoAc",
+        "position": {
+          "x": 3524.6517300605774,
+          "y": -101.0747737060359
+        },
+        "data": {
+          "label": "FirstRowAC",
+          "operation": "FirstRowAC",
+          "functionRef": "FirstRowAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "array",
+              "required": true,
+              "description": ""
+            }
+          ],
+          "outputs": [
+            {
+              "name": "_result",
+              "type": "any",
+              "description": "Raw return value (no structured Result interface defined)"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-0",
+        "source": "node-0",
+        "target": "node-2",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "edge-1",
+        "source": "node-0",
+        "target": "node-2",
+        "sourceHandle": "output-rootId",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "edge-2",
+        "source": "node-10",
+        "target": "node-2",
+        "sourceHandle": "output",
+        "targetHandle": "input-nCat"
+      },
+      {
+        "id": "edge-3",
+        "source": "node-2",
+        "target": "node-6",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "edge-4",
+        "source": "node-6",
+        "target": "node-3",
+        "sourceHandle": "output-_result",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "edge-5",
+        "source": "node-0",
+        "target": "node-3",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "edge-6",
+        "source": "node-11",
+        "target": "node-3",
+        "sourceHandle": "output",
+        "targetHandle": "input-nCat"
+      },
+      {
+        "id": "edge-7",
+        "source": "node-3",
+        "target": "node-7",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "edge-8",
+        "source": "node-12",
+        "target": "node-3",
+        "sourceHandle": "output",
+        "targetHandle": "input-key"
+      },
+      {
+        "id": "edge-9",
+        "source": "node-0",
+        "target": "node-4",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "edge-10",
+        "source": "node-7",
+        "target": "node-4",
+        "sourceHandle": "output-_result",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "edge-11",
+        "source": "node-13",
+        "target": "node-4",
+        "sourceHandle": "output",
+        "targetHandle": "input-uCat"
+      },
+      {
+        "id": "edge-12",
+        "source": "node-4",
+        "target": "node-8",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "edge-15",
+        "source": "node-0",
+        "target": "node-14",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "edge-16",
+        "source": "node-8",
+        "target": "node-14",
+        "sourceHandle": "output-_result",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "edge-18",
+        "source": "node-16",
+        "target": "node-14",
+        "sourceHandle": "output",
+        "targetHandle": "input-key"
+      },
+      {
+        "id": "edge-19",
+        "source": "node-14",
+        "target": "node-9",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "edge-20",
+        "source": "node-9",
+        "target": "node-17",
+        "sourceHandle": "output-_result",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "edge-21",
+        "source": "node-0",
+        "target": "node-17",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "edge-22",
+        "source": "node-18",
+        "target": "node-17",
+        "sourceHandle": "output",
+        "targetHandle": "input-column"
+      },
+      {
+        "id": "edge-23",
+        "source": "node-17",
+        "target": "node-19",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "edge-24",
+        "source": "node-19",
+        "target": "node-1",
+        "sourceHandle": "output-_result",
+        "targetHandle": "input-nameValue"
+      }
+    ]
+  }
+}
