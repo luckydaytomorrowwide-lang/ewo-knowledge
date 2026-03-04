@@ -1,33 +1,84 @@
 # EWO Generation Specification
 
-EWO生成は  
-sourceブランチの実装資産を使用して行う。
-
-## 実装参照
-
-source / ewo / source / activities  
-source / ewo / source / workflows  
-
-これらがEWO生成の実装の正本である。
+このドキュメントは
+EWO生成の基本仕様を定義する。
 
 ---
 
-## 生成判断
+# EWO生成の位置づけ
 
-ユーザーの依頼だけでは  
+EWO生成は **PLAN工程**で行う。
+
+PLAN工程では
+新しい **EWO.json** を作成する。
+
+---
+
+# EWO生成の成果物
+
+EWO生成の成果物は次である。
+
+* EWO.json
+
+EWO.json は
+workflow実行の定義を持つ。
+
+---
+
+# 実行（DO工程）
+
+EWO.json に基づき
+workflow を実行する。
+
+workflow 実装は
+sourceブランチを参照する。
+
+```
+source / ewo / source / activities
+source / ewo / source / workflows
+```
+
+これらが実装の正本である。
+
+---
+
+# テストケース
+
+EWO生成は
+テストケースとともに作成する。
+
+テスト資材は次の構造で管理する。
+
+```
+test/
+  case-xxx/
+    test-xxx/
+```
+
+例
+
+```
+test/case-001/test-001/
+```
+
+このディレクトリには
+当該テストで使用する資材一式を保存する。
+
+例
+
+* EWO.json
+* Layout.json
+* Data.json
+* Template.json
+* その他必要資材
+
+---
+
+# 情報不足時
+
+ユーザー依頼だけでは
 EWO生成内容が確定できない場合
-
-不足情報を質問して確定する。
 
 推測で補完してはならない。
 
----
-
-## 生成成果物
-
-EWO生成の成果物は次のいずれかである。
-
-- workflow
-- activity
-- workflow実行結果
-- 実行ログ
+不足情報を質問して確定する。
