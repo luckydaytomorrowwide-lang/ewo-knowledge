@@ -32,9 +32,9 @@ AIは必ず次の順序で参照すること
 spec → decisions → examples → templates → checklists
 
 specが最優先である。
-
+EWO生成の実装資産は source ブランチ（ewo/source/activities, ewo/source/workflows）を正とする。
 ---
 
 ## Purpose
 
-SWF生成を **再現可能なプロセス**として固定する。
+EWO生成を **再現可能なプロセス**として固定する。
