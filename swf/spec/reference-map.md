@@ -29,4 +29,7 @@ spec/
 
 ## 決定事項
 
-decisions/
+参照ブランチ：main  
+参照パス：swf/decisions/
+
+※ AIはEWO生成・解析・status更新前に必ず参照する。
