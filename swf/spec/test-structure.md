@@ -4,7 +4,7 @@
 tests/
   case-xxx/
     test-yyy/
-      ewo.json
+      <EWO 任意名>.json   # EWO（任意名、ただし1ファイルのみ）
       input.json
       table.json
       log/
