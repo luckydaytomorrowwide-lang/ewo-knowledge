@@ -48,10 +48,40 @@ PDCA工程
 
 # examples
 
-EWO実行の再現ケース。
+examples は  
+実績のある EWO の例を保存するディレクトリである。
 
-examples は
-EWO動作の確認および参照例として使用する。
+examples は  
+EWO生成時の参考資料として使用する。
+
+---
+
+## examples の種類
+
+examples には次の2種類がある。
+
+good  
+良いEWOの例
+
+bad  
+悪いEWOの例
+
+---
+
+## good
+
+実績のある良いEWO。
+
+EWO生成時の参考として使用する。
+
+---
+
+## bad
+
+問題があるEWO。
+
+失敗例として  
+EWO生成時の参考にする。
 
 ---
 
