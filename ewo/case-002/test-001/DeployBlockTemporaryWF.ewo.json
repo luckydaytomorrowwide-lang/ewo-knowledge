@@ -1,0 +1,160 @@
+{
+  "id": "DeployBlockTemporaryWF",
+  "version": "1.0.0",
+  "name": "DeployBlockTemporaryWF",
+  "description": "ブロックデータを取得し、テーブルへプッシュしてテンポラリテーブルを作成する。RetrieveBlockAC→PushRecordsAC→MakeTemporaryWF(wfCall)の3ステップ直列。",
+  "inputs": {
+    "tableId": { "schema": "string" },
+    "lineId": { "schema": "string" },
+    "depth": { "schema": "number" },
+    "type": { "schema": "string" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "RetrieveBlock",
+        "operation": "RetrieveBlockAC",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "lineId": { "sourceAcId": "$input", "sourcePort": "lineId" },
+          "depth": { "sourceAcId": "$input", "sourcePort": "depth" }
+        },
+        "outputs": { "rows": {} }
+      },
+      {
+        "id": "PushRecords",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "beforeRows": { "literal": [] },
+          "afterRows": { "sourceAcId": "RetrieveBlock", "sourcePort": "rows" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "MakeTemporary",
+        "operation": "MakeTemporaryWF",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "rows": { "sourceAcId": "RetrieveBlock", "sourcePort": "rows" }
+        },
+        "outputs": { "tempTableId": {} },
+        "wfCall": {
+          "callee": "MakeTemporaryWF",
+          "boundary": true
+        }
+      }
+    ],
+    "outputs": {
+      "tempTableId": "MakeTemporary.tempTableId"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-RetrieveBlock",
+        "when": { "type": "RetrieveBlock.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "PushRecords.afterRows", "wfid": "DeployBlockTemporaryWF", "map": "outputRef->payloadRef" },
+          { "type": "MakeTemporary.rows", "wfid": "DeployBlockTemporaryWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-PushRecords",
+        "when": { "type": "PushRecords.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": []
+      },
+      {
+        "id": "R-MakeTemporary",
+        "when": { "type": "MakeTemporary.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "DeployBlockTemporaryWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.85 },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": { "x": 50, "y": 180 },
+        "data": {
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "lineId", "type": "string" },
+            { "name": "depth", "type": "number" },
+            { "name": "type", "type": "string" }
+          ]
+        }
+      },
+      {
+        "id": "node-RetrieveBlock",
+        "type": "ewoAc",
+        "position": { "x": 320, "y": 180 },
+        "data": {
+          "label": "RetrieveBlock",
+          "operation": "RetrieveBlockAC",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "lineId", "type": "string" },
+            { "name": "depth", "type": "number" }
+          ],
+          "outputs": [{ "name": "rows", "type": "any[]" }]
+        }
+      },
+      {
+        "id": "node-PushRecords",
+        "type": "ewoAc",
+        "position": { "x": 600, "y": 100 },
+        "data": {
+          "label": "PushRecords",
+          "operation": "PushRecordsAC",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "afterRows", "type": "any[]" }
+          ],
+          "outputs": []
+        }
+      },
+      {
+        "id": "node-MakeTemporary",
+        "type": "ewoWfCall",
+        "position": { "x": 600, "y": 260 },
+        "data": {
+          "label": "MakeTemporary",
+          "operation": "MakeTemporaryWF",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "rows", "type": "any[]" }
+          ],
+          "outputs": [{ "name": "tempTableId", "type": "string" }],
+          "wfCall": { "callee": "MakeTemporaryWF", "boundary": true }
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": { "x": 900, "y": 260 },
+        "data": {
+          "outputs": [{ "name": "tempTableId", "type": "string" }]
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e-start-retrieve-tableId", "source": "node-start", "target": "node-RetrieveBlock", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-start-retrieve-lineId", "source": "node-start", "target": "node-RetrieveBlock", "sourceHandle": "output-lineId", "targetHandle": "input-lineId" },
+      { "id": "e-start-retrieve-depth", "source": "node-start", "target": "node-RetrieveBlock", "sourceHandle": "output-depth", "targetHandle": "input-depth" },
+      { "id": "e-retrieve-push", "source": "node-RetrieveBlock", "target": "node-PushRecords", "sourceHandle": "output-rows", "targetHandle": "input-afterRows" },
+      { "id": "e-start-push-tableId", "source": "node-start", "target": "node-PushRecords", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-retrieve-maketemp", "source": "node-RetrieveBlock", "target": "node-MakeTemporary", "sourceHandle": "output-rows", "targetHandle": "input-rows" },
+      { "id": "e-start-maketemp-tableId", "source": "node-start", "target": "node-MakeTemporary", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-maketemp-end", "source": "node-MakeTemporary", "target": "node-end", "sourceHandle": "output-tempTableId", "targetHandle": "input-tempTableId" }
+    ]
+  }
+}

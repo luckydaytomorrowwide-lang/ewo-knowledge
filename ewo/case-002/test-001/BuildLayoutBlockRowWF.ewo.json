@@ -1,0 +1,203 @@
+{
+  "id": "BuildLayoutBlockRowWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutBlockRowWF",
+  "description": "レイアウトブロック行を構築する。ConvertDeployToStructTableNameACでテーブル名変換→CreateLayoutBlockPropertyACでプロパティ生成→BuildLayoutBlockRowACで行オブジェクト構築。",
+  "inputs": {
+    "tableId": { "schema": "string" },
+    "lineId": { "schema": "string" },
+    "blockKey": { "schema": "string" },
+    "anchorUcat": { "schema": "string" },
+    "lineKey": { "schema": "string" },
+    "column": { "schema": "string" },
+    "instViewType": { "schema": "string" },
+    "instEditType": { "schema": "string" },
+    "instSelectType": { "schema": "string" },
+    "tplViewType": { "schema": "string" },
+    "tplEditType": { "schema": "string" },
+    "tplSelectType": { "schema": "string" },
+    "layoutProperty": { "schema": "object" },
+    "propertyKey": { "schema": "string|null" },
+    "propertyValue": { "schema": "any" },
+    "key": { "schema": "string|null" },
+    "label": { "schema": "string" },
+    "jointId": { "schema": "string" },
+    "value": { "schema": "any" },
+    "nCat": { "schema": "string|null" },
+    "uCat": { "schema": "string|null" },
+    "parentId": { "schema": "string|null" },
+    "depId": { "schema": "string|null" },
+    "iType": { "schema": "string|null" },
+    "fType": { "schema": "string|null" },
+    "nodeId": { "schema": "string|null" },
+    "nodeLabels": { "schema": "string[]|null" },
+    "order": { "schema": "any" },
+    "option": { "schema": "any" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "ConvertTableName",
+        "operation": "ConvertDeployToStructTableNameAC",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" }
+        },
+        "outputs": { "tableId": {} }
+      },
+      {
+        "id": "CreateProperty",
+        "operation": "CreateLayoutBlockPropertyAC",
+        "deps": {
+          "tableId": { "sourceAcId": "ConvertTableName", "sourcePort": "tableId" },
+          "lineId": { "sourceAcId": "$input", "sourcePort": "lineId" },
+          "anchorUcat": { "sourceAcId": "$input", "sourcePort": "anchorUcat" },
+          "lineKey": { "sourceAcId": "$input", "sourcePort": "lineKey" },
+          "column": { "sourceAcId": "$input", "sourcePort": "column" },
+          "label": { "sourceAcId": "$input", "sourcePort": "label" },
+          "nCat": { "sourceAcId": "$input", "sourcePort": "nCat" },
+          "uCat": { "sourceAcId": "$input", "sourcePort": "uCat" },
+          "parentId": { "sourceAcId": "$input", "sourcePort": "parentId" },
+          "depId": { "sourceAcId": "$input", "sourcePort": "depId" },
+          "key": { "sourceAcId": "$input", "sourcePort": "propertyKey" },
+          "iType": { "sourceAcId": "$input", "sourcePort": "iType" },
+          "fType": { "sourceAcId": "$input", "sourcePort": "fType" },
+          "value": { "sourceAcId": "$input", "sourcePort": "propertyValue" },
+          "nodeId": { "sourceAcId": "$input", "sourcePort": "nodeId" },
+          "nodeLabels": { "sourceAcId": "$input", "sourcePort": "nodeLabels" },
+          "order": { "sourceAcId": "$input", "sourcePort": "order" },
+          "option": { "sourceAcId": "$input", "sourcePort": "option" }
+        },
+        "outputs": { "property": {} }
+      },
+      {
+        "id": "BuildRow",
+        "operation": "BuildLayoutBlockRowAC",
+        "deps": {
+          "blockKey": { "sourceAcId": "$input", "sourcePort": "blockKey" },
+          "instViewType": { "sourceAcId": "$input", "sourcePort": "instViewType" },
+          "instEditType": { "sourceAcId": "$input", "sourcePort": "instEditType" },
+          "instSelectType": { "sourceAcId": "$input", "sourcePort": "instSelectType" },
+          "tplViewType": { "sourceAcId": "$input", "sourcePort": "tplViewType" },
+          "tplEditType": { "sourceAcId": "$input", "sourcePort": "tplEditType" },
+          "tplSelectType": { "sourceAcId": "$input", "sourcePort": "tplSelectType" },
+          "layoutProperty": { "sourceAcId": "$input", "sourcePort": "layoutProperty" },
+          "property": { "sourceAcId": "CreateProperty", "sourcePort": "property" }
+        },
+        "outputs": { "layoutRow": {} }
+      }
+    ],
+    "outputs": {
+      "layoutRow": "BuildRow.layoutRow"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-ConvertTableName",
+        "when": { "type": "ConvertTableName.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "CreateProperty.tableId", "wfid": "BuildLayoutBlockRowWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-CreateProperty",
+        "when": { "type": "CreateProperty.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildRow.property", "wfid": "BuildLayoutBlockRowWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildRow",
+        "when": { "type": "BuildRow.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "BuildLayoutBlockRowWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.8 },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": { "x": 50, "y": 200 },
+        "data": {
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "lineId", "type": "string" },
+            { "name": "blockKey", "type": "string" },
+            { "name": "instViewType", "type": "string" },
+            { "name": "instEditType", "type": "string" },
+            { "name": "tplViewType", "type": "string" },
+            { "name": "tplEditType", "type": "string" },
+            { "name": "propertyKey", "type": "string|null" },
+            { "name": "propertyValue", "type": "any" },
+            { "name": "nodeId", "type": "string|null" },
+            { "name": "nodeLabels", "type": "string[]|null" },
+            { "name": "order", "type": "any" }
+          ]
+        }
+      },
+      {
+        "id": "node-ConvertTableName",
+        "type": "ewoAc",
+        "position": { "x": 320, "y": 200 },
+        "data": {
+          "label": "ConvertTableName",
+          "operation": "ConvertDeployToStructTableNameAC",
+          "inputs": [{ "name": "tableId", "type": "string" }],
+          "outputs": [{ "name": "tableId", "type": "string" }]
+        }
+      },
+      {
+        "id": "node-CreateProperty",
+        "type": "ewoAc",
+        "position": { "x": 600, "y": 200 },
+        "data": {
+          "label": "CreateProperty",
+          "operation": "CreateLayoutBlockPropertyAC",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "lineId", "type": "string" }
+          ],
+          "outputs": [{ "name": "property", "type": "object" }]
+        }
+      },
+      {
+        "id": "node-BuildRow",
+        "type": "ewoAc",
+        "position": { "x": 900, "y": 200 },
+        "data": {
+          "label": "BuildRow",
+          "operation": "BuildLayoutBlockRowAC",
+          "inputs": [
+            { "name": "blockKey", "type": "string" },
+            { "name": "property", "type": "object" }
+          ],
+          "outputs": [{ "name": "layoutRow", "type": "object" }]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": { "x": 1180, "y": 200 },
+        "data": {
+          "outputs": [{ "name": "layoutRow", "type": "object" }]
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e-start-convert", "source": "node-start", "target": "node-ConvertTableName", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-convert-prop", "source": "node-ConvertTableName", "target": "node-CreateProperty", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-start-prop-lineId", "source": "node-start", "target": "node-CreateProperty", "sourceHandle": "output-lineId", "targetHandle": "input-lineId" },
+      { "id": "e-prop-row", "source": "node-CreateProperty", "target": "node-BuildRow", "sourceHandle": "output-property", "targetHandle": "input-property" },
+      { "id": "e-start-row-blockKey", "source": "node-start", "target": "node-BuildRow", "sourceHandle": "output-blockKey", "targetHandle": "input-blockKey" },
+      { "id": "e-row-end", "source": "node-BuildRow", "target": "node-end", "sourceHandle": "output-layoutRow", "targetHandle": "input-layoutRow" }
+    ]
+  }
+}

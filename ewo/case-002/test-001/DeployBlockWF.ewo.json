@@ -1,0 +1,265 @@
+{
+  "id": "DeployBlockWF",
+  "version": "1.0.0",
+  "name": "DeployBlockWF",
+  "description": "ブロックデータを展開しマージする。ConvertStructToDataTableNameACでデータテーブル名取得→DeployBlockTemporaryWFを構造・データ両方で並列実行→MergeTableACでマージ→BuildTemporaryTableIdAC→PushRecordsACでテンポラリテーブル登録。",
+  "inputs": {
+    "tableId": { "schema": "string" },
+    "lineId": { "schema": "string" },
+    "depth": { "schema": "number" },
+    "type": { "schema": "string" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "ConvertTableName",
+        "operation": "ConvertStructToDataTableNameAC",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" }
+        },
+        "outputs": { "tableId": {} }
+      },
+      {
+        "id": "DeployStruct",
+        "operation": "DeployBlockTemporaryWF",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "lineId": { "sourceAcId": "$input", "sourcePort": "lineId" },
+          "depth": { "sourceAcId": "$input", "sourcePort": "depth" },
+          "type": { "sourceAcId": "$input", "sourcePort": "type" }
+        },
+        "outputs": { "tempTableId": {} },
+        "wfCall": {
+          "callee": "DeployBlockTemporaryWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "DeployData",
+        "operation": "DeployBlockTemporaryWF",
+        "deps": {
+          "tableId": { "sourceAcId": "ConvertTableName", "sourcePort": "tableId" },
+          "lineId": { "sourceAcId": "$input", "sourcePort": "lineId" },
+          "depth": { "sourceAcId": "$input", "sourcePort": "depth" },
+          "type": { "sourceAcId": "$input", "sourcePort": "type" }
+        },
+        "outputs": { "tempTableId": {} },
+        "wfCall": {
+          "callee": "DeployBlockTemporaryWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "MergeTable",
+        "operation": "MergeTableAC",
+        "deps": {
+          "structTableId": { "sourceAcId": "DeployStruct", "sourcePort": "tempTableId" },
+          "dataTableId": { "sourceAcId": "DeployData", "sourcePort": "tempTableId" }
+        },
+        "outputs": { "rows": {} }
+      },
+      {
+        "id": "BuildTempId",
+        "operation": "BuildTemporaryTableIdAC",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "ulid": { "sourceAcId": "$input", "sourcePort": "lineId" }
+        },
+        "outputs": { "tempTableId": {} }
+      },
+      {
+        "id": "PushRecords",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "sourceAcId": "BuildTempId", "sourcePort": "tempTableId" },
+          "beforeRows": { "literal": [] },
+          "afterRows": { "sourceAcId": "MergeTable", "sourcePort": "rows" }
+        },
+        "outputs": {}
+      }
+    ],
+    "outputs": {
+      "tempTableId": "BuildTempId.tempTableId"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-ConvertTableName",
+        "when": { "type": "ConvertTableName.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "DeployData.tableId", "wfid": "DeployBlockWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-DeployStruct",
+        "when": { "type": "DeployStruct.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "MergeTable.structTableId", "wfid": "DeployBlockWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-DeployData",
+        "when": { "type": "DeployData.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "MergeTable.dataTableId", "wfid": "DeployBlockWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-MergeTable",
+        "when": { "type": "MergeTable.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "PushRecords.afterRows", "wfid": "DeployBlockWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildTempId",
+        "when": { "type": "BuildTempId.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "PushRecords.tableId", "wfid": "DeployBlockWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-PushRecords",
+        "when": { "type": "PushRecords.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "DeployBlockWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.75 },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": { "x": 50, "y": 220 },
+        "data": {
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "lineId", "type": "string" },
+            { "name": "depth", "type": "number" },
+            { "name": "type", "type": "string" }
+          ]
+        }
+      },
+      {
+        "id": "node-ConvertTableName",
+        "type": "ewoAc",
+        "position": { "x": 300, "y": 340 },
+        "data": {
+          "label": "ConvertTableName",
+          "operation": "ConvertStructToDataTableNameAC",
+          "inputs": [{ "name": "tableId", "type": "string" }],
+          "outputs": [{ "name": "tableId", "type": "string" }]
+        }
+      },
+      {
+        "id": "node-DeployStruct",
+        "type": "ewoWfCall",
+        "position": { "x": 300, "y": 100 },
+        "data": {
+          "label": "DeployStruct",
+          "operation": "DeployBlockTemporaryWF",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "lineId", "type": "string" },
+            { "name": "depth", "type": "number" },
+            { "name": "type", "type": "string" }
+          ],
+          "outputs": [{ "name": "tempTableId", "type": "string" }],
+          "wfCall": { "callee": "DeployBlockTemporaryWF", "boundary": true }
+        }
+      },
+      {
+        "id": "node-DeployData",
+        "type": "ewoWfCall",
+        "position": { "x": 600, "y": 340 },
+        "data": {
+          "label": "DeployData",
+          "operation": "DeployBlockTemporaryWF",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "lineId", "type": "string" },
+            { "name": "depth", "type": "number" },
+            { "name": "type", "type": "string" }
+          ],
+          "outputs": [{ "name": "tempTableId", "type": "string" }],
+          "wfCall": { "callee": "DeployBlockTemporaryWF", "boundary": true }
+        }
+      },
+      {
+        "id": "node-MergeTable",
+        "type": "ewoAc",
+        "position": { "x": 900, "y": 220 },
+        "data": {
+          "label": "MergeTable",
+          "operation": "MergeTableAC",
+          "inputs": [
+            { "name": "structTableId", "type": "string" },
+            { "name": "dataTableId", "type": "string" }
+          ],
+          "outputs": [{ "name": "rows", "type": "any[]" }]
+        }
+      },
+      {
+        "id": "node-BuildTempId",
+        "type": "ewoAc",
+        "position": { "x": 900, "y": 80 },
+        "data": {
+          "label": "BuildTempId",
+          "operation": "BuildTemporaryTableIdAC",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "ulid", "type": "string" }
+          ],
+          "outputs": [{ "name": "tempTableId", "type": "string" }]
+        }
+      },
+      {
+        "id": "node-PushRecords",
+        "type": "ewoAc",
+        "position": { "x": 1180, "y": 220 },
+        "data": {
+          "label": "PushRecords",
+          "operation": "PushRecordsAC",
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "afterRows", "type": "any[]" }
+          ],
+          "outputs": []
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": { "x": 1450, "y": 220 },
+        "data": {
+          "outputs": [{ "name": "tempTableId", "type": "string" }]
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e-start-convert", "source": "node-start", "target": "node-ConvertTableName", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-start-struct-tableId", "source": "node-start", "target": "node-DeployStruct", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-start-struct-lineId", "source": "node-start", "target": "node-DeployStruct", "sourceHandle": "output-lineId", "targetHandle": "input-lineId" },
+      { "id": "e-convert-data", "source": "node-ConvertTableName", "target": "node-DeployData", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-start-data-lineId", "source": "node-start", "target": "node-DeployData", "sourceHandle": "output-lineId", "targetHandle": "input-lineId" },
+      { "id": "e-struct-merge", "source": "node-DeployStruct", "target": "node-MergeTable", "sourceHandle": "output-tempTableId", "targetHandle": "input-structTableId" },
+      { "id": "e-data-merge", "source": "node-DeployData", "target": "node-MergeTable", "sourceHandle": "output-tempTableId", "targetHandle": "input-dataTableId" },
+      { "id": "e-start-buildid-tableId", "source": "node-start", "target": "node-BuildTempId", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-start-buildid-ulid", "source": "node-start", "target": "node-BuildTempId", "sourceHandle": "output-lineId", "targetHandle": "input-ulid" },
+      { "id": "e-merge-push", "source": "node-MergeTable", "target": "node-PushRecords", "sourceHandle": "output-rows", "targetHandle": "input-afterRows" },
+      { "id": "e-buildid-push", "source": "node-BuildTempId", "target": "node-PushRecords", "sourceHandle": "output-tempTableId", "targetHandle": "input-tableId" },
+      { "id": "e-buildid-end", "source": "node-BuildTempId", "target": "node-end", "sourceHandle": "output-tempTableId", "targetHandle": "input-tempTableId" }
+    ]
+  }
+}

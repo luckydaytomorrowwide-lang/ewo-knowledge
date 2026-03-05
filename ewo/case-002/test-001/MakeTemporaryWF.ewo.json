@@ -1,0 +1,104 @@
+{
+  "id": "MakeTemporaryWF",
+  "version": "1.0.0",
+  "name": "MakeTemporaryWF",
+  "description": "テンポラリテーブルを作成する。CreateUlidAC→BuildTemporaryTableIdAC→PushRecordsACの3ステップ直列。",
+  "inputs": {
+    "tableId": { "schema": "string" },
+    "rows": { "schema": "any[]" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "CreateUlid",
+        "operation": "CreateUlidAC",
+        "deps": {},
+        "outputs": { "ulid": {} }
+      },
+      {
+        "id": "BuildTempTableId",
+        "operation": "BuildTemporaryTableIdAC",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "ulid": { "sourceAcId": "CreateUlid", "sourcePort": "ulid" }
+        },
+        "outputs": { "tempTableId": {} }
+      },
+      {
+        "id": "PushRecords",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "sourceAcId": "BuildTempTableId", "sourcePort": "tempTableId" },
+          "beforeRows": { "literal": [] },
+          "afterRows": { "sourceAcId": "$input", "sourcePort": "rows" }
+        },
+        "outputs": {}
+      }
+    ],
+    "outputs": {
+      "tempTableId": "BuildTempTableId.tempTableId"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-CreateUlid",
+        "when": { "type": "CreateUlid.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildTempTableId.ulid", "wfid": "MakeTemporaryWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildTempTableId",
+        "when": { "type": "BuildTempTableId.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "PushRecords.tableId", "wfid": "MakeTemporaryWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-PushRecords",
+        "when": { "type": "PushRecords.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "MakeTemporaryWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.8 },
+    "nodes": [
+      {
+        "id": "node-start", "type": "ewoStart", "position": { "x": 50, "y": 150 },
+        "data": { "inputs": [{ "name": "tableId", "type": "string" }, { "name": "rows", "type": "any[]" }] }
+      },
+      {
+        "id": "node-CreateUlid", "type": "ewoAc", "position": { "x": 300, "y": 100 },
+        "data": { "label": "CreateUlid", "operation": "CreateUlidAC", "inputs": [], "outputs": [{ "name": "ulid", "type": "string" }] }
+      },
+      {
+        "id": "node-BuildTempTableId", "type": "ewoAc", "position": { "x": 540, "y": 150 },
+        "data": { "label": "BuildTempTableId", "operation": "BuildTemporaryTableIdAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "ulid", "type": "string" }], "outputs": [{ "name": "tempTableId", "type": "string" }] }
+      },
+      {
+        "id": "node-PushRecords", "type": "ewoAc", "position": { "x": 800, "y": 150 },
+        "data": { "label": "PushRecords", "operation": "PushRecordsAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "afterRows", "type": "any[]" }], "outputs": [] }
+      },
+      {
+        "id": "node-end", "type": "ewoEnd", "position": { "x": 1050, "y": 150 },
+        "data": { "outputs": [{ "name": "tempTableId", "type": "string" }] }
+      }
+    ],
+    "edges": [
+      { "id": "e-start-ulid", "source": "node-start", "target": "node-CreateUlid" },
+      { "id": "e-start-build", "source": "node-start", "target": "node-BuildTempTableId", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-ulid-build", "source": "node-CreateUlid", "target": "node-BuildTempTableId", "sourceHandle": "output-ulid", "targetHandle": "input-ulid" },
+      { "id": "e-build-push", "source": "node-BuildTempTableId", "target": "node-PushRecords", "sourceHandle": "output-tempTableId", "targetHandle": "input-tableId" },
+      { "id": "e-start-push-rows", "source": "node-start", "target": "node-PushRecords", "sourceHandle": "output-rows", "targetHandle": "input-afterRows" },
+      { "id": "e-push-end", "source": "node-PushRecords", "target": "node-end" }
+    ]
+  }
+}

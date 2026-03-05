@@ -1,0 +1,454 @@
+{
+  "id": "BuildLayoutSnackingWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutSnackingWF",
+  "description": "スナッキングレイアウト構築。準備(RetrieveTableAC×2→PushRecordsAC×2)→rootブロックキー作成→snackingConfig取得→ForEach[nodeIds×configs: SearchNodeAC→BuildLayoutStructOldWF→AddFormDataStoreAC→BlockKeyWF→KeyMap→ReplaceKey]→schedule条件分岐→BuildLayoutActionWF→ボタンConfig→ForEach[BuildLayoutButtonWF]→PaddingLayoutBlockAC。",
+  "inputs": {
+    "nodeIds": { "schema": "string[]" },
+    "configId": { "schema": "string" },
+    "snackingConfig": { "schema": "any[]" },
+    "buttonConfig": { "schema": "any[]" },
+    "keyMapConfig": { "schema": "object" },
+    "ymd": { "schema": "string" },
+    "mode": { "schema": "string" },
+    "containerId": { "schema": "string" },
+    "timestamp": { "schema": "any" },
+    "traceContainerIds": { "schema": "string[]" },
+    "traceFlowIds": { "schema": "string[]" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "RetrieveStructTable",
+        "operation": "RetrieveTableAC",
+        "deps": {
+          "tableId": { "literal": "button_structs" }
+        },
+        "outputs": { "rows": {} }
+      },
+      {
+        "id": "PushStructTable",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "literal": "button_structs" },
+          "afterRows": { "sourceAcId": "RetrieveStructTable", "sourcePort": "rows" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "RetrieveDataTable",
+        "operation": "RetrieveTableAC",
+        "deps": {
+          "tableId": { "literal": "button_data" }
+        },
+        "outputs": { "rows": {} }
+      },
+      {
+        "id": "PushDataTable",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "literal": "button_data" },
+          "afterRows": { "sourceAcId": "RetrieveDataTable", "sourcePort": "rows" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "BuildRootKey",
+        "operation": "BuildLayoutBlockKeyWF",
+        "deps": {
+          "parentKey": { "literal": null },
+          "blockKey": { "literal": "root" }
+        },
+        "outputs": { "blockKey": {} },
+        "wfCall": { "callee": "BuildLayoutBlockKeyWF", "boundary": true }
+      },
+      {
+        "id": "BuildRootRow",
+        "operation": "BuildLayoutBlockRowAC",
+        "deps": {
+          "blockKey": { "sourceAcId": "BuildRootKey", "sourcePort": "blockKey" },
+          "instViewType": { "literal": "card" },
+          "instEditType": { "literal": "card" },
+          "tplViewType": { "literal": "card" },
+          "tplEditType": { "literal": "card" }
+        },
+        "outputs": { "layoutRow": {} }
+      },
+      {
+        "id": "GetSnackingConfig",
+        "operation": "GetLayoutSnackingConfigAC",
+        "guard": "$input.snackingConfig == null",
+        "deps": {
+          "configId": { "sourceAcId": "$input", "sourcePort": "configId" }
+        },
+        "outputs": { "configs": {} }
+      },
+      {
+        "id": "ResolveSnackingConfig",
+        "operation": "CoalesceAC",
+        "deps": {
+          "primary": { "sourceAcId": "$input", "sourcePort": "snackingConfig" },
+          "fallback": { "sourceAcId": "GetSnackingConfig", "sourcePort": "configs" }
+        },
+        "outputs": { "value": {} }
+      },
+      {
+        "id": "SearchNode",
+        "operation": "SearchNodeAC",
+        "deps": {
+          "searchType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.searchType" },
+          "nodeId": { "sourceAcId": "$zoneInput", "sourcePort": "nodeItem" },
+          "edgeType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.edgeType" },
+          "nodeLabel": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.nodeLabel" }
+        },
+        "outputs": { "nodeIds": {} }
+      },
+      {
+        "id": "BuildStructOld",
+        "operation": "BuildLayoutStructOldWF",
+        "deps": {
+          "rows": { "sourceAcId": "SearchNode", "sourcePort": "nodeIds" },
+          "anchorKey": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.anchorKey" },
+          "lineKey": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.lineKey" },
+          "column": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.column" }
+        },
+        "outputs": { "layoutRows": {} },
+        "wfCall": { "callee": "BuildLayoutStructOldWF", "boundary": true }
+      },
+      {
+        "id": "AddFormDataStore",
+        "operation": "AddFormDataStoreByOutputJsonAC",
+        "deps": {
+          "layoutRows": { "sourceAcId": "BuildStructOld", "sourcePort": "layoutRows" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "BuildAnchorKey",
+        "operation": "BuildLayoutBlockKeyWF",
+        "deps": {
+          "parentKey": { "sourceAcId": "BuildRootKey", "sourcePort": "blockKey" },
+          "blockKey": { "sourceAcId": "$zoneInput", "sourcePort": "nodeItem" }
+        },
+        "outputs": { "blockKey": {} },
+        "wfCall": { "callee": "BuildLayoutBlockKeyWF", "boundary": true }
+      },
+      {
+        "id": "GetKeyMapConfig",
+        "operation": "GetLayoutKeyMapConfigAC",
+        "guard": "$input.keyMapConfig == null",
+        "deps": {
+          "no": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.no" },
+          "configId": { "sourceAcId": "$input", "sourcePort": "configId" }
+        },
+        "outputs": { "key": {} }
+      },
+      {
+        "id": "ResolveKeyMap",
+        "operation": "ResolveKeyMapAC",
+        "deps": {
+          "keyMapConfig": { "sourceAcId": "$input", "sourcePort": "keyMapConfig" },
+          "no": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.no" },
+          "fallbackKey": { "sourceAcId": "GetKeyMapConfig", "sourcePort": "key" }
+        },
+        "outputs": { "replaceKey": {} }
+      },
+      {
+        "id": "ReplaceKey",
+        "operation": "ReplaceLayoutKeyAC",
+        "guard": "ResolveKeyMap.replaceKey != null",
+        "deps": {
+          "layoutRows": { "sourceAcId": "BuildStructOld", "sourcePort": "layoutRows" },
+          "prefixKey": { "sourceAcId": "BuildAnchorKey", "sourcePort": "blockKey" },
+          "replaceKey": { "sourceAcId": "ResolveKeyMap", "sourcePort": "replaceKey" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "CollectSnackingRows",
+        "operation": "FlattenLayoutRowsAC",
+        "deps": {
+          "nestedRows": { "sourceAcId": "$zone:nodeZone", "sourcePort": "allNodeResults" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "MergeRootAndSnacking",
+        "operation": "MergeLayoutRowsAC",
+        "deps": {
+          "rootRow": { "sourceAcId": "BuildRootRow", "sourcePort": "layoutRow" },
+          "snackingRows": { "sourceAcId": "CollectSnackingRows", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "ConvertCalendar",
+        "operation": "ConvertScheduleToCalendarEventAC",
+        "guard": "$input.configId == \"schedule\"",
+        "deps": {
+          "layoutRows": { "sourceAcId": "MergeRootAndSnacking", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "BuildCalendarJson",
+        "operation": "BuildLayoutCalendarJsonAC",
+        "guard": "$input.configId == \"schedule\"",
+        "deps": {
+          "ymd": { "sourceAcId": "$input", "sourcePort": "ymd" },
+          "mode": { "sourceAcId": "$input", "sourcePort": "mode" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "MergeAfterSchedule",
+        "operation": "MergeLayoutRowsAC",
+        "deps": {
+          "baseRows": { "sourceAcId": "MergeRootAndSnacking", "sourcePort": "layoutRows" },
+          "calendarConvertedRows": { "sourceAcId": "ConvertCalendar", "sourcePort": "layoutRows" },
+          "calendarJsonRows": { "sourceAcId": "BuildCalendarJson", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "BuildAction",
+        "operation": "BuildLayoutActionWF",
+        "deps": {
+          "configId": { "sourceAcId": "$input", "sourcePort": "configId" },
+          "layoutRows": { "sourceAcId": "MergeAfterSchedule", "sourcePort": "layoutRows" },
+          "containerId": { "sourceAcId": "$input", "sourcePort": "containerId" },
+          "timestamp": { "sourceAcId": "$input", "sourcePort": "timestamp" },
+          "traceContainerIds": { "sourceAcId": "$input", "sourcePort": "traceContainerIds" },
+          "traceFlowIds": { "sourceAcId": "$input", "sourcePort": "traceFlowIds" }
+        },
+        "outputs": { "layoutRows": {} },
+        "wfCall": { "callee": "BuildLayoutActionWF", "boundary": true }
+      },
+      {
+        "id": "MergeAfterAction",
+        "operation": "MergeLayoutRowsAC",
+        "deps": {
+          "baseRows": { "sourceAcId": "MergeAfterSchedule", "sourcePort": "layoutRows" },
+          "actionRows": { "sourceAcId": "BuildAction", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "GetButtonConfig",
+        "operation": "GetLayoutButtonConfigAC",
+        "guard": "$input.buttonConfig == null",
+        "deps": {
+          "configId": { "sourceAcId": "$input", "sourcePort": "configId" }
+        },
+        "outputs": { "configs": {} }
+      },
+      {
+        "id": "ResolveButtonConfig",
+        "operation": "CoalesceAC",
+        "deps": {
+          "primary": { "sourceAcId": "$input", "sourcePort": "buttonConfig" },
+          "fallback": { "sourceAcId": "GetButtonConfig", "sourcePort": "configs" }
+        },
+        "outputs": { "value": {} }
+      },
+      {
+        "id": "BuildButton",
+        "operation": "BuildLayoutButtonWF",
+        "deps": {
+          "layoutRows": { "sourceAcId": "MergeAfterAction", "sourcePort": "layoutRows" },
+          "isRoot": { "sourceAcId": "$zoneInput", "sourcePort": "buttonItem.isRoot" },
+          "viewType": { "sourceAcId": "$zoneInput", "sourcePort": "buttonItem.viewType" },
+          "editType": { "sourceAcId": "$zoneInput", "sourcePort": "buttonItem.editType" },
+          "tableId": { "literal": "button_structs" },
+          "nCat": { "literal": "anchor" },
+          "key": { "sourceAcId": "$zoneInput", "sourcePort": "buttonItem.buttonRootKey" }
+        },
+        "outputs": { "layoutRows": {} },
+        "wfCall": { "callee": "BuildLayoutButtonWF", "boundary": true }
+      },
+      {
+        "id": "CollectButtonRows",
+        "operation": "FlattenLayoutRowsAC",
+        "deps": {
+          "nestedRows": { "sourceAcId": "$zone:buttonZone", "sourcePort": "allButtonResults" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "MergeAfterButton",
+        "operation": "MergeLayoutRowsAC",
+        "deps": {
+          "baseRows": { "sourceAcId": "MergeAfterAction", "sourcePort": "layoutRows" },
+          "buttonRows": { "sourceAcId": "CollectButtonRows", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "PaddingBlock",
+        "operation": "PaddingLayoutBlockAC",
+        "deps": {
+          "layoutRows": { "sourceAcId": "MergeAfterButton", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      },
+      {
+        "id": "FinalMerge",
+        "operation": "MergeLayoutRowsAC",
+        "deps": {
+          "baseRows": { "sourceAcId": "MergeAfterButton", "sourcePort": "layoutRows" },
+          "paddingRows": { "sourceAcId": "PaddingBlock", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "nodeZone",
+        "collectionSource": {
+          "sourceAcId": "$input",
+          "sourcePort": "nodeIds"
+        },
+        "iterationParam": "nodeItem",
+        "nodes": [],
+        "childZones": [
+          {
+            "id": "configZone",
+            "collectionSource": {
+              "sourceAcId": "ResolveSnackingConfig",
+              "sourcePort": "value"
+            },
+            "iterationParam": "configItem",
+            "nodes": ["SearchNode", "BuildStructOld", "AddFormDataStore", "BuildAnchorKey", "GetKeyMapConfig", "ResolveKeyMap", "ReplaceKey"],
+            "outputNodeId": "ReplaceKey",
+            "outputPort": "layoutRows",
+            "outputCollection": "allConfigResults"
+          }
+        ],
+        "outputNodeId": "configZone",
+        "outputPort": "allConfigResults",
+        "outputCollection": "allNodeResults"
+      },
+      {
+        "id": "buttonZone",
+        "collectionSource": {
+          "sourceAcId": "ResolveButtonConfig",
+          "sourcePort": "value"
+        },
+        "iterationParam": "buttonItem",
+        "nodes": ["BuildButton"],
+        "outputNodeId": "BuildButton",
+        "outputPort": "layoutRows",
+        "outputCollection": "allButtonResults"
+      }
+    ],
+    "outputs": {
+      "layoutRows": "FinalMerge.layoutRows"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      { "id": "R-RetrieveStructTable", "when": { "type": "RetrieveStructTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "PushStructTable.afterRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-PushStructTable", "when": { "type": "PushStructTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-RetrieveDataTable", "when": { "type": "RetrieveDataTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "PushDataTable.afterRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-PushDataTable", "when": { "type": "PushDataTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-BuildRootKey", "when": { "type": "BuildRootKey.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "BuildRootRow.blockKey", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }, { "type": "BuildAnchorKey.parentKey", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-BuildRootRow", "when": { "type": "BuildRootRow.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "MergeRootAndSnacking.rootRow", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-GetSnackingConfig", "when": { "type": "GetSnackingConfig.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "ResolveSnackingConfig.fallback", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-ResolveSnackingConfig", "when": { "type": "ResolveSnackingConfig.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "$zone:configZone.input", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-SearchNode", "when": { "type": "SearchNode.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "BuildStructOld.rows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-BuildStructOld", "when": { "type": "BuildStructOld.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "AddFormDataStore.layoutRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }, { "type": "ReplaceKey.layoutRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-AddFormDataStore", "when": { "type": "AddFormDataStore.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-BuildAnchorKey", "when": { "type": "BuildAnchorKey.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "ReplaceKey.prefixKey", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-GetKeyMapConfig", "when": { "type": "GetKeyMapConfig.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "ResolveKeyMap.fallbackKey", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-ResolveKeyMap", "when": { "type": "ResolveKeyMap.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "ReplaceKey.replaceKey", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-ReplaceKey", "when": { "type": "ReplaceKey.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-$zone:configZone", "when": { "type": "$zone:configZone.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-$zone:nodeZone", "when": { "type": "$zone:nodeZone.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "CollectSnackingRows.nestedRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-CollectSnackingRows", "when": { "type": "CollectSnackingRows.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "MergeRootAndSnacking.snackingRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-MergeRootAndSnacking", "when": { "type": "MergeRootAndSnacking.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "ConvertCalendar.layoutRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }, { "type": "MergeAfterSchedule.baseRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-ConvertCalendar", "when": { "type": "ConvertCalendar.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "MergeAfterSchedule.calendarConvertedRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-BuildCalendarJson", "when": { "type": "BuildCalendarJson.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "MergeAfterSchedule.calendarJsonRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-MergeAfterSchedule", "when": { "type": "MergeAfterSchedule.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "BuildAction.layoutRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }, { "type": "MergeAfterAction.baseRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-BuildAction", "when": { "type": "BuildAction.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "MergeAfterAction.actionRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-MergeAfterAction", "when": { "type": "MergeAfterAction.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "BuildButton.layoutRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }, { "type": "MergeAfterButton.baseRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-GetButtonConfig", "when": { "type": "GetButtonConfig.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "ResolveButtonConfig.fallback", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-ResolveButtonConfig", "when": { "type": "ResolveButtonConfig.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "$zone:buttonZone.input", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-BuildButton", "when": { "type": "BuildButton.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-$zone:buttonZone", "when": { "type": "$zone:buttonZone.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "CollectButtonRows.nestedRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-CollectButtonRows", "when": { "type": "CollectButtonRows.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "MergeAfterButton.buttonRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-MergeAfterButton", "when": { "type": "MergeAfterButton.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "PaddingBlock.layoutRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }, { "type": "FinalMerge.baseRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-PaddingBlock", "when": { "type": "PaddingBlock.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "FinalMerge.paddingRows", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-FinalMerge", "when": { "type": "FinalMerge.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "wf.completed", "wfid": "BuildLayoutSnackingWF", "map": "outputRef->payloadRef" }] }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.3 },
+    "nodes": [
+      { "id": "node-start", "type": "ewoStart", "position": { "x": 50, "y": 500 }, "data": { "inputs": [{ "name": "nodeIds", "type": "string[]" }, { "name": "configId", "type": "string" }, { "name": "snackingConfig", "type": "any[]" }, { "name": "buttonConfig", "type": "any[]" }, { "name": "keyMapConfig", "type": "object" }, { "name": "ymd", "type": "string" }, { "name": "mode", "type": "string" }] } },
+      { "id": "node-RetrieveStructTable", "type": "ewoAc", "position": { "x": 300, "y": 80 }, "data": { "label": "RetrieveStructTable", "operation": "RetrieveTableAC" } },
+      { "id": "node-PushStructTable", "type": "ewoAc", "position": { "x": 560, "y": 80 }, "data": { "label": "PushStructTable", "operation": "PushRecordsAC" } },
+      { "id": "node-RetrieveDataTable", "type": "ewoAc", "position": { "x": 300, "y": 200 }, "data": { "label": "RetrieveDataTable", "operation": "RetrieveTableAC" } },
+      { "id": "node-PushDataTable", "type": "ewoAc", "position": { "x": 560, "y": 200 }, "data": { "label": "PushDataTable", "operation": "PushRecordsAC" } },
+      { "id": "node-BuildRootKey", "type": "ewoWfCall", "position": { "x": 300, "y": 380 }, "data": { "label": "BuildRootKey", "operation": "BuildLayoutBlockKeyWF", "wfCall": { "callee": "BuildLayoutBlockKeyWF", "boundary": true } } },
+      { "id": "node-BuildRootRow", "type": "ewoAc", "position": { "x": 560, "y": 380 }, "data": { "label": "BuildRootRow", "operation": "BuildLayoutBlockRowAC" } },
+      { "id": "node-GetSnackingConfig", "type": "ewoAc", "position": { "x": 300, "y": 520 }, "data": { "label": "GetSnackingConfig", "operation": "GetLayoutSnackingConfigAC", "guard": "$input.snackingConfig == null" } },
+      { "id": "node-ResolveSnackingConfig", "type": "ewoAc", "position": { "x": 560, "y": 520 }, "data": { "label": "ResolveSnackingConfig", "operation": "CoalesceAC" } },
+      { "id": "region-nodeZone", "type": "ewoForEachRegion", "position": { "x": 840, "y": 350 }, "style": { "width": "1600px", "height": "500px" }, "data": { "label": "NodeZone (nodeIds iterate)", "zoneId": "nodeZone", "iterationParam": "nodeItem", "outputCollection": "allNodeResults" } },
+      { "id": "region-configZone", "type": "ewoForEachRegion", "position": { "x": 30, "y": 50 }, "parentNode": "region-nodeZone", "extent": "parent", "style": { "width": "1500px", "height": "400px" }, "data": { "label": "ConfigZone (configs iterate)", "zoneId": "configZone", "iterationParam": "configItem", "outputCollection": "allConfigResults" } },
+      { "id": "node-SearchNode", "type": "ewoAc", "position": { "x": 30, "y": 70 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "SearchNode", "operation": "SearchNodeAC" } },
+      { "id": "node-BuildStructOld", "type": "ewoWfCall", "position": { "x": 280, "y": 70 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "BuildStructOld", "operation": "BuildLayoutStructOldWF", "wfCall": { "callee": "BuildLayoutStructOldWF", "boundary": true } } },
+      { "id": "node-AddFormDataStore", "type": "ewoAc", "position": { "x": 530, "y": 70 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "AddFormDataStore", "operation": "AddFormDataStoreByOutputJsonAC" } },
+      { "id": "node-BuildAnchorKey", "type": "ewoWfCall", "position": { "x": 530, "y": 200 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "BuildAnchorKey", "operation": "BuildLayoutBlockKeyWF", "wfCall": { "callee": "BuildLayoutBlockKeyWF", "boundary": true } } },
+      { "id": "node-GetKeyMapConfig", "type": "ewoAc", "position": { "x": 780, "y": 70 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "GetKeyMapConfig", "operation": "GetLayoutKeyMapConfigAC", "guard": "$input.keyMapConfig == null" } },
+      { "id": "node-ResolveKeyMap", "type": "ewoAc", "position": { "x": 1020, "y": 70 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "ResolveKeyMap", "operation": "ResolveKeyMapAC" } },
+      { "id": "node-ReplaceKey", "type": "ewoAc", "position": { "x": 1250, "y": 140 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "ReplaceKey", "operation": "ReplaceLayoutKeyAC", "guard": "ResolveKeyMap.replaceKey != null" } },
+      { "id": "node-CollectSnackingRows", "type": "ewoAc", "position": { "x": 2500, "y": 520 }, "data": { "label": "CollectSnackingRows", "operation": "FlattenLayoutRowsAC" } },
+      { "id": "node-MergeRootAndSnacking", "type": "ewoAc", "position": { "x": 2750, "y": 450 }, "data": { "label": "MergeRootAndSnacking", "operation": "MergeLayoutRowsAC" } },
+      { "id": "node-ConvertCalendar", "type": "ewoAc", "position": { "x": 3000, "y": 350 }, "data": { "label": "ConvertCalendar", "operation": "ConvertScheduleToCalendarEventAC", "guard": "$input.configId == \"schedule\"" } },
+      { "id": "node-BuildCalendarJson", "type": "ewoAc", "position": { "x": 3000, "y": 480 }, "data": { "label": "BuildCalendarJson", "operation": "BuildLayoutCalendarJsonAC", "guard": "$input.configId == \"schedule\"" } },
+      { "id": "node-MergeAfterSchedule", "type": "ewoAc", "position": { "x": 3280, "y": 400 }, "data": { "label": "MergeAfterSchedule", "operation": "MergeLayoutRowsAC" } },
+      { "id": "node-BuildAction", "type": "ewoWfCall", "position": { "x": 3530, "y": 350 }, "data": { "label": "BuildAction", "operation": "BuildLayoutActionWF", "wfCall": { "callee": "BuildLayoutActionWF", "boundary": true } } },
+      { "id": "node-MergeAfterAction", "type": "ewoAc", "position": { "x": 3800, "y": 400 }, "data": { "label": "MergeAfterAction", "operation": "MergeLayoutRowsAC" } },
+      { "id": "node-GetButtonConfig", "type": "ewoAc", "position": { "x": 300, "y": 950 }, "data": { "label": "GetButtonConfig", "operation": "GetLayoutButtonConfigAC", "guard": "$input.buttonConfig == null" } },
+      { "id": "node-ResolveButtonConfig", "type": "ewoAc", "position": { "x": 560, "y": 950 }, "data": { "label": "ResolveButtonConfig", "operation": "CoalesceAC" } },
+      { "id": "region-buttonZone", "type": "ewoForEachRegion", "position": { "x": 4050, "y": 350 }, "style": { "width": "400px", "height": "180px" }, "data": { "label": "ButtonZone (buttons iterate)", "zoneId": "buttonZone", "iterationParam": "buttonItem", "outputCollection": "allButtonResults" } },
+      { "id": "node-BuildButton", "type": "ewoWfCall", "position": { "x": 30, "y": 50 }, "parentNode": "region-buttonZone", "extent": "parent", "data": { "label": "BuildButton", "operation": "BuildLayoutButtonWF", "wfCall": { "callee": "BuildLayoutButtonWF", "boundary": true } } },
+      { "id": "node-CollectButtonRows", "type": "ewoAc", "position": { "x": 4530, "y": 430 }, "data": { "label": "CollectButtonRows", "operation": "FlattenLayoutRowsAC" } },
+      { "id": "node-MergeAfterButton", "type": "ewoAc", "position": { "x": 4800, "y": 430 }, "data": { "label": "MergeAfterButton", "operation": "MergeLayoutRowsAC" } },
+      { "id": "node-PaddingBlock", "type": "ewoAc", "position": { "x": 5060, "y": 380 }, "data": { "label": "PaddingBlock", "operation": "PaddingLayoutBlockAC" } },
+      { "id": "node-FinalMerge", "type": "ewoAc", "position": { "x": 5320, "y": 430 }, "data": { "label": "FinalMerge", "operation": "MergeLayoutRowsAC" } },
+      { "id": "node-end", "type": "ewoEnd", "position": { "x": 5580, "y": 430 }, "data": { "outputs": [{ "name": "layoutRows", "type": "object[]" }] } }
+    ],
+    "edges": [
+      { "id": "e-retrieveStruct-push", "source": "node-RetrieveStructTable", "target": "node-PushStructTable" },
+      { "id": "e-retrieveData-push", "source": "node-RetrieveDataTable", "target": "node-PushDataTable" },
+      { "id": "e-buildRootKey-row", "source": "node-BuildRootKey", "target": "node-BuildRootRow" },
+      { "id": "e-resolve-zone", "source": "node-ResolveSnackingConfig", "target": "region-configZone" },
+      { "id": "e-search-struct", "source": "node-SearchNode", "target": "node-BuildStructOld" },
+      { "id": "e-struct-formdata", "source": "node-BuildStructOld", "target": "node-AddFormDataStore" },
+      { "id": "e-struct-replace", "source": "node-BuildStructOld", "target": "node-ReplaceKey" },
+      { "id": "e-anchorKey-replace", "source": "node-BuildAnchorKey", "target": "node-ReplaceKey" },
+      { "id": "e-keyMap-replace", "source": "node-ResolveKeyMap", "target": "node-ReplaceKey" },
+      { "id": "e-nodeZone-collect", "source": "region-nodeZone", "target": "node-CollectSnackingRows" },
+      { "id": "e-collect-merge", "source": "node-CollectSnackingRows", "target": "node-MergeRootAndSnacking" },
+      { "id": "e-rootRow-merge", "source": "node-BuildRootRow", "target": "node-MergeRootAndSnacking" },
+      { "id": "e-merge-convert", "source": "node-MergeRootAndSnacking", "target": "node-ConvertCalendar" },
+      { "id": "e-merge-mergeSchedule", "source": "node-MergeRootAndSnacking", "target": "node-MergeAfterSchedule" },
+      { "id": "e-convert-mergeSchedule", "source": "node-ConvertCalendar", "target": "node-MergeAfterSchedule" },
+      { "id": "e-calendar-mergeSchedule", "source": "node-BuildCalendarJson", "target": "node-MergeAfterSchedule" },
+      { "id": "e-mergeSchedule-action", "source": "node-MergeAfterSchedule", "target": "node-BuildAction" },
+      { "id": "e-mergeSchedule-mergeAction", "source": "node-MergeAfterSchedule", "target": "node-MergeAfterAction" },
+      { "id": "e-action-mergeAction", "source": "node-BuildAction", "target": "node-MergeAfterAction" },
+      { "id": "e-mergeAction-button", "source": "node-MergeAfterAction", "target": "node-BuildButton" },
+      { "id": "e-mergeAction-mergeButton", "source": "node-MergeAfterAction", "target": "node-MergeAfterButton" },
+      { "id": "e-resolveButton-zone", "source": "node-ResolveButtonConfig", "target": "region-buttonZone" },
+      { "id": "e-buttonZone-collect", "source": "region-buttonZone", "target": "node-CollectButtonRows" },
+      { "id": "e-collectButton-mergeButton", "source": "node-CollectButtonRows", "target": "node-MergeAfterButton" },
+      { "id": "e-mergeButton-padding", "source": "node-MergeAfterButton", "target": "node-PaddingBlock" },
+      { "id": "e-mergeButton-final", "source": "node-MergeAfterButton", "target": "node-FinalMerge" },
+      { "id": "e-padding-final", "source": "node-PaddingBlock", "target": "node-FinalMerge" },
+      { "id": "e-final-end", "source": "node-FinalMerge", "target": "node-end" }
+    ]
+  }
+}

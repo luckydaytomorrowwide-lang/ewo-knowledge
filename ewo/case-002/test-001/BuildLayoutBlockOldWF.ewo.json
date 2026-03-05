@@ -1,0 +1,399 @@
+{
+  "id": "BuildLayoutBlockOldWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutBlockOldWF",
+  "description": "レイアウトブロックを構築する(旧版)。anchorKeyの有無でswitchし、つまみ食いパターン(anchorKey有)と格納パターン(anchorKey無)に分岐。各パターンでSearchLineAC→ForEach→BuildLayoutBlockKeyWF/BuildLayoutBlockRowWF/BuildLayoutBlockDataWFを呼び出す。",
+  "inputs": {
+    "tableId": { "schema": "string" },
+    "blockKey": { "schema": "string" },
+    "anchorId": { "schema": "string" },
+    "anchorKey": { "schema": "string" },
+    "lineKey": { "schema": "string" },
+    "column": { "schema": "string" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "SearchAnchorByKey",
+        "operation": "SearchLineAC",
+        "guard": "$input.anchorKey != null",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "key": { "sourceAcId": "$input", "sourcePort": "anchorKey" },
+          "nCat": { "literal": "anchor" }
+        },
+        "outputs": { "lineIds": {} }
+      },
+      {
+        "id": "DataWFByKey",
+        "operation": "BuildLayoutBlockDataWF",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "anchorId": { "sourceAcId": "$zoneInput", "sourcePort": "anchorByKeyItem" },
+          "lineKey": { "sourceAcId": "$input", "sourcePort": "lineKey" },
+          "column": { "sourceAcId": "$input", "sourcePort": "column" }
+        },
+        "outputs": { "layoutRows": {} },
+        "wfCall": {
+          "callee": "BuildLayoutBlockDataWF",
+          "boundary": true,
+          "recursive": true,
+          "policy": { "maxRecursionDepth": 20 }
+        }
+      },
+      {
+        "id": "SearchAnchorByParent",
+        "operation": "SearchLineAC",
+        "guard": "$input.anchorKey == null",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "nCat": { "literal": "anchor" },
+          "parentId": { "sourceAcId": "$input", "sourcePort": "anchorId" }
+        },
+        "outputs": { "lineIds": {} }
+      },
+      {
+        "id": "BuildKeyForParent",
+        "operation": "BuildLayoutBlockKeyWF",
+        "deps": {
+          "parentKey": { "sourceAcId": "$input", "sourcePort": "blockKey" },
+          "blockKey": { "sourceAcId": "$zoneInput", "sourcePort": "anchorByParentItem" }
+        },
+        "outputs": { "blockKey": {} },
+        "wfCall": {
+          "callee": "BuildLayoutBlockKeyWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "BuildRowForParent",
+        "operation": "BuildLayoutBlockRowWF",
+        "deps": {
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "lineId": { "sourceAcId": "$zoneInput", "sourcePort": "anchorByParentItem" },
+          "blockKey": { "sourceAcId": "BuildKeyForParent", "sourcePort": "blockKey" },
+          "instViewType": { "literal": "card" },
+          "instEditType": { "literal": "card" },
+          "tplViewType": { "literal": "card" },
+          "tplEditType": { "literal": "card" },
+          "label": { "literal": null },
+          "value": { "literal": null },
+          "jointId": { "literal": null }
+        },
+        "outputs": { "layoutRow": {} },
+        "wfCall": {
+          "callee": "BuildLayoutBlockRowWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "DataWFByParent",
+        "operation": "BuildLayoutBlockDataWF",
+        "deps": {
+          "blockKey": { "sourceAcId": "BuildKeyForParent", "sourcePort": "blockKey" },
+          "tableId": { "sourceAcId": "$input", "sourcePort": "tableId" },
+          "anchorId": { "sourceAcId": "$zoneInput", "sourcePort": "anchorByParentItem" },
+          "lineKey": { "sourceAcId": "$input", "sourcePort": "lineKey" },
+          "column": { "sourceAcId": "$input", "sourcePort": "column" }
+        },
+        "outputs": { "layoutRows": {} },
+        "wfCall": {
+          "callee": "BuildLayoutBlockDataWF",
+          "boundary": true,
+          "recursive": true,
+          "policy": { "maxRecursionDepth": 20 }
+        }
+      },
+      {
+        "id": "AssembleParentResults",
+        "operation": "AssembleLineResultsAC",
+        "deps": {
+          "lineRow": { "sourceAcId": "BuildRowForParent", "sourcePort": "layoutRow" },
+          "columnRows": { "sourceAcId": "DataWFByParent", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "lineLayoutRows": {} }
+      },
+      {
+        "id": "MergeAllResults",
+        "operation": "FlattenLayoutRowsAC",
+        "deps": {
+          "keyResults": { "sourceAcId": "$zone:anchorByKeyZone", "sourcePort": "allKeyResults" },
+          "parentResults": { "sourceAcId": "$zone:anchorByParentZone", "sourcePort": "allParentResults" }
+        },
+        "outputs": { "layoutRows": {} }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "anchorByKeyZone",
+        "collectionSource": {
+          "sourceAcId": "SearchAnchorByKey",
+          "sourcePort": "lineIds"
+        },
+        "iterationParam": "anchorByKeyItem",
+        "nodes": ["DataWFByKey"],
+        "outputNodeId": "DataWFByKey",
+        "outputPort": "layoutRows",
+        "outputCollection": "allKeyResults"
+      },
+      {
+        "id": "anchorByParentZone",
+        "collectionSource": {
+          "sourceAcId": "SearchAnchorByParent",
+          "sourcePort": "lineIds"
+        },
+        "iterationParam": "anchorByParentItem",
+        "nodes": ["BuildKeyForParent", "BuildRowForParent", "DataWFByParent", "AssembleParentResults"],
+        "outputNodeId": "AssembleParentResults",
+        "outputPort": "lineLayoutRows",
+        "outputCollection": "allParentResults"
+      }
+    ],
+    "outputs": {
+      "layoutRows": "MergeAllResults.layoutRows"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-SearchAnchorByKey",
+        "when": { "type": "SearchAnchorByKey.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "$zone:anchorByKeyZone.input", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-DataWFByKey",
+        "when": { "type": "DataWFByKey.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": []
+      },
+      {
+        "id": "R-$zone:anchorByKeyZone",
+        "when": { "type": "$zone:anchorByKeyZone.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "MergeAllResults.keyResults", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-SearchAnchorByParent",
+        "when": { "type": "SearchAnchorByParent.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "$zone:anchorByParentZone.input", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildKeyForParent",
+        "when": { "type": "BuildKeyForParent.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildRowForParent.blockKey", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" },
+          { "type": "DataWFByParent.blockKey", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildRowForParent",
+        "when": { "type": "BuildRowForParent.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "AssembleParentResults.lineRow", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-DataWFByParent",
+        "when": { "type": "DataWFByParent.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "AssembleParentResults.columnRows", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-AssembleParentResults",
+        "when": { "type": "AssembleParentResults.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": []
+      },
+      {
+        "id": "R-$zone:anchorByParentZone",
+        "when": { "type": "$zone:anchorByParentZone.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "MergeAllResults.parentResults", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-MergeAllResults",
+        "when": { "type": "MergeAllResults.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "BuildLayoutBlockOldWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.55 },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": { "x": 50, "y": 300 },
+        "data": {
+          "inputs": [
+            { "name": "tableId", "type": "string" },
+            { "name": "blockKey", "type": "string" },
+            { "name": "anchorId", "type": "string" },
+            { "name": "anchorKey", "type": "string" },
+            { "name": "lineKey", "type": "string" },
+            { "name": "column", "type": "string" }
+          ]
+        }
+      },
+      {
+        "id": "node-SearchAnchorByKey",
+        "type": "ewoAc",
+        "position": { "x": 350, "y": 80 },
+        "data": {
+          "label": "SearchAnchorByKey",
+          "operation": "SearchLineAC",
+          "guard": "$input.anchorKey != null",
+          "inputs": [{ "name": "tableId", "type": "string" }, { "name": "key", "type": "string" }],
+          "outputs": [{ "name": "lineIds", "type": "string[]" }]
+        }
+      },
+      {
+        "id": "region-anchorByKeyZone",
+        "type": "ewoForEachRegion",
+        "position": { "x": 650, "y": 30 },
+        "style": { "width": "400px", "height": "200px" },
+        "data": { "label": "AnchorByKeyZone", "zoneId": "anchorByKeyZone", "iterationParam": "anchorByKeyItem", "outputCollection": "allKeyResults" }
+      },
+      {
+        "id": "node-DataWFByKey",
+        "type": "ewoWfCall",
+        "position": { "x": 40, "y": 50 },
+        "parentNode": "region-anchorByKeyZone",
+        "extent": "parent",
+        "data": {
+          "label": "DataWFByKey",
+          "operation": "BuildLayoutBlockDataWF",
+          "inputs": [{ "name": "tableId", "type": "string" }, { "name": "anchorId", "type": "string" }],
+          "outputs": [{ "name": "layoutRows", "type": "object[]" }],
+          "wfCall": { "callee": "BuildLayoutBlockDataWF", "boundary": true, "recursive": true, "policy": { "maxRecursionDepth": 20 } }
+        }
+      },
+      {
+        "id": "node-SearchAnchorByParent",
+        "type": "ewoAc",
+        "position": { "x": 350, "y": 400 },
+        "data": {
+          "label": "SearchAnchorByParent",
+          "operation": "SearchLineAC",
+          "guard": "$input.anchorKey == null",
+          "inputs": [{ "name": "tableId", "type": "string" }, { "name": "parentId", "type": "string" }],
+          "outputs": [{ "name": "lineIds", "type": "string[]" }]
+        }
+      },
+      {
+        "id": "region-anchorByParentZone",
+        "type": "ewoForEachRegion",
+        "position": { "x": 650, "y": 300 },
+        "style": { "width": "800px", "height": "280px" },
+        "data": { "label": "AnchorByParentZone", "zoneId": "anchorByParentZone", "iterationParam": "anchorByParentItem", "outputCollection": "allParentResults" }
+      },
+      {
+        "id": "node-BuildKeyForParent",
+        "type": "ewoWfCall",
+        "position": { "x": 40, "y": 60 },
+        "parentNode": "region-anchorByParentZone",
+        "extent": "parent",
+        "data": {
+          "label": "BuildKeyForParent",
+          "operation": "BuildLayoutBlockKeyWF",
+          "inputs": [{ "name": "parentKey", "type": "string" }, { "name": "blockKey", "type": "string" }],
+          "outputs": [{ "name": "blockKey", "type": "string" }],
+          "wfCall": { "callee": "BuildLayoutBlockKeyWF", "boundary": true }
+        }
+      },
+      {
+        "id": "node-BuildRowForParent",
+        "type": "ewoWfCall",
+        "position": { "x": 280, "y": 40 },
+        "parentNode": "region-anchorByParentZone",
+        "extent": "parent",
+        "data": {
+          "label": "BuildRowForParent",
+          "operation": "BuildLayoutBlockRowWF",
+          "inputs": [{ "name": "blockKey", "type": "string" }],
+          "outputs": [{ "name": "layoutRow", "type": "object" }],
+          "wfCall": { "callee": "BuildLayoutBlockRowWF", "boundary": true }
+        }
+      },
+      {
+        "id": "node-DataWFByParent",
+        "type": "ewoWfCall",
+        "position": { "x": 280, "y": 160 },
+        "parentNode": "region-anchorByParentZone",
+        "extent": "parent",
+        "data": {
+          "label": "DataWFByParent",
+          "operation": "BuildLayoutBlockDataWF",
+          "inputs": [{ "name": "blockKey", "type": "string" }, { "name": "tableId", "type": "string" }, { "name": "anchorId", "type": "string" }],
+          "outputs": [{ "name": "layoutRows", "type": "object[]" }],
+          "wfCall": { "callee": "BuildLayoutBlockDataWF", "boundary": true, "recursive": true, "policy": { "maxRecursionDepth": 20 } }
+        }
+      },
+      {
+        "id": "node-AssembleParentResults",
+        "type": "ewoAc",
+        "position": { "x": 560, "y": 100 },
+        "parentNode": "region-anchorByParentZone",
+        "extent": "parent",
+        "data": {
+          "label": "AssembleParentResults",
+          "operation": "AssembleLineResultsAC",
+          "inputs": [{ "name": "lineRow", "type": "object" }, { "name": "columnRows", "type": "object[]" }],
+          "outputs": [{ "name": "lineLayoutRows", "type": "object[]" }]
+        }
+      },
+      {
+        "id": "node-MergeAllResults",
+        "type": "ewoAc",
+        "position": { "x": 1550, "y": 300 },
+        "data": {
+          "label": "MergeAllResults",
+          "operation": "FlattenLayoutRowsAC",
+          "inputs": [{ "name": "keyResults", "type": "object[][]" }, { "name": "parentResults", "type": "object[][]" }],
+          "outputs": [{ "name": "layoutRows", "type": "object[]" }]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": { "x": 1850, "y": 300 },
+        "data": { "outputs": [{ "name": "layoutRows", "type": "object[]" }] }
+      }
+    ],
+    "edges": [
+      { "id": "e-start-searchKey", "source": "node-start", "target": "node-SearchAnchorByKey", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-searchKey-zone", "source": "node-SearchAnchorByKey", "target": "region-anchorByKeyZone", "sourceHandle": "output-lineIds", "targetHandle": "input-collection" },
+      { "id": "e-keyZone-iter", "source": "region-anchorByKeyZone", "target": "node-DataWFByKey", "sourceHandle": "iter-out", "targetHandle": "input-anchorId" },
+      { "id": "e-dataKey-collect", "source": "node-DataWFByKey", "target": "region-anchorByKeyZone", "sourceHandle": "output-layoutRows", "targetHandle": "collect-in" },
+      { "id": "e-start-searchParent", "source": "node-start", "target": "node-SearchAnchorByParent", "sourceHandle": "output-tableId", "targetHandle": "input-tableId" },
+      { "id": "e-searchParent-zone", "source": "node-SearchAnchorByParent", "target": "region-anchorByParentZone", "sourceHandle": "output-lineIds", "targetHandle": "input-collection" },
+      { "id": "e-parentZone-buildKey", "source": "region-anchorByParentZone", "target": "node-BuildKeyForParent", "sourceHandle": "iter-out", "targetHandle": "input-blockKey" },
+      { "id": "e-buildKey-buildRow", "source": "node-BuildKeyForParent", "target": "node-BuildRowForParent", "sourceHandle": "output-blockKey", "targetHandle": "input-blockKey" },
+      { "id": "e-buildKey-dataParent", "source": "node-BuildKeyForParent", "target": "node-DataWFByParent", "sourceHandle": "output-blockKey", "targetHandle": "input-blockKey" },
+      { "id": "e-buildRow-assemble", "source": "node-BuildRowForParent", "target": "node-AssembleParentResults", "sourceHandle": "output-layoutRow", "targetHandle": "input-lineRow" },
+      { "id": "e-dataParent-assemble", "source": "node-DataWFByParent", "target": "node-AssembleParentResults", "sourceHandle": "output-layoutRows", "targetHandle": "input-columnRows" },
+      { "id": "e-assemble-collect", "source": "node-AssembleParentResults", "target": "region-anchorByParentZone", "sourceHandle": "output-lineLayoutRows", "targetHandle": "collect-in" },
+      { "id": "e-keyZone-merge", "source": "region-anchorByKeyZone", "target": "node-MergeAllResults", "sourceHandle": "output-results", "targetHandle": "input-keyResults" },
+      { "id": "e-parentZone-merge", "source": "region-anchorByParentZone", "target": "node-MergeAllResults", "sourceHandle": "output-results", "targetHandle": "input-parentResults" },
+      { "id": "e-merge-end", "source": "node-MergeAllResults", "target": "node-end", "sourceHandle": "output-layoutRows", "targetHandle": "input-layoutRows" }
+    ]
+  }
+}

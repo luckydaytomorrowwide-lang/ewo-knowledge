@@ -1,0 +1,133 @@
+{
+  "id": "BuildLayoutSingleWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutSingleWF",
+  "description": "シングルページレイアウト構築。準備(RetrieveTableAC→PushRecordsAC×2)→BuildLayoutStructWF→AddFormDataStoreByOutputJsonAC→BuildLayoutActionWF→結果マージ。",
+  "inputs": {
+    "rows": { "schema": "any[]" },
+    "containerId": { "schema": "string" },
+    "timestamp": { "schema": "any" },
+    "traceContainerIds": { "schema": "string[]" },
+    "traceFlowIds": { "schema": "string[]" },
+    "configId": { "schema": "string" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "RetrieveStructTable",
+        "operation": "RetrieveTableAC",
+        "deps": {
+          "tableId": { "literal": "button_structs" }
+        },
+        "outputs": { "rows": {} }
+      },
+      {
+        "id": "PushStructTable",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "literal": "button_structs" },
+          "afterRows": { "sourceAcId": "RetrieveStructTable", "sourcePort": "rows" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "RetrieveDataTable",
+        "operation": "RetrieveTableAC",
+        "deps": {
+          "tableId": { "literal": "button_data" }
+        },
+        "outputs": { "rows": {} }
+      },
+      {
+        "id": "PushDataTable",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "literal": "button_data" },
+          "afterRows": { "sourceAcId": "RetrieveDataTable", "sourcePort": "rows" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "BuildLayoutStruct",
+        "operation": "BuildLayoutStructWF",
+        "deps": {
+          "rows": { "sourceAcId": "$input", "sourcePort": "rows" }
+        },
+        "outputs": { "layoutRows": {} },
+        "wfCall": { "callee": "BuildLayoutStructWF", "boundary": true }
+      },
+      {
+        "id": "AddFormDataStore",
+        "operation": "AddFormDataStoreByOutputJsonAC",
+        "deps": {
+          "layoutRows": { "sourceAcId": "BuildLayoutStruct", "sourcePort": "layoutRows" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "BuildLayoutAction",
+        "operation": "BuildLayoutActionWF",
+        "deps": {
+          "layoutRows": { "sourceAcId": "BuildLayoutStruct", "sourcePort": "layoutRows" },
+          "configId": { "sourceAcId": "$input", "sourcePort": "configId" },
+          "containerId": { "sourceAcId": "$input", "sourcePort": "containerId" },
+          "timestamp": { "sourceAcId": "$input", "sourcePort": "timestamp" },
+          "traceContainerIds": { "sourceAcId": "$input", "sourcePort": "traceContainerIds" },
+          "traceFlowIds": { "sourceAcId": "$input", "sourcePort": "traceFlowIds" }
+        },
+        "outputs": { "layoutRows": {} },
+        "wfCall": { "callee": "BuildLayoutActionWF", "boundary": true }
+      },
+      {
+        "id": "MergeResults",
+        "operation": "MergeLayoutRowsAC",
+        "deps": {
+          "structRows": { "sourceAcId": "BuildLayoutStruct", "sourcePort": "layoutRows" },
+          "actionRows": { "sourceAcId": "BuildLayoutAction", "sourcePort": "layoutRows" }
+        },
+        "outputs": { "layoutRows": {} }
+      }
+    ],
+    "outputs": {
+      "layoutRows": "MergeResults.layoutRows"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      { "id": "R-RetrieveStructTable", "when": { "type": "RetrieveStructTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "PushStructTable.afterRows", "wfid": "BuildLayoutSingleWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-PushStructTable", "when": { "type": "PushStructTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-RetrieveDataTable", "when": { "type": "RetrieveDataTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "PushDataTable.afterRows", "wfid": "BuildLayoutSingleWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-PushDataTable", "when": { "type": "PushDataTable.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-BuildLayoutStruct", "when": { "type": "BuildLayoutStruct.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "AddFormDataStore.layoutRows", "wfid": "BuildLayoutSingleWF", "map": "outputRef->payloadRef" }, { "type": "BuildLayoutAction.layoutRows", "wfid": "BuildLayoutSingleWF", "map": "outputRef->payloadRef" }, { "type": "MergeResults.structRows", "wfid": "BuildLayoutSingleWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-AddFormDataStore", "when": { "type": "AddFormDataStore.done" }, "correlate": { "by": ["correlationid"] }, "emit": [] },
+      { "id": "R-BuildLayoutAction", "when": { "type": "BuildLayoutAction.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "MergeResults.actionRows", "wfid": "BuildLayoutSingleWF", "map": "outputRef->payloadRef" }] },
+      { "id": "R-MergeResults", "when": { "type": "MergeResults.done" }, "correlate": { "by": ["correlationid"] }, "emit": [{ "type": "wf.completed", "wfid": "BuildLayoutSingleWF", "map": "outputRef->payloadRef" }] }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.65 },
+    "nodes": [
+      { "id": "node-start", "type": "ewoStart", "position": { "x": 50, "y": 300 }, "data": { "inputs": [{ "name": "rows", "type": "any[]" }, { "name": "configId", "type": "string" }, { "name": "containerId", "type": "string" }, { "name": "timestamp", "type": "any" }] } },
+      { "id": "node-RetrieveStructTable", "type": "ewoAc", "position": { "x": 320, "y": 80 }, "data": { "label": "RetrieveStructTable", "operation": "RetrieveTableAC" } },
+      { "id": "node-PushStructTable", "type": "ewoAc", "position": { "x": 580, "y": 80 }, "data": { "label": "PushStructTable", "operation": "PushRecordsAC" } },
+      { "id": "node-RetrieveDataTable", "type": "ewoAc", "position": { "x": 320, "y": 200 }, "data": { "label": "RetrieveDataTable", "operation": "RetrieveTableAC" } },
+      { "id": "node-PushDataTable", "type": "ewoAc", "position": { "x": 580, "y": 200 }, "data": { "label": "PushDataTable", "operation": "PushRecordsAC" } },
+      { "id": "node-BuildLayoutStruct", "type": "ewoWfCall", "position": { "x": 320, "y": 400 }, "data": { "label": "BuildLayoutStruct", "operation": "BuildLayoutStructWF", "wfCall": { "callee": "BuildLayoutStructWF", "boundary": true } } },
+      { "id": "node-AddFormDataStore", "type": "ewoAc", "position": { "x": 650, "y": 350 }, "data": { "label": "AddFormDataStore", "operation": "AddFormDataStoreByOutputJsonAC" } },
+      { "id": "node-BuildLayoutAction", "type": "ewoWfCall", "position": { "x": 650, "y": 480 }, "data": { "label": "BuildLayoutAction", "operation": "BuildLayoutActionWF", "wfCall": { "callee": "BuildLayoutActionWF", "boundary": true } } },
+      { "id": "node-MergeResults", "type": "ewoAc", "position": { "x": 1000, "y": 420 }, "data": { "label": "MergeResults", "operation": "MergeLayoutRowsAC" } },
+      { "id": "node-end", "type": "ewoEnd", "position": { "x": 1280, "y": 420 }, "data": { "outputs": [{ "name": "layoutRows", "type": "object[]" }] } }
+    ],
+    "edges": [
+      { "id": "e-retrieveStruct-push", "source": "node-RetrieveStructTable", "target": "node-PushStructTable", "sourceHandle": "output-rows", "targetHandle": "input-afterRows" },
+      { "id": "e-retrieveData-push", "source": "node-RetrieveDataTable", "target": "node-PushDataTable", "sourceHandle": "output-rows", "targetHandle": "input-afterRows" },
+      { "id": "e-start-struct", "source": "node-start", "target": "node-BuildLayoutStruct", "sourceHandle": "output-rows", "targetHandle": "input-rows" },
+      { "id": "e-struct-formData", "source": "node-BuildLayoutStruct", "target": "node-AddFormDataStore", "sourceHandle": "output-layoutRows", "targetHandle": "input-layoutRows" },
+      { "id": "e-struct-action", "source": "node-BuildLayoutStruct", "target": "node-BuildLayoutAction", "sourceHandle": "output-layoutRows", "targetHandle": "input-layoutRows" },
+      { "id": "e-struct-merge", "source": "node-BuildLayoutStruct", "target": "node-MergeResults", "sourceHandle": "output-layoutRows", "targetHandle": "input-structRows" },
+      { "id": "e-action-merge", "source": "node-BuildLayoutAction", "target": "node-MergeResults", "sourceHandle": "output-layoutRows", "targetHandle": "input-actionRows" },
+      { "id": "e-merge-end", "source": "node-MergeResults", "target": "node-end", "sourceHandle": "output-layoutRows", "targetHandle": "input-layoutRows" }
+    ]
+  }
+}

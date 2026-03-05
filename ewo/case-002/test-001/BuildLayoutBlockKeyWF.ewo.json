@@ -1,0 +1,116 @@
+{
+  "id": "BuildLayoutBlockKeyWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutBlockKeyWF",
+  "description": "レイアウトブロックキーを構築する。CreateLayoutBlockKeyACでブロックキーを生成し、ConcatStringACで親キーと連結する。",
+  "inputs": {
+    "parentKey": { "schema": "string|null" },
+    "blockKey": { "schema": "string" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "CreateBlockKey",
+        "operation": "CreateLayoutBlockKeyAC",
+        "deps": {
+          "name": { "literal": "block" },
+          "key": { "sourceAcId": "$input", "sourcePort": "blockKey" }
+        },
+        "outputs": { "str": {} }
+      },
+      {
+        "id": "ConcatString",
+        "operation": "ConcatStringAC",
+        "deps": {
+          "srcStr": { "sourceAcId": "$input", "sourcePort": "parentKey" },
+          "separator": { "literal": "." },
+          "destStr": { "sourceAcId": "CreateBlockKey", "sourcePort": "str" }
+        },
+        "outputs": { "str": {} }
+      }
+    ],
+    "outputs": {
+      "blockKey": "ConcatString.str"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-CreateBlockKey",
+        "when": { "type": "CreateBlockKey.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "ConcatString.destStr", "wfid": "BuildLayoutBlockKeyWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-ConcatString",
+        "when": { "type": "ConcatString.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "BuildLayoutBlockKeyWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.85 },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": { "x": 50, "y": 180 },
+        "data": {
+          "inputs": [
+            { "name": "parentKey", "type": "string|null" },
+            { "name": "blockKey", "type": "string" }
+          ]
+        }
+      },
+      {
+        "id": "node-CreateBlockKey",
+        "type": "ewoAc",
+        "position": { "x": 320, "y": 180 },
+        "data": {
+          "label": "CreateBlockKey",
+          "operation": "CreateLayoutBlockKeyAC",
+          "inputs": [
+            { "name": "name", "type": "string" },
+            { "name": "key", "type": "string" }
+          ],
+          "outputs": [{ "name": "str", "type": "string" }]
+        }
+      },
+      {
+        "id": "node-ConcatString",
+        "type": "ewoAc",
+        "position": { "x": 600, "y": 180 },
+        "data": {
+          "label": "ConcatString",
+          "operation": "ConcatStringAC",
+          "inputs": [
+            { "name": "srcStr", "type": "string|null" },
+            { "name": "separator", "type": "string" },
+            { "name": "destStr", "type": "string" }
+          ],
+          "outputs": [{ "name": "str", "type": "string" }]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": { "x": 880, "y": 180 },
+        "data": {
+          "outputs": [{ "name": "blockKey", "type": "string" }]
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e-start-create-key", "source": "node-start", "target": "node-CreateBlockKey", "sourceHandle": "output-blockKey", "targetHandle": "input-key" },
+      { "id": "e-start-concat-src", "source": "node-start", "target": "node-ConcatString", "sourceHandle": "output-parentKey", "targetHandle": "input-srcStr" },
+      { "id": "e-create-concat", "source": "node-CreateBlockKey", "target": "node-ConcatString", "sourceHandle": "output-str", "targetHandle": "input-destStr" },
+      { "id": "e-concat-end", "source": "node-ConcatString", "target": "node-end", "sourceHandle": "output-str", "targetHandle": "input-blockKey" }
+    ]
+  }
+}

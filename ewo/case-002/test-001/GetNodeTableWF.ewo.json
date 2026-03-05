@@ -1,0 +1,323 @@
+{
+  "id": "GetNodeTableWF",
+  "version": "1.0.0",
+  "name": "GetNodeTableWF",
+  "description": "ノードのdataプロパティからテーブルIDと最初のブロックIDを取得する。GetNodeLabelsAC(並列)、GetNodePropertyAC→CreateUlidAC→BuildTemporaryTableIdAC→PushRecordsAC→SearchLineAC×2(tableId/firstBlockId)→RetrieveColumnAC×2→FirstRowAC×2。",
+  "inputs": {
+    "nodeId": { "schema": "string" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "GetNodeLabels",
+        "operation": "GetNodeLabelsAC",
+        "deps": {
+          "nodeId": { "sourceAcId": "$input", "sourcePort": "nodeId" }
+        },
+        "outputs": { "labels": {} }
+      },
+      {
+        "id": "GetNodeProperty",
+        "operation": "GetNodePropertyAC",
+        "deps": {
+          "nodeId": { "sourceAcId": "$input", "sourcePort": "nodeId" },
+          "property": { "literal": "data" }
+        },
+        "outputs": { "value": {} }
+      },
+      {
+        "id": "CreateUlid",
+        "operation": "CreateUlidAC",
+        "deps": {},
+        "outputs": { "ulid": {} }
+      },
+      {
+        "id": "BuildTempTableId",
+        "operation": "BuildTemporaryTableIdAC",
+        "deps": {
+          "tableId": { "literal": "data_property" },
+          "ulid": { "sourceAcId": "CreateUlid", "sourcePort": "ulid" }
+        },
+        "outputs": { "tempTableId": {} }
+      },
+      {
+        "id": "PushRecords",
+        "operation": "PushRecordsAC",
+        "deps": {
+          "tableId": { "sourceAcId": "BuildTempTableId", "sourcePort": "tempTableId" },
+          "afterRows": { "sourceAcId": "GetNodeProperty", "sourcePort": "value" }
+        },
+        "outputs": {}
+      },
+      {
+        "id": "SearchTableIdLine",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": { "sourceAcId": "BuildTempTableId", "sourcePort": "tempTableId" },
+          "key": { "literal": "tableId" }
+        },
+        "outputs": { "lineIds": {} }
+      },
+      {
+        "id": "FirstTableIdLine",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": { "sourceAcId": "SearchTableIdLine", "sourcePort": "lineIds" }
+        },
+        "outputs": { "row": {} }
+      },
+      {
+        "id": "RetrieveTableIdValue",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": { "sourceAcId": "BuildTempTableId", "sourcePort": "tempTableId" },
+          "lineId": { "sourceAcId": "FirstTableIdLine", "sourcePort": "row" },
+          "column": { "literal": "value" }
+        },
+        "outputs": { "columns": {} }
+      },
+      {
+        "id": "FirstTableIdValue",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": { "sourceAcId": "RetrieveTableIdValue", "sourcePort": "columns" }
+        },
+        "outputs": { "row": {} }
+      },
+      {
+        "id": "SearchFirstBlockIdLine",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": { "sourceAcId": "BuildTempTableId", "sourcePort": "tempTableId" },
+          "key": { "literal": "firstBlockId" }
+        },
+        "outputs": { "lineIds": {} }
+      },
+      {
+        "id": "FirstBlockIdLine",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": { "sourceAcId": "SearchFirstBlockIdLine", "sourcePort": "lineIds" }
+        },
+        "outputs": { "row": {} }
+      },
+      {
+        "id": "RetrieveFirstBlockIdValue",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": { "sourceAcId": "BuildTempTableId", "sourcePort": "tempTableId" },
+          "lineId": { "sourceAcId": "FirstBlockIdLine", "sourcePort": "row" },
+          "column": { "literal": "value" }
+        },
+        "outputs": { "columns": {} }
+      },
+      {
+        "id": "FirstBlockIdValue",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": { "sourceAcId": "RetrieveFirstBlockIdValue", "sourcePort": "columns" }
+        },
+        "outputs": { "row": {} }
+      }
+    ],
+    "outputs": {
+      "tableId": "FirstTableIdValue.row",
+      "firstBlockId": "FirstBlockIdValue.row",
+      "nodeLabels": "GetNodeLabels.labels"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-GetNodeLabels",
+        "when": { "type": "GetNodeLabels.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": []
+      },
+      {
+        "id": "R-GetNodeProperty",
+        "when": { "type": "GetNodeProperty.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "PushRecords.afterRows", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-CreateUlid",
+        "when": { "type": "CreateUlid.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildTempTableId.ulid", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildTempTableId",
+        "when": { "type": "BuildTempTableId.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "PushRecords.tableId", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" },
+          { "type": "SearchTableIdLine.tableId", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" },
+          { "type": "SearchFirstBlockIdLine.tableId", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" },
+          { "type": "RetrieveTableIdValue.tableId", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" },
+          { "type": "RetrieveFirstBlockIdValue.tableId", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-PushRecords",
+        "when": { "type": "PushRecords.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "SearchTableIdLine.ready", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" },
+          { "type": "SearchFirstBlockIdLine.ready", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-SearchTableIdLine",
+        "when": { "type": "SearchTableIdLine.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FirstTableIdLine.rows", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FirstTableIdLine",
+        "when": { "type": "FirstTableIdLine.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "RetrieveTableIdValue.lineId", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-RetrieveTableIdValue",
+        "when": { "type": "RetrieveTableIdValue.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FirstTableIdValue.rows", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FirstTableIdValue",
+        "when": { "type": "FirstTableIdValue.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": []
+      },
+      {
+        "id": "R-SearchFirstBlockIdLine",
+        "when": { "type": "SearchFirstBlockIdLine.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FirstBlockIdLine.rows", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FirstBlockIdLine",
+        "when": { "type": "FirstBlockIdLine.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "RetrieveFirstBlockIdValue.lineId", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-RetrieveFirstBlockIdValue",
+        "when": { "type": "RetrieveFirstBlockIdValue.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FirstBlockIdValue.rows", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FirstBlockIdValue",
+        "when": { "type": "FirstBlockIdValue.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "GetNodeTableWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.6 },
+    "nodes": [
+      {
+        "id": "node-start", "type": "ewoStart", "position": { "x": 50, "y": 280 },
+        "data": { "inputs": [{ "name": "nodeId", "type": "string" }] }
+      },
+      {
+        "id": "node-GetNodeLabels", "type": "ewoAc", "position": { "x": 300, "y": 80 },
+        "data": { "label": "GetNodeLabels", "operation": "GetNodeLabelsAC", "inputs": [{ "name": "nodeId", "type": "string" }], "outputs": [{ "name": "labels", "type": "string[]" }] }
+      },
+      {
+        "id": "node-GetNodeProperty", "type": "ewoAc", "position": { "x": 300, "y": 220 },
+        "data": { "label": "GetNodeProperty", "operation": "GetNodePropertyAC", "inputs": [{ "name": "nodeId", "type": "string" }, { "name": "property", "type": "string" }], "outputs": [{ "name": "value", "type": "any" }] }
+      },
+      {
+        "id": "node-CreateUlid", "type": "ewoAc", "position": { "x": 300, "y": 380 },
+        "data": { "label": "CreateUlid", "operation": "CreateUlidAC", "inputs": [], "outputs": [{ "name": "ulid", "type": "string" }] }
+      },
+      {
+        "id": "node-BuildTempTableId", "type": "ewoAc", "position": { "x": 560, "y": 380 },
+        "data": { "label": "BuildTempTableId", "operation": "BuildTemporaryTableIdAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "ulid", "type": "string" }], "outputs": [{ "name": "tempTableId", "type": "string" }] }
+      },
+      {
+        "id": "node-PushRecords", "type": "ewoAc", "position": { "x": 820, "y": 280 },
+        "data": { "label": "PushRecords", "operation": "PushRecordsAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "afterRows", "type": "any" }], "outputs": [] }
+      },
+      {
+        "id": "node-SearchTableIdLine", "type": "ewoAc", "position": { "x": 1080, "y": 180 },
+        "data": { "label": "SearchTableIdLine", "operation": "SearchLineAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "key", "type": "string" }], "outputs": [{ "name": "lineIds", "type": "string[]" }] }
+      },
+      {
+        "id": "node-FirstTableIdLine", "type": "ewoAc", "position": { "x": 1340, "y": 180 },
+        "data": { "label": "FirstTableIdLine", "operation": "FirstRowAC", "inputs": [{ "name": "rows", "type": "any[]" }], "outputs": [{ "name": "row", "type": "any" }] }
+      },
+      {
+        "id": "node-RetrieveTableIdValue", "type": "ewoAc", "position": { "x": 1580, "y": 180 },
+        "data": { "label": "RetrieveTableIdValue", "operation": "RetrieveColumnAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "lineId", "type": "string" }, { "name": "column", "type": "string" }], "outputs": [{ "name": "columns", "type": "any[]" }] }
+      },
+      {
+        "id": "node-FirstTableIdValue", "type": "ewoAc", "position": { "x": 1840, "y": 180 },
+        "data": { "label": "FirstTableIdValue", "operation": "FirstRowAC", "inputs": [{ "name": "rows", "type": "any[]" }], "outputs": [{ "name": "row", "type": "any" }] }
+      },
+      {
+        "id": "node-SearchFirstBlockIdLine", "type": "ewoAc", "position": { "x": 1080, "y": 400 },
+        "data": { "label": "SearchFirstBlockIdLine", "operation": "SearchLineAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "key", "type": "string" }], "outputs": [{ "name": "lineIds", "type": "string[]" }] }
+      },
+      {
+        "id": "node-FirstBlockIdLine", "type": "ewoAc", "position": { "x": 1340, "y": 400 },
+        "data": { "label": "FirstBlockIdLine", "operation": "FirstRowAC", "inputs": [{ "name": "rows", "type": "any[]" }], "outputs": [{ "name": "row", "type": "any" }] }
+      },
+      {
+        "id": "node-RetrieveFirstBlockIdValue", "type": "ewoAc", "position": { "x": 1580, "y": 400 },
+        "data": { "label": "RetrieveFirstBlockIdValue", "operation": "RetrieveColumnAC", "inputs": [{ "name": "tableId", "type": "string" }, { "name": "lineId", "type": "string" }, { "name": "column", "type": "string" }], "outputs": [{ "name": "columns", "type": "any[]" }] }
+      },
+      {
+        "id": "node-FirstBlockIdValue", "type": "ewoAc", "position": { "x": 1840, "y": 400 },
+        "data": { "label": "FirstBlockIdValue", "operation": "FirstRowAC", "inputs": [{ "name": "rows", "type": "any[]" }], "outputs": [{ "name": "row", "type": "any" }] }
+      },
+      {
+        "id": "node-end", "type": "ewoEnd", "position": { "x": 2100, "y": 280 },
+        "data": { "outputs": [{ "name": "tableId", "type": "string" }, { "name": "firstBlockId", "type": "string" }, { "name": "nodeLabels", "type": "string[]" }] }
+      }
+    ],
+    "edges": [
+      { "id": "e-start-labels", "source": "node-start", "target": "node-GetNodeLabels", "sourceHandle": "output-nodeId", "targetHandle": "input-nodeId" },
+      { "id": "e-start-property", "source": "node-start", "target": "node-GetNodeProperty", "sourceHandle": "output-nodeId", "targetHandle": "input-nodeId" },
+      { "id": "e-start-ulid", "source": "node-start", "target": "node-CreateUlid" },
+      { "id": "e-ulid-build", "source": "node-CreateUlid", "target": "node-BuildTempTableId", "sourceHandle": "output-ulid", "targetHandle": "input-ulid" },
+      { "id": "e-property-push", "source": "node-GetNodeProperty", "target": "node-PushRecords", "sourceHandle": "output-value", "targetHandle": "input-afterRows" },
+      { "id": "e-build-push", "source": "node-BuildTempTableId", "target": "node-PushRecords", "sourceHandle": "output-tempTableId", "targetHandle": "input-tableId" },
+      { "id": "e-push-searchTableId", "source": "node-PushRecords", "target": "node-SearchTableIdLine" },
+      { "id": "e-push-searchBlockId", "source": "node-PushRecords", "target": "node-SearchFirstBlockIdLine" },
+      { "id": "e-searchTid-first", "source": "node-SearchTableIdLine", "target": "node-FirstTableIdLine", "sourceHandle": "output-lineIds", "targetHandle": "input-rows" },
+      { "id": "e-firstTidLine-retrieve", "source": "node-FirstTableIdLine", "target": "node-RetrieveTableIdValue", "sourceHandle": "output-row", "targetHandle": "input-lineId" },
+      { "id": "e-retrieveTid-first", "source": "node-RetrieveTableIdValue", "target": "node-FirstTableIdValue", "sourceHandle": "output-columns", "targetHandle": "input-rows" },
+      { "id": "e-searchBid-first", "source": "node-SearchFirstBlockIdLine", "target": "node-FirstBlockIdLine", "sourceHandle": "output-lineIds", "targetHandle": "input-rows" },
+      { "id": "e-firstBidLine-retrieve", "source": "node-FirstBlockIdLine", "target": "node-RetrieveFirstBlockIdValue", "sourceHandle": "output-row", "targetHandle": "input-lineId" },
+      { "id": "e-retrieveBid-first", "source": "node-RetrieveFirstBlockIdValue", "target": "node-FirstBlockIdValue", "sourceHandle": "output-columns", "targetHandle": "input-rows" },
+      { "id": "e-labels-end", "source": "node-GetNodeLabels", "target": "node-end", "sourceHandle": "output-labels", "targetHandle": "input-nodeLabels" },
+      { "id": "e-tableId-end", "source": "node-FirstTableIdValue", "target": "node-end", "sourceHandle": "output-row", "targetHandle": "input-tableId" },
+      { "id": "e-blockId-end", "source": "node-FirstBlockIdValue", "target": "node-end", "sourceHandle": "output-row", "targetHandle": "input-firstBlockId" }
+    ]
+  }
+}

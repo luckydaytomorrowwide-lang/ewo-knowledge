@@ -1,0 +1,415 @@
+{
+  "id": "BuildLayoutActionWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutActionWF",
+  "description": "レイアウトアクションを構築する。GetLayoutActionConfigACでコンフィグ取得→ForEach config[SearchLineAC→DeployBlockWF→SearchLayoutJsonAC→ForEach blockKey[BuildLayoutBlockKeyWF→RetrieveColumnAC→SearchLayoutTemplateTypeAC→プロパティ取得ループ→CreateLayoutBlockPropertyAC→BuildLayoutBlockRowAC]]→結果フラット化。",
+  "inputs": {
+    "configId": { "schema": "string" },
+    "layoutRows": { "schema": "any[]" },
+    "containerId": { "schema": "string" },
+    "timestamp": { "schema": "any" },
+    "traceContainerIds": { "schema": "string[]" },
+    "traceFlowIds": { "schema": "string[]" }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "GetActionConfig",
+        "operation": "GetLayoutActionConfigAC",
+        "deps": {
+          "configId": { "sourceAcId": "$input", "sourcePort": "configId" }
+        },
+        "outputs": { "configs": {} }
+      },
+      {
+        "id": "SearchButtonRoot",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.tableId" },
+          "nCat": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.buttonNcat" },
+          "key": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.buttonRootKey" }
+        },
+        "outputs": { "lineIds": {} }
+      },
+      {
+        "id": "FirstButtonRoot",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": { "sourceAcId": "SearchButtonRoot", "sourcePort": "lineIds" }
+        },
+        "outputs": { "row": {} }
+      },
+      {
+        "id": "DeployButton",
+        "operation": "DeployBlockWF",
+        "deps": {
+          "tableId": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.tableId" },
+          "lineId": { "sourceAcId": "FirstButtonRoot", "sourcePort": "row" }
+        },
+        "outputs": { "tempTableId": {} },
+        "wfCall": { "callee": "DeployBlockWF", "boundary": true }
+      },
+      {
+        "id": "SearchButtonAnchor",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": { "sourceAcId": "DeployButton", "sourcePort": "tempTableId" },
+          "uCat": { "literal": "button" },
+          "parentId": { "sourceAcId": "FirstButtonRoot", "sourcePort": "row" }
+        },
+        "outputs": { "lineIds": {} }
+      },
+      {
+        "id": "FirstButtonAnchor",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": { "sourceAcId": "SearchButtonAnchor", "sourcePort": "lineIds" }
+        },
+        "outputs": { "row": {} }
+      },
+      {
+        "id": "SearchLayout",
+        "operation": "SearchLayoutJsonAC",
+        "deps": {
+          "json": { "sourceAcId": "$input", "sourcePort": "layoutRows" },
+          "isRoot": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.isRoot" },
+          "instViewType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.instViewType" },
+          "instEditType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.instEditType" },
+          "instSelectType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.instSelectType" },
+          "tplViewType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.tplViewType" },
+          "tplEditType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.tplEditType" },
+          "tplSelectType": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.tplSelectType" },
+          "anchorUcat": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.anchorUcat" },
+          "lineKey": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.lineKey" },
+          "propertyKey": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.propertyKey" },
+          "propertyValue": { "sourceAcId": "$zoneInput", "sourcePort": "configItem.propertyValue" }
+        },
+        "outputs": { "keys": {} }
+      },
+      {
+        "id": "GetParentKey",
+        "operation": "GetLayoutParentKeyAC",
+        "deps": {
+          "key": { "sourceAcId": "$zoneInput", "sourcePort": "blockKeyItem" }
+        },
+        "outputs": { "key": {} }
+      },
+      {
+        "id": "BuildBlockKey",
+        "operation": "BuildLayoutBlockKeyWF",
+        "deps": {
+          "parentKey": { "sourceAcId": "GetParentKey", "sourcePort": "key" },
+          "blockKey": { "sourceAcId": "FirstButtonAnchor", "sourcePort": "row" }
+        },
+        "outputs": { "blockKey": {} },
+        "wfCall": { "callee": "BuildLayoutBlockKeyWF", "boundary": true }
+      },
+      {
+        "id": "RetrieveAnchorKey",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": { "sourceAcId": "DeployButton", "sourcePort": "tempTableId" },
+          "lineId": { "sourceAcId": "FirstButtonAnchor", "sourcePort": "row" },
+          "column": { "literal": "key" }
+        },
+        "outputs": { "columns": {} }
+      },
+      {
+        "id": "FirstAnchorKey",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": { "sourceAcId": "RetrieveAnchorKey", "sourcePort": "columns" }
+        },
+        "outputs": { "row": {} }
+      },
+      {
+        "id": "SearchTemplate",
+        "operation": "SearchLayoutTemplateTypeAC",
+        "deps": {
+          "lineKey": { "sourceAcId": "FirstAnchorKey", "sourcePort": "row" },
+          "column": { "literal": null },
+          "anchorUcat": { "literal": null }
+        },
+        "outputs": { "instViewType": {}, "instEditType": {}, "instSelectType": {}, "tplViewType": {}, "tplEditType": {}, "tplSelectType": {} }
+      },
+      {
+        "id": "RetrieveButtonProperties",
+        "operation": "RetrieveButtonPropertiesAC",
+        "deps": {
+          "tableId": { "sourceAcId": "DeployButton", "sourcePort": "tempTableId" },
+          "parentId": { "sourceAcId": "FirstButtonAnchor", "sourcePort": "row" }
+        },
+        "outputs": { "properties": {} }
+      },
+      {
+        "id": "CreateProperty",
+        "operation": "CreateLayoutBlockPropertyAC",
+        "deps": {
+          "tableId": { "sourceAcId": "DeployButton", "sourcePort": "tempTableId" },
+          "lineId": { "sourceAcId": "FirstButtonAnchor", "sourcePort": "row" },
+          "flowId": { "sourceAcId": "BuildBlockKey", "sourcePort": "blockKey" },
+          "containerId": { "sourceAcId": "$input", "sourcePort": "containerId" },
+          "timestamp": { "sourceAcId": "$input", "sourcePort": "timestamp" },
+          "traceContainerIds": { "sourceAcId": "$input", "sourcePort": "traceContainerIds" },
+          "traceFlowIds": { "sourceAcId": "$input", "sourcePort": "traceFlowIds" },
+          "properties": { "sourceAcId": "RetrieveButtonProperties", "sourcePort": "properties" }
+        },
+        "outputs": { "property": {} }
+      },
+      {
+        "id": "BuildRow",
+        "operation": "BuildLayoutBlockRowAC",
+        "deps": {
+          "blockKey": { "sourceAcId": "BuildBlockKey", "sourcePort": "blockKey" },
+          "instViewType": { "sourceAcId": "SearchTemplate", "sourcePort": "instViewType" },
+          "instEditType": { "sourceAcId": "SearchTemplate", "sourcePort": "instEditType" },
+          "instSelectType": { "sourceAcId": "SearchTemplate", "sourcePort": "instSelectType" },
+          "tplViewType": { "sourceAcId": "SearchTemplate", "sourcePort": "tplViewType" },
+          "tplEditType": { "sourceAcId": "SearchTemplate", "sourcePort": "tplEditType" },
+          "tplSelectType": { "sourceAcId": "SearchTemplate", "sourcePort": "tplSelectType" },
+          "property": { "sourceAcId": "CreateProperty", "sourcePort": "property" }
+        },
+        "outputs": { "layoutRow": {} }
+      },
+      {
+        "id": "FlattenResults",
+        "operation": "FlattenLayoutRowsAC",
+        "deps": {
+          "nestedRows": { "sourceAcId": "$zone:configZone", "sourcePort": "allConfigResults" }
+        },
+        "outputs": { "layoutRows": {} }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "configZone",
+        "collectionSource": {
+          "sourceAcId": "GetActionConfig",
+          "sourcePort": "configs"
+        },
+        "iterationParam": "configItem",
+        "nodes": ["SearchButtonRoot", "FirstButtonRoot", "DeployButton", "SearchButtonAnchor", "FirstButtonAnchor", "SearchLayout", "RetrieveAnchorKey", "FirstAnchorKey", "SearchTemplate", "RetrieveButtonProperties"],
+        "childZones": [
+          {
+            "id": "blockKeyZone",
+            "collectionSource": {
+              "sourceAcId": "SearchLayout",
+              "sourcePort": "keys"
+            },
+            "iterationParam": "blockKeyItem",
+            "nodes": ["GetParentKey", "BuildBlockKey", "CreateProperty", "BuildRow"],
+            "outputNodeId": "BuildRow",
+            "outputPort": "layoutRow",
+            "outputCollection": "allBlockKeyResults"
+          }
+        ],
+        "outputNodeId": "blockKeyZone",
+        "outputPort": "allBlockKeyResults",
+        "outputCollection": "allConfigResults"
+      }
+    ],
+    "outputs": {
+      "layoutRows": "FlattenResults.layoutRows"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-GetActionConfig",
+        "when": { "type": "GetActionConfig.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "$zone:configZone.input", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-SearchButtonRoot",
+        "when": { "type": "SearchButtonRoot.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FirstButtonRoot.rows", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FirstButtonRoot",
+        "when": { "type": "FirstButtonRoot.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "DeployButton.lineId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "SearchButtonAnchor.parentId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-DeployButton",
+        "when": { "type": "DeployButton.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "SearchButtonAnchor.tableId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "RetrieveAnchorKey.tableId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "RetrieveButtonProperties.tableId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "CreateProperty.tableId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-SearchButtonAnchor",
+        "when": { "type": "SearchButtonAnchor.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FirstButtonAnchor.rows", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FirstButtonAnchor",
+        "when": { "type": "FirstButtonAnchor.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildBlockKey.blockKey", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "RetrieveAnchorKey.lineId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "RetrieveButtonProperties.parentId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "CreateProperty.lineId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-SearchLayout",
+        "when": { "type": "SearchLayout.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "$zone:blockKeyZone.input", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-GetParentKey",
+        "when": { "type": "GetParentKey.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildBlockKey.parentKey", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildBlockKey",
+        "when": { "type": "BuildBlockKey.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "CreateProperty.flowId", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "BuildRow.blockKey", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-RetrieveAnchorKey",
+        "when": { "type": "RetrieveAnchorKey.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FirstAnchorKey.rows", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FirstAnchorKey",
+        "when": { "type": "FirstAnchorKey.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "SearchTemplate.lineKey", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-SearchTemplate",
+        "when": { "type": "SearchTemplate.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildRow.instViewType", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "BuildRow.instEditType", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "BuildRow.instSelectType", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "BuildRow.tplViewType", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "BuildRow.tplEditType", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" },
+          { "type": "BuildRow.tplSelectType", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-RetrieveButtonProperties",
+        "when": { "type": "RetrieveButtonProperties.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "CreateProperty.properties", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-CreateProperty",
+        "when": { "type": "CreateProperty.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "BuildRow.property", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-BuildRow",
+        "when": { "type": "BuildRow.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": []
+      },
+      {
+        "id": "R-$zone:blockKeyZone",
+        "when": { "type": "$zone:blockKeyZone.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": []
+      },
+      {
+        "id": "R-$zone:configZone",
+        "when": { "type": "$zone:configZone.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "FlattenResults.nestedRows", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      },
+      {
+        "id": "R-FlattenResults",
+        "when": { "type": "FlattenResults.done" },
+        "correlate": { "by": ["correlationid"] },
+        "emit": [
+          { "type": "wf.completed", "wfid": "BuildLayoutActionWF", "map": "outputRef->payloadRef" }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": { "x": 0, "y": 0, "zoom": 0.4 },
+    "nodes": [
+      { "id": "node-start", "type": "ewoStart", "position": { "x": 50, "y": 400 }, "data": { "inputs": [{ "name": "configId", "type": "string" }, { "name": "layoutRows", "type": "any[]" }, { "name": "containerId", "type": "string" }, { "name": "timestamp", "type": "any" }] } },
+      { "id": "node-GetActionConfig", "type": "ewoAc", "position": { "x": 320, "y": 400 }, "data": { "label": "GetActionConfig", "operation": "GetLayoutActionConfigAC", "inputs": [{ "name": "configId", "type": "string" }], "outputs": [{ "name": "configs", "type": "object[]" }] } },
+      { "id": "region-configZone", "type": "ewoForEachRegion", "position": { "x": 600, "y": 30 }, "style": { "width": "2200px", "height": "800px" }, "data": { "label": "ConfigZone (configs iterate)", "zoneId": "configZone", "iterationParam": "configItem", "outputCollection": "allConfigResults" } },
+      { "id": "node-SearchButtonRoot", "type": "ewoAc", "position": { "x": 30, "y": 80 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "SearchButtonRoot", "operation": "SearchLineAC" } },
+      { "id": "node-FirstButtonRoot", "type": "ewoAc", "position": { "x": 260, "y": 80 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "FirstButtonRoot", "operation": "FirstRowAC" } },
+      { "id": "node-DeployButton", "type": "ewoWfCall", "position": { "x": 460, "y": 80 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "DeployButton", "operation": "DeployBlockWF", "wfCall": { "callee": "DeployBlockWF", "boundary": true } } },
+      { "id": "node-SearchButtonAnchor", "type": "ewoAc", "position": { "x": 700, "y": 80 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "SearchButtonAnchor", "operation": "SearchLineAC" } },
+      { "id": "node-FirstButtonAnchor", "type": "ewoAc", "position": { "x": 940, "y": 80 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "FirstButtonAnchor", "operation": "FirstRowAC" } },
+      { "id": "node-SearchLayout", "type": "ewoAc", "position": { "x": 30, "y": 350 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "SearchLayout", "operation": "SearchLayoutJsonAC" } },
+      { "id": "node-RetrieveAnchorKey", "type": "ewoAc", "position": { "x": 700, "y": 350 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "RetrieveAnchorKey", "operation": "RetrieveColumnAC" } },
+      { "id": "node-FirstAnchorKey", "type": "ewoAc", "position": { "x": 940, "y": 350 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "FirstAnchorKey", "operation": "FirstRowAC" } },
+      { "id": "node-SearchTemplate", "type": "ewoAc", "position": { "x": 1150, "y": 350 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "SearchTemplate", "operation": "SearchLayoutTemplateTypeAC" } },
+      { "id": "node-RetrieveButtonProperties", "type": "ewoAc", "position": { "x": 700, "y": 500 }, "parentNode": "region-configZone", "extent": "parent", "data": { "label": "RetrieveButtonProperties", "operation": "RetrieveButtonPropertiesAC" } },
+      { "id": "region-blockKeyZone", "type": "ewoForEachRegion", "position": { "x": 1150, "y": 450 }, "parentNode": "region-configZone", "extent": "parent", "style": { "width": "900px", "height": "280px" }, "data": { "label": "BlockKeyZone (keys iterate)", "zoneId": "blockKeyZone", "iterationParam": "blockKeyItem", "outputCollection": "allBlockKeyResults" } },
+      { "id": "node-GetParentKey", "type": "ewoAc", "position": { "x": 30, "y": 70 }, "parentNode": "region-blockKeyZone", "extent": "parent", "data": { "label": "GetParentKey", "operation": "GetLayoutParentKeyAC" } },
+      { "id": "node-BuildBlockKey", "type": "ewoWfCall", "position": { "x": 230, "y": 70 }, "parentNode": "region-blockKeyZone", "extent": "parent", "data": { "label": "BuildBlockKey", "operation": "BuildLayoutBlockKeyWF", "wfCall": { "callee": "BuildLayoutBlockKeyWF", "boundary": true } } },
+      { "id": "node-CreateProperty", "type": "ewoAc", "position": { "x": 470, "y": 70 }, "parentNode": "region-blockKeyZone", "extent": "parent", "data": { "label": "CreateProperty", "operation": "CreateLayoutBlockPropertyAC" } },
+      { "id": "node-BuildRow", "type": "ewoAc", "position": { "x": 700, "y": 70 }, "parentNode": "region-blockKeyZone", "extent": "parent", "data": { "label": "BuildRow", "operation": "BuildLayoutBlockRowAC" } },
+      { "id": "node-FlattenResults", "type": "ewoAc", "position": { "x": 2900, "y": 400 }, "data": { "label": "FlattenResults", "operation": "FlattenLayoutRowsAC" } },
+      { "id": "node-end", "type": "ewoEnd", "position": { "x": 3150, "y": 400 }, "data": { "outputs": [{ "name": "layoutRows", "type": "object[]" }] } }
+    ],
+    "edges": [
+      { "id": "e-start-config", "source": "node-start", "target": "node-GetActionConfig", "sourceHandle": "output-configId", "targetHandle": "input-configId" },
+      { "id": "e-config-zone", "source": "node-GetActionConfig", "target": "region-configZone", "sourceHandle": "output-configs", "targetHandle": "input-collection" },
+      { "id": "e-searchRoot-first", "source": "node-SearchButtonRoot", "target": "node-FirstButtonRoot", "sourceHandle": "output-lineIds", "targetHandle": "input-rows" },
+      { "id": "e-first-deploy", "source": "node-FirstButtonRoot", "target": "node-DeployButton", "sourceHandle": "output-row", "targetHandle": "input-lineId" },
+      { "id": "e-deploy-searchAnchor", "source": "node-DeployButton", "target": "node-SearchButtonAnchor", "sourceHandle": "output-tempTableId", "targetHandle": "input-tableId" },
+      { "id": "e-searchAnchor-first", "source": "node-SearchButtonAnchor", "target": "node-FirstButtonAnchor", "sourceHandle": "output-lineIds", "targetHandle": "input-rows" },
+      { "id": "e-searchLayout-blockKeyZone", "source": "node-SearchLayout", "target": "region-blockKeyZone", "sourceHandle": "output-keys", "targetHandle": "input-collection" },
+      { "id": "e-blockKeyZone-getParent", "source": "region-blockKeyZone", "target": "node-GetParentKey", "sourceHandle": "iter-out", "targetHandle": "input-key" },
+      { "id": "e-getParent-buildKey", "source": "node-GetParentKey", "target": "node-BuildBlockKey", "sourceHandle": "output-key", "targetHandle": "input-parentKey" },
+      { "id": "e-buildKey-createProp", "source": "node-BuildBlockKey", "target": "node-CreateProperty", "sourceHandle": "output-blockKey", "targetHandle": "input-flowId" },
+      { "id": "e-createProp-buildRow", "source": "node-CreateProperty", "target": "node-BuildRow", "sourceHandle": "output-property", "targetHandle": "input-property" },
+      { "id": "e-buildKey-buildRow", "source": "node-BuildBlockKey", "target": "node-BuildRow", "sourceHandle": "output-blockKey", "targetHandle": "input-blockKey" },
+      { "id": "e-buildRow-collect", "source": "node-BuildRow", "target": "region-blockKeyZone", "sourceHandle": "output-layoutRow", "targetHandle": "collect-in" },
+      { "id": "e-zone-flatten", "source": "region-configZone", "target": "node-FlattenResults", "sourceHandle": "output-results", "targetHandle": "input-nestedRows" },
+      { "id": "e-flatten-end", "source": "node-FlattenResults", "target": "node-end", "sourceHandle": "output-layoutRows", "targetHandle": "input-layoutRows" }
+    ]
+  }
+}
