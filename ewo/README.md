@@ -9,21 +9,6 @@ SWF生成やEWO解析を
 
 ---
 
-# 参照順（基本ルール）
-
-EWO関連の作業では、次の順序でGitHubを参照します。
-
-spec  
-decisions  
-examples  
-templates  
-checklists  
-reference（必要に応じて）
-
-spec が最優先です。
-
----
-
 # 工程参照
 
 EWO作業は **PDCA工程**で進めます。
