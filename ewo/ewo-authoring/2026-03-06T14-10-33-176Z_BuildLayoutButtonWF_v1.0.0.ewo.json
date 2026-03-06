@@ -1,0 +1,1955 @@
+{
+  "id": "BuildLayoutButtonWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutButtonWF",
+  "description": "レイアウトボタンを構築する。SearchLineAC→FirstRowAC→DeployBlockWF→ボタンアンカー取得→AnchorKey/Label/JointId取得(1回)→SearchLayoutJsonACでblockKeys取得→ForEach blockKey[RemoveEndBracketsAC→BuildLayoutBlockKeyWF→CreateLayoutBlockPropertyAC→BuildLayoutBlockRowAC]→結果収集。",
+  "inputs": {
+    "layoutRows": {
+      "schema": "any[]"
+    },
+    "isRoot": {
+      "schema": "boolean"
+    },
+    "viewType": {
+      "schema": "string"
+    },
+    "editType": {
+      "schema": "string"
+    },
+    "propertyKey": {
+      "schema": "string"
+    },
+    "propertyValue": {
+      "schema": "any"
+    },
+    "tableId": {
+      "schema": "string"
+    },
+    "nCat": {
+      "schema": "string"
+    },
+    "key": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "SearchButtonRoot",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "nCat": {
+            "sourceAcId": "$input",
+            "sourcePort": "nCat"
+          },
+          "key": {
+            "sourceAcId": "$input",
+            "sourcePort": "key"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "FirstButtonRoot",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchButtonRoot",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "DeployButton",
+        "operation": "DeployBlockWF",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "lineId": {
+            "sourceAcId": "FirstButtonRoot",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "tempTableId": {}
+        },
+        "wfCall": {
+          "callee": "DeployBlockWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "SearchButtonAnchor",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "DeployButton",
+            "sourcePort": "tempTableId"
+          },
+          "parentId": {
+            "sourceAcId": "FirstButtonRoot",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "FirstButtonAnchor",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchButtonAnchor",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "RetrieveAnchorKey",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "DeployButton",
+            "sourcePort": "tempTableId"
+          },
+          "lineId": {
+            "sourceAcId": "FirstButtonAnchor",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstAnchorKey",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveAnchorKey",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "SearchTemplate",
+        "operation": "SearchLayoutTemplateTypeAC",
+        "deps": {
+          "lineKey": {
+            "sourceAcId": "FirstAnchorKey",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "viewTemplateType": {},
+          "editTemplateType": {}
+        }
+      },
+      {
+        "id": "SearchLabelLine",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "DeployButton",
+            "sourcePort": "tempTableId"
+          },
+          "parentId": {
+            "sourceAcId": "FirstButtonAnchor",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "FirstLabelLineId",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchLabelLine",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "RetrieveLabelValue",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "DeployButton",
+            "sourcePort": "tempTableId"
+          },
+          "lineId": {
+            "sourceAcId": "FirstLabelLineId",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstLabelValue",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveLabelValue",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "SearchJointIdLine",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "DeployButton",
+            "sourcePort": "tempTableId"
+          },
+          "parentId": {
+            "sourceAcId": "FirstButtonAnchor",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "FirstJointIdLineId",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchJointIdLine",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "RetrieveJointIdValue",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "DeployButton",
+            "sourcePort": "tempTableId"
+          },
+          "lineId": {
+            "sourceAcId": "FirstJointIdLineId",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstJointIdValue",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveJointIdValue",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "SearchLayout",
+        "operation": "SearchLayoutJsonAC",
+        "deps": {
+          "json": {
+            "sourceAcId": "$input",
+            "sourcePort": "layoutRows"
+          }
+        },
+        "outputs": {
+          "keys": {}
+        }
+      },
+      {
+        "id": "RemoveEndBrackets",
+        "operation": "RemoveEndBracketsAC",
+        "deps": {
+          "blockKey": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "blockKeyItem"
+          }
+        },
+        "outputs": {
+          "parentKey": {}
+        }
+      },
+      {
+        "id": "BuildBlockKey",
+        "operation": "BuildLayoutBlockKeyWF",
+        "deps": {
+          "parentKey": {
+            "sourceAcId": "RemoveEndBrackets",
+            "sourcePort": "parentKey"
+          },
+          "blockKey": {
+            "sourceAcId": "FirstButtonAnchor",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "blockKey": {}
+        },
+        "wfCall": {
+          "callee": "BuildLayoutBlockKeyWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "CreateProperty",
+        "operation": "CreateLayoutBlockPropertyAC",
+        "deps": {
+          "flowId": {
+            "sourceAcId": "BuildBlockKey",
+            "sourcePort": "blockKey"
+          },
+          "tableId": {
+            "sourceAcId": "DeployButton",
+            "sourcePort": "tempTableId"
+          },
+          "lineId": {
+            "sourceAcId": "FirstButtonAnchor",
+            "sourcePort": "row"
+          },
+          "buttonLabel": {
+            "sourceAcId": "FirstLabelValue",
+            "sourcePort": "row"
+          },
+          "buttonJointId": {
+            "sourceAcId": "FirstJointIdValue",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "property": {}
+        }
+      },
+      {
+        "id": "BuildRow",
+        "operation": "BuildLayoutBlockRowAC",
+        "deps": {
+          "blockKey": {
+            "sourceAcId": "BuildBlockKey",
+            "sourcePort": "blockKey"
+          },
+          "viewType": {
+            "sourceAcId": "SearchTemplate",
+            "sourcePort": "viewTemplateType"
+          },
+          "editType": {
+            "sourceAcId": "SearchTemplate",
+            "sourcePort": "editTemplateType"
+          },
+          "property": {
+            "sourceAcId": "CreateProperty",
+            "sourcePort": "property"
+          }
+        },
+        "outputs": {
+          "layoutRow": {}
+        }
+      },
+      {
+        "id": "FlattenResults",
+        "operation": "FlattenLayoutRowsAC",
+        "deps": {
+          "nestedRows": {
+            "sourceAcId": "$zone:blockKeyZone",
+            "sourcePort": "allBlockKeyResults"
+          }
+        },
+        "outputs": {
+          "layoutRows": {}
+        }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "blockKeyZone",
+        "collectionSource": {
+          "sourceAcId": "SearchLayout",
+          "sourcePort": "keys"
+        },
+        "iterationParam": "blockKeyItem",
+        "nodes": [
+          "RemoveEndBrackets",
+          "BuildBlockKey",
+          "CreateProperty",
+          "BuildRow"
+        ],
+        "outputNodeId": "BuildRow",
+        "outputPort": "layoutRow",
+        "outputCollection": "allBlockKeyResults",
+        "mode": "parallel"
+      }
+    ],
+    "outputs": {
+      "layoutRows": "FlattenResults.layoutRows"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-SearchButtonRoot",
+        "when": {
+          "type": "SearchButtonRoot.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstButtonRoot.rows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstButtonRoot",
+        "when": {
+          "type": "FirstButtonRoot.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstButtonRoot.result",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "DeployButton.lineId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "SearchButtonAnchor.parentId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-DeployButton",
+        "when": {
+          "type": "DeployButton.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "DeployButton.result",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "SearchButtonAnchor.tableId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "RetrieveAnchorKey.tableId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "SearchLabelLine.tableId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "RetrieveLabelValue.tableId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "SearchJointIdLine.tableId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "RetrieveJointIdValue.tableId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "CreateProperty.tableId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchButtonAnchor",
+        "when": {
+          "type": "SearchButtonAnchor.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstButtonAnchor.rows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstButtonAnchor",
+        "when": {
+          "type": "FirstButtonAnchor.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstButtonAnchor.result",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "RetrieveAnchorKey.lineId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "SearchLabelLine.parentId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "SearchJointIdLine.parentId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildBlockKey.blockKey",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "CreateProperty.lineId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveAnchorKey",
+        "when": {
+          "type": "RetrieveAnchorKey.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstAnchorKey.rows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstAnchorKey",
+        "when": {
+          "type": "FirstAnchorKey.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "SearchTemplate.lineKey",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchLabelLine",
+        "when": {
+          "type": "SearchLabelLine.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstLabelLineId.rows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstLabelLineId",
+        "when": {
+          "type": "FirstLabelLineId.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "RetrieveLabelValue.lineId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveLabelValue",
+        "when": {
+          "type": "RetrieveLabelValue.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstLabelValue.rows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchJointIdLine",
+        "when": {
+          "type": "SearchJointIdLine.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstJointIdLineId.rows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstJointIdLineId",
+        "when": {
+          "type": "FirstJointIdLineId.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "RetrieveJointIdValue.lineId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveJointIdValue",
+        "when": {
+          "type": "RetrieveJointIdValue.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstJointIdValue.rows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RemoveEndBrackets",
+        "when": {
+          "type": "RemoveEndBrackets.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "BuildBlockKey.parentKey",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-BuildBlockKey",
+        "when": {
+          "type": "BuildBlockKey.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "BuildBlockKey.result",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "CreateProperty.flowId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildRow.blockKey",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstLabelValue",
+        "when": {
+          "type": "FirstLabelValue.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "CreateProperty.buttonLabel",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstJointIdValue",
+        "when": {
+          "type": "FirstJointIdValue.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "CreateProperty.buttonJointId",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchTemplate",
+        "when": {
+          "type": "SearchTemplate.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "SearchTemplate.result",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildRow.viewType",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildRow.editType",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-CreateProperty",
+        "when": {
+          "type": "CreateProperty.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "BuildRow.property",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchLayout",
+        "when": {
+          "type": "SearchLayout.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "$zone:blockKeyZone.input",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-$zone:blockKeyZone",
+        "when": {
+          "type": "$zone:blockKeyZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FlattenResults.nestedRows",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FlattenResults",
+        "when": {
+          "type": "FlattenResults.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "BuildLayoutButtonWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.8
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 450
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "layoutRows",
+              "type": "any[]"
+            },
+            {
+              "name": "isRoot",
+              "type": "boolean"
+            },
+            {
+              "name": "viewType",
+              "type": "string"
+            },
+            {
+              "name": "editType",
+              "type": "string"
+            },
+            {
+              "name": "propertyKey",
+              "type": "string"
+            },
+            {
+              "name": "propertyValue",
+              "type": "any"
+            },
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "nCat",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-SearchButtonRoot",
+        "type": "ewoAc",
+        "position": {
+          "x": 350,
+          "y": 100
+        },
+        "data": {
+          "label": "SearchButtonRoot",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "nCat",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstButtonRoot",
+        "type": "ewoAc",
+        "position": {
+          "x": 620,
+          "y": 100
+        },
+        "data": {
+          "label": "FirstButtonRoot",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-DeployButton",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 860,
+          "y": 100
+        },
+        "data": {
+          "label": "DeployButton",
+          "operation": "DeployBlockWF",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tempTableId",
+              "type": "string"
+            }
+          ],
+          "wfCall": {
+            "callee": "DeployBlockWF",
+            "boundary": true
+          }
+        }
+      },
+      {
+        "id": "node-SearchButtonAnchor",
+        "type": "ewoAc",
+        "position": {
+          "x": 1150,
+          "y": 100
+        },
+        "data": {
+          "label": "SearchButtonAnchor",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "uCat",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstButtonAnchor",
+        "type": "ewoAc",
+        "position": {
+          "x": 1440,
+          "y": 100
+        },
+        "data": {
+          "label": "FirstButtonAnchor",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-RetrieveAnchorKey",
+        "type": "ewoAc",
+        "position": {
+          "x": 1730,
+          "y": 100
+        },
+        "data": {
+          "label": "RetrieveAnchorKey",
+          "operation": "RetrieveColumnAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "column",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "any[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstAnchorKey",
+        "type": "ewoAc",
+        "position": {
+          "x": 2020,
+          "y": 100
+        },
+        "data": {
+          "label": "FirstAnchorKey",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-SearchTemplate",
+        "type": "ewoAc",
+        "position": {
+          "x": 2290,
+          "y": 100
+        },
+        "data": {
+          "label": "SearchTemplate",
+          "operation": "SearchLayoutTemplateTypeAC",
+          "inputs": [
+            {
+              "name": "lineKey",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "viewTemplateType",
+              "type": "string"
+            },
+            {
+              "name": "editTemplateType",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-SearchLabelLine",
+        "type": "ewoAc",
+        "position": {
+          "x": 1730,
+          "y": 300
+        },
+        "data": {
+          "label": "SearchLabelLine",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstLabelLineId",
+        "type": "ewoAc",
+        "position": {
+          "x": 2020,
+          "y": 300
+        },
+        "data": {
+          "label": "FirstLabelLineId",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-RetrieveLabelValue",
+        "type": "ewoAc",
+        "position": {
+          "x": 2290,
+          "y": 300
+        },
+        "data": {
+          "label": "RetrieveLabelValue",
+          "operation": "RetrieveColumnAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "column",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "any[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstLabelValue",
+        "type": "ewoAc",
+        "position": {
+          "x": 2570,
+          "y": 300
+        },
+        "data": {
+          "label": "FirstLabelValue",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-SearchJointIdLine",
+        "type": "ewoAc",
+        "position": {
+          "x": 1730,
+          "y": 500
+        },
+        "data": {
+          "label": "SearchJointIdLine",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstJointIdLineId",
+        "type": "ewoAc",
+        "position": {
+          "x": 2020,
+          "y": 500
+        },
+        "data": {
+          "label": "FirstJointIdLineId",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-RetrieveJointIdValue",
+        "type": "ewoAc",
+        "position": {
+          "x": 2290,
+          "y": 500
+        },
+        "data": {
+          "label": "RetrieveJointIdValue",
+          "operation": "RetrieveColumnAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "column",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "any[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstJointIdValue",
+        "type": "ewoAc",
+        "position": {
+          "x": 2570,
+          "y": 500
+        },
+        "data": {
+          "label": "FirstJointIdValue",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-SearchLayout",
+        "type": "ewoAc",
+        "position": {
+          "x": 350,
+          "y": 700
+        },
+        "data": {
+          "label": "SearchLayout",
+          "operation": "SearchLayoutJsonAC",
+          "inputs": [
+            {
+              "name": "json",
+              "type": "any[]"
+            },
+            {
+              "name": "isRoot",
+              "type": "boolean"
+            },
+            {
+              "name": "instViewType",
+              "type": "string"
+            },
+            {
+              "name": "instEditType",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "keys",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "region-blockKeyZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 1155.2853507083564,
+          "y": 1122.103279230565
+        },
+        "data": {
+          "label": "BlockKeyZone (keys iterate)",
+          "zoneId": "blockKeyZone",
+          "iterationParam": "blockKeyItem",
+          "outputCollection": "allBlockKeyResults"
+        },
+        "style": {
+          "width": "1200px",
+          "height": "250px"
+        }
+      },
+      {
+        "id": "node-RemoveEndBrackets",
+        "type": "ewoAc",
+        "position": {
+          "x": 30,
+          "y": 70
+        },
+        "data": {
+          "label": "RemoveEndBrackets",
+          "operation": "RemoveEndBracketsAC",
+          "inputs": [
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "parentKey",
+              "type": "string"
+            }
+          ]
+        },
+        "parentNode": "region-blockKeyZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-BuildBlockKey",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 280,
+          "y": 70
+        },
+        "data": {
+          "label": "BuildBlockKey",
+          "operation": "BuildLayoutBlockKeyWF",
+          "inputs": [
+            {
+              "name": "parentKey",
+              "type": "string"
+            },
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "wfCall": {
+            "callee": "BuildLayoutBlockKeyWF",
+            "boundary": true
+          }
+        },
+        "parentNode": "region-blockKeyZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-CreateProperty",
+        "type": "ewoAc",
+        "position": {
+          "x": 560,
+          "y": 70
+        },
+        "data": {
+          "label": "CreateProperty",
+          "operation": "CreateLayoutBlockPropertyAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "flowId",
+              "type": "string"
+            },
+            {
+              "name": "buttonLabel",
+              "type": "string"
+            },
+            {
+              "name": "buttonJointId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "property",
+              "type": "object"
+            }
+          ]
+        },
+        "parentNode": "region-blockKeyZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-BuildRow",
+        "type": "ewoAc",
+        "position": {
+          "x": 880,
+          "y": 70
+        },
+        "data": {
+          "label": "BuildRow",
+          "operation": "BuildLayoutBlockRowAC",
+          "inputs": [
+            {
+              "name": "blockKey",
+              "type": "string"
+            },
+            {
+              "name": "viewType",
+              "type": "string"
+            },
+            {
+              "name": "editType",
+              "type": "string"
+            },
+            {
+              "name": "property",
+              "type": "object"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "layoutRow",
+              "type": "object"
+            }
+          ]
+        },
+        "parentNode": "region-blockKeyZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-FlattenResults",
+        "type": "ewoAc",
+        "position": {
+          "x": 2412.0392487941062,
+          "y": 1325.8351819296695
+        },
+        "data": {
+          "label": "FlattenResults",
+          "operation": "FlattenLayoutRowsAC",
+          "inputs": [
+            {
+              "name": "nestedRows",
+              "type": "object[][]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "layoutRows",
+              "type": "object[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 2761.2917537520025,
+          "y": 1351.0620747129824
+        },
+        "data": {
+          "outputs": [
+            {
+              "name": "layoutRows",
+              "type": "object[]"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-searchRoot-tableId",
+        "source": "node-start",
+        "target": "node-SearchButtonRoot",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-searchRoot-nCat",
+        "source": "node-start",
+        "target": "node-SearchButtonRoot",
+        "sourceHandle": "output-nCat",
+        "targetHandle": "input-nCat"
+      },
+      {
+        "id": "e-start-searchRoot-key",
+        "source": "node-start",
+        "target": "node-SearchButtonRoot",
+        "sourceHandle": "output-key",
+        "targetHandle": "input-key"
+      },
+      {
+        "id": "e-searchRoot-first",
+        "source": "node-SearchButtonRoot",
+        "target": "node-FirstButtonRoot",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-start-deploy-tableId",
+        "source": "node-start",
+        "target": "node-DeployButton",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-first-deploy",
+        "source": "node-FirstButtonRoot",
+        "target": "node-DeployButton",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-deploy-searchAnchor-tableId",
+        "source": "node-DeployButton",
+        "target": "node-SearchButtonAnchor",
+        "sourceHandle": "output-tempTableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-firstRoot-searchAnchor-parentId",
+        "source": "node-FirstButtonRoot",
+        "target": "node-SearchButtonAnchor",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-searchAnchor-firstAnchor",
+        "source": "node-SearchButtonAnchor",
+        "target": "node-FirstButtonAnchor",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-deploy-retrieveAnchorKey-tableId",
+        "source": "node-DeployButton",
+        "target": "node-RetrieveAnchorKey",
+        "sourceHandle": "output-tempTableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-firstAnchor-retrieveAnchorKey-lineId",
+        "source": "node-FirstButtonAnchor",
+        "target": "node-RetrieveAnchorKey",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-retrieveAnchorKey-firstAnchorKey",
+        "source": "node-RetrieveAnchorKey",
+        "target": "node-FirstAnchorKey",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-firstAnchorKey-searchTemplate",
+        "source": "node-FirstAnchorKey",
+        "target": "node-SearchTemplate",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineKey"
+      },
+      {
+        "id": "e-deploy-searchLabel-tableId",
+        "source": "node-DeployButton",
+        "target": "node-SearchLabelLine",
+        "sourceHandle": "output-tempTableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-firstAnchor-searchLabel-parentId",
+        "source": "node-FirstButtonAnchor",
+        "target": "node-SearchLabelLine",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-searchLabel-firstLabel",
+        "source": "node-SearchLabelLine",
+        "target": "node-FirstLabelLineId",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-deploy-retrieveLabel-tableId",
+        "source": "node-DeployButton",
+        "target": "node-RetrieveLabelValue",
+        "sourceHandle": "output-tempTableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-firstLabelLine-retrieveLabel",
+        "source": "node-FirstLabelLineId",
+        "target": "node-RetrieveLabelValue",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-retrieveLabel-firstLabelVal",
+        "source": "node-RetrieveLabelValue",
+        "target": "node-FirstLabelValue",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-deploy-searchJointId-tableId",
+        "source": "node-DeployButton",
+        "target": "node-SearchJointIdLine",
+        "sourceHandle": "output-tempTableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-firstAnchor-searchJointId-parentId",
+        "source": "node-FirstButtonAnchor",
+        "target": "node-SearchJointIdLine",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-searchJointId-firstJointId",
+        "source": "node-SearchJointIdLine",
+        "target": "node-FirstJointIdLineId",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-deploy-retrieveJointId-tableId",
+        "source": "node-DeployButton",
+        "target": "node-RetrieveJointIdValue",
+        "sourceHandle": "output-tempTableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-firstJointIdLine-retrieveJointId",
+        "source": "node-FirstJointIdLineId",
+        "target": "node-RetrieveJointIdValue",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-retrieveJointId-firstJointIdVal",
+        "source": "node-RetrieveJointIdValue",
+        "target": "node-FirstJointIdValue",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-start-searchLayout",
+        "source": "node-start",
+        "target": "node-SearchLayout",
+        "sourceHandle": "output-layoutRows",
+        "targetHandle": "input-json"
+      },
+      {
+        "id": "e-searchLayout-zone",
+        "source": "node-SearchLayout",
+        "target": "region-blockKeyZone",
+        "sourceHandle": "output-keys",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-zone-removeEnd",
+        "source": "region-blockKeyZone",
+        "target": "node-RemoveEndBrackets",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-blockKey"
+      },
+      {
+        "id": "e-removeEnd-buildKey",
+        "source": "node-RemoveEndBrackets",
+        "target": "node-BuildBlockKey",
+        "sourceHandle": "output-parentKey",
+        "targetHandle": "input-parentKey"
+      },
+      {
+        "id": "e-firstAnchor-buildKey-blockKey",
+        "source": "node-FirstButtonAnchor",
+        "target": "node-BuildBlockKey",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-blockKey"
+      },
+      {
+        "id": "e-buildKey-createProp-flowId",
+        "source": "node-BuildBlockKey",
+        "target": "node-CreateProperty",
+        "sourceHandle": "output-blockKey",
+        "targetHandle": "input-flowId"
+      },
+      {
+        "id": "e-deploy-createProp-tableId",
+        "source": "node-DeployButton",
+        "target": "node-CreateProperty",
+        "sourceHandle": "output-tempTableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-firstAnchor-createProp-lineId",
+        "source": "node-FirstButtonAnchor",
+        "target": "node-CreateProperty",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-firstLabelVal-createProp",
+        "source": "node-FirstLabelValue",
+        "target": "node-CreateProperty",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-buttonLabel"
+      },
+      {
+        "id": "e-firstJointIdVal-createProp",
+        "source": "node-FirstJointIdValue",
+        "target": "node-CreateProperty",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-buttonJointId"
+      },
+      {
+        "id": "e-buildKey-buildRow-blockKey",
+        "source": "node-BuildBlockKey",
+        "target": "node-BuildRow",
+        "sourceHandle": "output-blockKey",
+        "targetHandle": "input-blockKey"
+      },
+      {
+        "id": "e-searchTemplate-buildRow-viewType",
+        "source": "node-SearchTemplate",
+        "target": "node-BuildRow",
+        "sourceHandle": "output-viewTemplateType",
+        "targetHandle": "input-viewType"
+      },
+      {
+        "id": "e-searchTemplate-buildRow-editType",
+        "source": "node-SearchTemplate",
+        "target": "node-BuildRow",
+        "sourceHandle": "output-editTemplateType",
+        "targetHandle": "input-editType"
+      },
+      {
+        "id": "e-createProp-buildRow-property",
+        "source": "node-CreateProperty",
+        "target": "node-BuildRow",
+        "sourceHandle": "output-property",
+        "targetHandle": "input-property"
+      },
+      {
+        "id": "e-buildRow-collect",
+        "source": "node-BuildRow",
+        "target": "region-blockKeyZone",
+        "sourceHandle": "output-layoutRow",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-zone-flatten",
+        "source": "region-blockKeyZone",
+        "target": "node-FlattenResults",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-nestedRows"
+      },
+      {
+        "id": "e-flatten-end",
+        "source": "node-FlattenResults",
+        "target": "node-end",
+        "sourceHandle": "output-layoutRows",
+        "targetHandle": "input-layoutRows"
+      }
+    ]
+  }
+}
