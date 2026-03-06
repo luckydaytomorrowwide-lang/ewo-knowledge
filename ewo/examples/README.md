@@ -1,12 +1,11 @@
-# Examples
+# 実例（examples）
 
-このディレクトリにはEWOのテストケースを保存する。
+examples は過去の例を保存します。
 
-各Exampleは以下の構造を持つ。
+- 正しいEWO構造の例
+- テストケース
+- JSON生成の参考
 
-ExampleName/
+として利用します。
 
-input  
-expected  
-log  
-meta.md
+AIが構造を理解したり、新しいJSONを生成するときの参考になります。
