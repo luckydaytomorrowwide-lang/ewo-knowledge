@@ -1,0 +1,389 @@
+{
+  "id": "DemoForEach_SearchDetail",
+  "version": "2.0.0",
+  "name": "DemoForEach_SearchDetail",
+  "description": "ForEach Zone パターン: 検索 → [Zone: FetchDetail → EnrichItem] → Assemble。query='test' で 3件を取得・加工・集約。",
+  "inputs": {
+    "query": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "Search",
+        "operation": "DemoSearchAC",
+        "deps": {
+          "query": {
+            "sourceAcId": "$input",
+            "sourcePort": "query"
+          }
+        },
+        "outputs": {
+          "ids": {},
+          "totalCount": {}
+        }
+      },
+      {
+        "id": "FetchDetail",
+        "operation": "DemoFetchDetailAC",
+        "deps": {
+          "id": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "item"
+          }
+        },
+        "outputs": {
+          "detail": {}
+        }
+      },
+      {
+        "id": "EnrichItem",
+        "operation": "DemoEnrichItemAC",
+        "deps": {
+          "detail": {
+            "sourceAcId": "FetchDetail",
+            "sourcePort": "detail"
+          }
+        },
+        "outputs": {
+          "enrichedItem": {}
+        }
+      },
+      {
+        "id": "Assemble",
+        "operation": "DemoAssembleAC",
+        "deps": {
+          "items": {
+            "sourceAcId": "$zone:detailZone",
+            "sourcePort": "enrichedItems"
+          }
+        },
+        "outputs": {
+          "assembled": {}
+        }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "detailZone",
+        "collectionSource": {
+          "sourceAcId": "Search",
+          "sourcePort": "ids"
+        },
+        "iterationParam": "item",
+        "nodes": [
+          "FetchDetail",
+          "EnrichItem"
+        ],
+        "outputNodeId": "EnrichItem",
+        "outputPort": "enrichedItem",
+        "outputCollection": "enrichedItems",
+        "mode": "parallel"
+      }
+    ],
+    "outputs": {
+      "assembled": "Assemble.assembled"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-Search-to-ZoneInput",
+        "when": {
+          "type": "Search.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "$zone:detailZone.input",
+            "wfid": "DemoForEach_SearchDetail",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FetchDetail-to-EnrichItem",
+        "when": {
+          "type": "FetchDetail.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "EnrichItem.detail",
+            "wfid": "DemoForEach_SearchDetail",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-Zone-to-Assemble",
+        "when": {
+          "type": "$zone:detailZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "Assemble.items",
+            "wfid": "DemoForEach_SearchDetail",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-Assemble",
+        "when": {
+          "type": "Assemble.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoForEach_SearchDetail",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.85
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 200
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-Search",
+        "type": "ewoAc",
+        "position": {
+          "x": 280,
+          "y": 170
+        },
+        "data": {
+          "label": "Search",
+          "operation": "DemoSearchAC",
+          "functionRef": "DemoSearchAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ids",
+              "type": "string[]"
+            },
+            {
+              "name": "totalCount",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-detailZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 530,
+          "y": 80
+        },
+        "style": {
+          "width": "520px",
+          "height": "300px"
+        },
+        "data": {
+          "label": "ForEach Zone: detailZone",
+          "zoneId": "detailZone",
+          "iterationParam": "item",
+          "mode": "parallel"
+        }
+      },
+      {
+        "id": "node-FetchDetail",
+        "type": "ewoAc",
+        "position": {
+          "x": 40,
+          "y": 60
+        },
+        "parentNode": "node-detailZone",
+        "extent": "parent",
+        "data": {
+          "label": "FetchDetail",
+          "operation": "DemoFetchDetailAC",
+          "functionRef": "DemoFetchDetailAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "detail",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-EnrichItem",
+        "type": "ewoAc",
+        "position": {
+          "x": 290,
+          "y": 60
+        },
+        "parentNode": "node-detailZone",
+        "extent": "parent",
+        "data": {
+          "label": "EnrichItem",
+          "operation": "DemoEnrichItemAC",
+          "functionRef": "DemoEnrichItemAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "detail",
+              "type": "object"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "enrichedItem",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-Assemble",
+        "type": "ewoAc",
+        "position": {
+          "x": 1110,
+          "y": 170
+        },
+        "data": {
+          "label": "Assemble",
+          "operation": "DemoAssembleAC",
+          "functionRef": "DemoAssembleAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "items",
+              "type": "object[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "assembled",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1400,
+          "y": 200
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "assembled",
+              "type": "object"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-search",
+        "source": "node-start",
+        "target": "node-Search",
+        "sourceHandle": "output-query",
+        "targetHandle": "input-query"
+      },
+      {
+        "id": "e-search-zone",
+        "source": "node-Search",
+        "target": "node-detailZone",
+        "sourceHandle": "output-ids",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-zone-iter-fetch",
+        "source": "node-detailZone",
+        "target": "node-FetchDetail",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-id"
+      },
+      {
+        "id": "e-fetch-enrich",
+        "source": "node-FetchDetail",
+        "target": "node-EnrichItem",
+        "sourceHandle": "output-detail",
+        "targetHandle": "input-detail"
+      },
+      {
+        "id": "e-enrich-zone-collect",
+        "source": "node-EnrichItem",
+        "target": "node-detailZone",
+        "sourceHandle": "output-enrichedItem",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-zone-assemble",
+        "source": "node-detailZone",
+        "target": "node-Assemble",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-items"
+      },
+      {
+        "id": "e-assemble-end",
+        "source": "node-Assemble",
+        "target": "node-end",
+        "sourceHandle": "output-assembled",
+        "targetHandle": "input-assembled"
+      }
+    ]
+  }
+}

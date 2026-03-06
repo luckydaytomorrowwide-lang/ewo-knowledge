@@ -1,0 +1,343 @@
+{
+  "id": "DemoSwitch_TicketView",
+  "version": "1.0.0",
+  "name": "DemoSwitch_TicketView",
+  "description": "EWO 12.3 Switch＋外部WF（boundary=true）パターン: チケット保有判定 → 未保有なら購入（子WF）→ 画像閲覧。",
+  "inputs": {
+    "userId": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "CheckTicket",
+        "operation": "DemoCheckTicketAC",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          }
+        },
+        "outputs": {
+          "hasTicket": {},
+          "ticketId": {}
+        }
+      },
+      {
+        "id": "PurchaseTicket",
+        "operation": "DemoPurchaseTicketAC",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          },
+          "hasTicket": {
+            "sourceAcId": "CheckTicket",
+            "sourcePort": "hasTicket"
+          }
+        },
+        "outputs": {
+          "ticketId": {},
+          "receipt": {}
+        },
+        "guard": ".hasTicket == false",
+        "wfCall": {
+          "callee": "DemoWF-PurchaseTicket",
+          "boundary": true
+        }
+      },
+      {
+        "id": "ViewImage",
+        "operation": "DemoViewImageAC",
+        "deps": {
+          "ticketId": {
+            "oneOf": [
+              {
+                "sourceAcId": "CheckTicket",
+                "sourcePort": "ticketId"
+              },
+              {
+                "sourceAcId": "PurchaseTicket",
+                "sourcePort": "ticketId"
+              }
+            ]
+          }
+        },
+        "outputs": {
+          "imageUrl": {},
+          "viewedAt": {}
+        }
+      }
+    ],
+    "outputs": {
+      "imageUrl": "ViewImage.imageUrl",
+      "viewedAt": "ViewImage.viewedAt"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-CheckTicket",
+        "when": {
+          "type": "CheckTicket.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "CheckTicket.result",
+            "wfid": "DemoSwitch_TicketView",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "PurchaseTicket.hasTicket",
+            "wfid": "DemoSwitch_TicketView",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ViewImage.ticketId",
+            "wfid": "DemoSwitch_TicketView",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-PurchaseTicket",
+        "when": {
+          "type": "PurchaseTicket.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ViewImage.ticketId",
+            "wfid": "DemoSwitch_TicketView",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-ViewImage",
+        "when": {
+          "type": "ViewImage.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoSwitch_TicketView",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.8
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 200
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-CheckTicket",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 170
+        },
+        "data": {
+          "label": "CheckTicket",
+          "operation": "DemoCheckTicketAC",
+          "functionRef": "DemoCheckTicketAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "hasTicket",
+              "type": "boolean"
+            },
+            {
+              "name": "ticketId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-PurchaseTicket",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 640,
+          "y": 50
+        },
+        "data": {
+          "label": "PurchaseTicket",
+          "operation": "DemoPurchaseTicketAC",
+          "functionRef": "DemoPurchaseTicketAC",
+          "nodeType": "wfCall",
+          "guard": ".hasTicket == false",
+          "wfCall": {
+            "callee": "DemoWF-PurchaseTicket",
+            "boundary": true
+          },
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            },
+            {
+              "name": "hasTicket",
+              "type": "boolean"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ticketId",
+              "type": "string"
+            },
+            {
+              "name": "receipt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ViewImage",
+        "type": "ewoAc",
+        "position": {
+          "x": 960,
+          "y": 190
+        },
+        "data": {
+          "label": "ViewImage",
+          "operation": "DemoViewImageAC",
+          "functionRef": "DemoViewImageAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "ticketId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "imageUrl",
+              "type": "string"
+            },
+            {
+              "name": "viewedAt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1260,
+          "y": 210
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "imageUrl",
+              "type": "string"
+            },
+            {
+              "name": "viewedAt",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-checkticket",
+        "source": "node-start",
+        "target": "node-CheckTicket",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-checkticket-purchase-hasticket",
+        "source": "node-CheckTicket",
+        "target": "node-PurchaseTicket",
+        "sourceHandle": "output-hasTicket",
+        "targetHandle": "input-hasTicket"
+      },
+      {
+        "id": "e-start-purchase-userid",
+        "source": "node-start",
+        "target": "node-PurchaseTicket",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-checkticket-viewimage",
+        "source": "node-CheckTicket",
+        "target": "node-ViewImage",
+        "sourceHandle": "output-ticketId",
+        "targetHandle": "input-ticketId"
+      },
+      {
+        "id": "e-purchase-viewimage",
+        "source": "node-PurchaseTicket",
+        "target": "node-ViewImage",
+        "sourceHandle": "output-ticketId",
+        "targetHandle": "input-ticketId"
+      },
+      {
+        "id": "e-viewimage-end-imageurl",
+        "source": "node-ViewImage",
+        "target": "node-end",
+        "sourceHandle": "output-imageUrl",
+        "targetHandle": "input-imageUrl"
+      },
+      {
+        "id": "e-viewimage-end-viewedat",
+        "source": "node-ViewImage",
+        "target": "node-end",
+        "sourceHandle": "output-viewedAt",
+        "targetHandle": "input-viewedAt"
+      }
+    ]
+  }
+}

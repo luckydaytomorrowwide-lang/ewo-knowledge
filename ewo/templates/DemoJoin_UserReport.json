@@ -1,0 +1,281 @@
+{
+  "id": "DemoJoin_UserReport",
+  "version": "1.0.0",
+  "name": "DemoJoin_UserReport",
+  "description": "EWO 12.2 Joinパターン: LoadProfile と LoadBilling が揃ったら MakeReport を生成。",
+  "inputs": {
+    "userId": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "LoadProfile",
+        "operation": "DemoLoadProfileAC",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          }
+        },
+        "outputs": {
+          "profile": {}
+        }
+      },
+      {
+        "id": "LoadBilling",
+        "operation": "DemoLoadBillingAC",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          }
+        },
+        "outputs": {
+          "billing": {}
+        }
+      },
+      {
+        "id": "MakeReport",
+        "operation": "DemoMakeReportAC",
+        "deps": {
+          "profile": {
+            "sourceAcId": "LoadProfile",
+            "sourcePort": "profile"
+          },
+          "billing": {
+            "sourceAcId": "LoadBilling",
+            "sourcePort": "billing"
+          }
+        },
+        "outputs": {
+          "report": {}
+        }
+      }
+    ],
+    "outputs": {
+      "report": "MakeReport.report"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-LoadProfile",
+        "when": {
+          "type": "LoadProfile.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "MakeReport.profile",
+            "wfid": "DemoJoin_UserReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-LoadBilling",
+        "when": {
+          "type": "LoadBilling.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "MakeReport.billing",
+            "wfid": "DemoJoin_UserReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-MakeReport",
+        "when": {
+          "type": "MakeReport.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoJoin_UserReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.85
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 200
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-LoadProfile",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 60
+        },
+        "data": {
+          "label": "LoadProfile",
+          "operation": "DemoLoadProfileAC",
+          "functionRef": "DemoLoadProfileAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "profile",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-LoadBilling",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 320
+        },
+        "data": {
+          "label": "LoadBilling",
+          "operation": "DemoLoadBillingAC",
+          "functionRef": "DemoLoadBillingAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "billing",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-MakeReport",
+        "type": "ewoAc",
+        "position": {
+          "x": 640,
+          "y": 180
+        },
+        "data": {
+          "label": "MakeReport",
+          "operation": "DemoMakeReportAC",
+          "functionRef": "DemoMakeReportAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "profile",
+              "type": "object"
+            },
+            {
+              "name": "billing",
+              "type": "object"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "report",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 960,
+          "y": 200
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "report",
+              "type": "object"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-profile",
+        "source": "node-start",
+        "target": "node-LoadProfile",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-start-billing",
+        "source": "node-start",
+        "target": "node-LoadBilling",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-profile-report",
+        "source": "node-LoadProfile",
+        "target": "node-MakeReport",
+        "sourceHandle": "output-profile",
+        "targetHandle": "input-profile"
+      },
+      {
+        "id": "e-billing-report",
+        "source": "node-LoadBilling",
+        "target": "node-MakeReport",
+        "sourceHandle": "output-billing",
+        "targetHandle": "input-billing"
+      },
+      {
+        "id": "e-report-end",
+        "source": "node-MakeReport",
+        "target": "node-end",
+        "sourceHandle": "output-report",
+        "targetHandle": "input-report"
+      }
+    ]
+  }
+}

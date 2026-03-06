@@ -1,0 +1,362 @@
+{
+  "id": "DemoRecursive_TreeWalk",
+  "version": "1.0.0",
+  "name": "DemoRecursive_TreeWalk",
+  "description": "再帰wfCallパターン: GetChildren → [ForEach children: wfCall(self, boundary=true)] → AssembleTree。末端は空children→ForEach即完了で終了。",
+  "inputs": {
+    "nodeId": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "GetChildren",
+        "operation": "DemoGetChildrenAC",
+        "deps": {
+          "nodeId": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeId"
+          }
+        },
+        "outputs": {
+          "label": {},
+          "children": {}
+        }
+      },
+      {
+        "id": "RecursiveWalk",
+        "operation": "DemoRecursive_TreeWalk",
+        "deps": {
+          "nodeId": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "childItem"
+          }
+        },
+        "outputs": {
+          "tree": {}
+        },
+        "wfCall": {
+          "callee": "DemoRecursive_TreeWalk",
+          "boundary": true,
+          "recursive": true,
+          "policy": {
+            "maxRecursionDepth": 10
+          }
+        }
+      },
+      {
+        "id": "AssembleTree",
+        "operation": "DemoAssembleTreeAC",
+        "deps": {
+          "label": {
+            "sourceAcId": "GetChildren",
+            "sourcePort": "label"
+          },
+          "childTrees": {
+            "sourceAcId": "$zone:childZone",
+            "sourcePort": "childTrees"
+          }
+        },
+        "outputs": {
+          "tree": {}
+        }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "childZone",
+        "collectionSource": {
+          "sourceAcId": "GetChildren",
+          "sourcePort": "children"
+        },
+        "iterationParam": "childItem",
+        "nodes": [
+          "RecursiveWalk"
+        ],
+        "outputNodeId": "RecursiveWalk",
+        "outputPort": "tree",
+        "outputCollection": "childTrees"
+      }
+    ],
+    "outputs": {
+      "tree": "AssembleTree.tree"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-GetChildren",
+        "when": {
+          "type": "GetChildren.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "$zone:childZone.input",
+            "wfid": "DemoRecursive_TreeWalk",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "AssembleTree.label",
+            "wfid": "DemoRecursive_TreeWalk",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RecursiveWalk",
+        "when": {
+          "type": "RecursiveWalk.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": []
+      },
+      {
+        "id": "R-$zone:childZone",
+        "when": {
+          "type": "$zone:childZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "AssembleTree.childTrees",
+            "wfid": "DemoRecursive_TreeWalk",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-AssembleTree",
+        "when": {
+          "type": "AssembleTree.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoRecursive_TreeWalk",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.85
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 180
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "nodeId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-GetChildren",
+        "type": "ewoAc",
+        "position": {
+          "x": 280,
+          "y": 180
+        },
+        "data": {
+          "label": "GetChildren",
+          "operation": "DemoGetChildrenAC",
+          "inputs": [
+            {
+              "name": "nodeId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "label",
+              "type": "string"
+            },
+            {
+              "name": "children",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "region-childZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 530,
+          "y": 60
+        },
+        "style": {
+          "width": "360px",
+          "height": "280px"
+        },
+        "data": {
+          "label": "ChildZone",
+          "zoneId": "childZone",
+          "iterationParam": "childItem",
+          "outputCollection": "childTrees"
+        }
+      },
+      {
+        "id": "node-RecursiveWalk",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 50,
+          "y": 80
+        },
+        "parentNode": "region-childZone",
+        "extent": "parent",
+        "data": {
+          "label": "RecursiveWalk",
+          "operation": "DemoRecursive_TreeWalk",
+          "inputs": [
+            {
+              "name": "nodeId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tree",
+              "type": "object"
+            }
+          ],
+          "wfCall": {
+            "callee": "DemoRecursive_TreeWalk",
+            "boundary": true,
+            "recursive": true,
+            "policy": {
+              "maxRecursionDepth": 10
+            }
+          }
+        }
+      },
+      {
+        "id": "node-AssembleTree",
+        "type": "ewoAc",
+        "position": {
+          "x": 950,
+          "y": 180
+        },
+        "data": {
+          "label": "AssembleTree",
+          "operation": "DemoAssembleTreeAC",
+          "inputs": [
+            {
+              "name": "label",
+              "type": "string"
+            },
+            {
+              "name": "childTrees",
+              "type": "object[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tree",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1200,
+          "y": 210
+        },
+        "data": {
+          "outputs": [
+            {
+              "name": "tree",
+              "type": "object"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-get",
+        "source": "node-start",
+        "target": "node-GetChildren",
+        "sourceHandle": "output-nodeId",
+        "targetHandle": "input-nodeId"
+      },
+      {
+        "id": "e-get-zone",
+        "source": "node-GetChildren",
+        "target": "region-childZone",
+        "sourceHandle": "output-children",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-zone-iter",
+        "source": "region-childZone",
+        "target": "node-RecursiveWalk",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-nodeId"
+      },
+      {
+        "id": "e-rec-collect",
+        "source": "node-RecursiveWalk",
+        "target": "region-childZone",
+        "sourceHandle": "output-tree",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-zone-assemble",
+        "source": "region-childZone",
+        "target": "node-AssembleTree",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-childTrees"
+      },
+      {
+        "id": "e-get-assemble-label",
+        "source": "node-GetChildren",
+        "target": "node-AssembleTree",
+        "sourceHandle": "output-label",
+        "targetHandle": "input-label"
+      },
+      {
+        "id": "e-assemble-end",
+        "source": "node-AssembleTree",
+        "target": "node-end",
+        "sourceHandle": "output-tree",
+        "targetHandle": "input-tree"
+      }
+    ]
+  }
+}

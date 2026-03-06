@@ -1,0 +1,308 @@
+{
+  "id": "DemoWF-PurchaseTicket",
+  "version": "1.0.0",
+  "name": "DemoWF-PurchaseTicket",
+  "description": "子WF: ユーザー検証 → 決済処理 → チケット発行。親WFから wfCall で呼び出される。",
+  "inputs": {
+    "userId": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "ValidateUser",
+        "operation": "DemoValidateUserAC",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          }
+        },
+        "outputs": {
+          "valid": {},
+          "userName": {}
+        }
+      },
+      {
+        "id": "ProcessPayment",
+        "operation": "DemoProcessPaymentAC",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          },
+          "valid": {
+            "sourceAcId": "ValidateUser",
+            "sourcePort": "valid"
+          }
+        },
+        "outputs": {
+          "paymentId": {},
+          "amount": {}
+        }
+      },
+      {
+        "id": "IssueTicket",
+        "operation": "DemoIssueTicketAC",
+        "deps": {
+          "paymentId": {
+            "sourceAcId": "ProcessPayment",
+            "sourcePort": "paymentId"
+          }
+        },
+        "outputs": {
+          "ticketId": {},
+          "receipt": {}
+        }
+      }
+    ],
+    "outputs": {
+      "ticketId": "IssueTicket.ticketId",
+      "receipt": "IssueTicket.receipt"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-ValidateUser",
+        "when": {
+          "type": "ValidateUser.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ProcessPayment.valid",
+            "wfid": "DemoWF-PurchaseTicket",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-ProcessPayment",
+        "when": {
+          "type": "ProcessPayment.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "IssueTicket.paymentId",
+            "wfid": "DemoWF-PurchaseTicket",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-IssueTicket",
+        "when": {
+          "type": "IssueTicket.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoWF-PurchaseTicket",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.8
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 150
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ValidateUser",
+        "type": "ewoAc",
+        "position": {
+          "x": 300,
+          "y": 120
+        },
+        "data": {
+          "label": "ValidateUser",
+          "operation": "DemoValidateUserAC",
+          "functionRef": "DemoValidateUserAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "valid",
+              "type": "boolean"
+            },
+            {
+              "name": "userName",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ProcessPayment",
+        "type": "ewoAc",
+        "position": {
+          "x": 580,
+          "y": 120
+        },
+        "data": {
+          "label": "ProcessPayment",
+          "operation": "DemoProcessPaymentAC",
+          "functionRef": "DemoProcessPaymentAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            },
+            {
+              "name": "valid",
+              "type": "boolean"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "paymentId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-IssueTicket",
+        "type": "ewoAc",
+        "position": {
+          "x": 860,
+          "y": 120
+        },
+        "data": {
+          "label": "IssueTicket",
+          "operation": "DemoIssueTicketAC",
+          "functionRef": "DemoIssueTicketAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "paymentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ticketId",
+              "type": "string"
+            },
+            {
+              "name": "receipt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1140,
+          "y": 150
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "ticketId",
+              "type": "string"
+            },
+            {
+              "name": "receipt",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-validate",
+        "source": "node-start",
+        "target": "node-ValidateUser",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-start-payment-userid",
+        "source": "node-start",
+        "target": "node-ProcessPayment",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-validate-payment",
+        "source": "node-ValidateUser",
+        "target": "node-ProcessPayment",
+        "sourceHandle": "output-valid",
+        "targetHandle": "input-valid"
+      },
+      {
+        "id": "e-payment-issue",
+        "source": "node-ProcessPayment",
+        "target": "node-IssueTicket",
+        "sourceHandle": "output-paymentId",
+        "targetHandle": "input-paymentId"
+      },
+      {
+        "id": "e-issue-end-ticketid",
+        "source": "node-IssueTicket",
+        "target": "node-end",
+        "sourceHandle": "output-ticketId",
+        "targetHandle": "input-ticketId"
+      },
+      {
+        "id": "e-issue-end-receipt",
+        "source": "node-IssueTicket",
+        "target": "node-end",
+        "sourceHandle": "output-receipt",
+        "targetHandle": "input-receipt"
+      }
+    ]
+  }
+}

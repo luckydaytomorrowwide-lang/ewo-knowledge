@@ -1,0 +1,261 @@
+{
+  "id": "DemoLiteral_TaxCalc",
+  "version": "1.0.0",
+  "name": "DemoLiteral_TaxCalc",
+  "description": "リテラルパターン: 固定値の taxRate(0.1) と storeName('Demo Shop') をリテラルノードで AC に渡す。price=1000 のとき receipt='[Demo Shop] Total: ¥1100'。",
+  "inputs": {
+    "price": {
+      "schema": "number"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "CalcTax",
+        "operation": "DemoCalcTaxAC",
+        "deps": {
+          "price": {
+            "sourceAcId": "$input",
+            "sourcePort": "price"
+          },
+          "taxRate": {
+            "literal": 0.1
+          }
+        },
+        "outputs": {
+          "tax": {},
+          "totalPrice": {}
+        }
+      },
+      {
+        "id": "FormatReceipt",
+        "operation": "DemoFormatReceiptAC",
+        "deps": {
+          "totalPrice": {
+            "sourceAcId": "CalcTax",
+            "sourcePort": "totalPrice"
+          },
+          "storeName": {
+            "literal": "Demo Shop"
+          }
+        },
+        "outputs": {
+          "receipt": {}
+        }
+      }
+    ],
+    "outputs": {
+      "receipt": "FormatReceipt.receipt"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-CalcTax",
+        "when": {
+          "type": "CalcTax.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FormatReceipt.totalPrice",
+            "wfid": "DemoLiteral_TaxCalc",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FormatReceipt",
+        "when": {
+          "type": "FormatReceipt.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoLiteral_TaxCalc",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.85
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 160
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "price",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-literal-taxRate",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 280,
+          "y": 30
+        },
+        "data": {
+          "label": "taxRate",
+          "value": 0.1,
+          "valueType": "number"
+        }
+      },
+      {
+        "id": "node-CalcTax",
+        "type": "ewoAc",
+        "position": {
+          "x": 420,
+          "y": 130
+        },
+        "data": {
+          "label": "CalcTax",
+          "operation": "DemoCalcTaxAC",
+          "functionRef": "DemoCalcTaxAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "price",
+              "type": "number"
+            },
+            {
+              "name": "taxRate",
+              "type": "number"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tax",
+              "type": "number"
+            },
+            {
+              "name": "totalPrice",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-literal-storeName",
+        "type": "ewoLiteral",
+        "position": {
+          "x": 620,
+          "y": 30
+        },
+        "data": {
+          "label": "storeName",
+          "value": "Demo Shop",
+          "valueType": "string"
+        }
+      },
+      {
+        "id": "node-FormatReceipt",
+        "type": "ewoAc",
+        "position": {
+          "x": 760,
+          "y": 130
+        },
+        "data": {
+          "label": "FormatReceipt",
+          "operation": "DemoFormatReceiptAC",
+          "functionRef": "DemoFormatReceiptAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "totalPrice",
+              "type": "number"
+            },
+            {
+              "name": "storeName",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "receipt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1080,
+          "y": 160
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "receipt",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-calctax",
+        "source": "node-start",
+        "target": "node-CalcTax",
+        "sourceHandle": "output-price",
+        "targetHandle": "input-price"
+      },
+      {
+        "id": "e-literal-taxrate",
+        "source": "node-literal-taxRate",
+        "target": "node-CalcTax",
+        "sourceHandle": "output-value",
+        "targetHandle": "input-taxRate"
+      },
+      {
+        "id": "e-calctax-formatreceipt",
+        "source": "node-CalcTax",
+        "target": "node-FormatReceipt",
+        "sourceHandle": "output-totalPrice",
+        "targetHandle": "input-totalPrice"
+      },
+      {
+        "id": "e-literal-storename",
+        "source": "node-literal-storeName",
+        "target": "node-FormatReceipt",
+        "sourceHandle": "output-value",
+        "targetHandle": "input-storeName"
+      },
+      {
+        "id": "e-formatreceipt-end",
+        "source": "node-FormatReceipt",
+        "target": "node-end",
+        "sourceHandle": "output-receipt",
+        "targetHandle": "input-receipt"
+      }
+    ]
+  }
+}

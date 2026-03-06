@@ -1,0 +1,565 @@
+{
+  "id": "DemoSwitchMerge_OrderProcess",
+  "version": "1.0.0",
+  "name": "DemoSwitchMerge_OrderProcess",
+  "description": "Switch分岐＋合流パターン: ClassifyOrder → standard/express 分岐 → FinalizeOrder で合流。amount<10000 は standard(5日), amount>=10000 は express(1日)。",
+  "inputs": {
+    "orderId": {
+      "schema": "string"
+    },
+    "amount": {
+      "schema": "number"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "ClassifyOrder",
+        "operation": "DemoClassifyOrderAC",
+        "deps": {
+          "orderId": {
+            "sourceAcId": "$input",
+            "sourcePort": "orderId"
+          },
+          "amount": {
+            "sourceAcId": "$input",
+            "sourcePort": "amount"
+          }
+        },
+        "outputs": {
+          "orderType": {},
+          "orderId": {},
+          "amount": {}
+        }
+      },
+      {
+        "id": "ProcessStandard",
+        "operation": "DemoProcessStandardAC",
+        "deps": {
+          "orderId": {
+            "sourceAcId": "ClassifyOrder",
+            "sourcePort": "orderId"
+          },
+          "amount": {
+            "sourceAcId": "ClassifyOrder",
+            "sourcePort": "amount"
+          },
+          "orderType": {
+            "sourceAcId": "ClassifyOrder",
+            "sourcePort": "orderType"
+          }
+        },
+        "outputs": {
+          "shipment": {}
+        },
+        "guard": ".orderType == \"standard\""
+      },
+      {
+        "id": "ValidateExpress",
+        "operation": "DemoValidateExpressAC",
+        "deps": {
+          "orderId": {
+            "sourceAcId": "ClassifyOrder",
+            "sourcePort": "orderId"
+          },
+          "amount": {
+            "sourceAcId": "ClassifyOrder",
+            "sourcePort": "amount"
+          },
+          "orderType": {
+            "sourceAcId": "ClassifyOrder",
+            "sourcePort": "orderType"
+          }
+        },
+        "outputs": {
+          "orderId": {},
+          "expressCharge": {},
+          "validated": {}
+        },
+        "guard": ".orderType == \"express\""
+      },
+      {
+        "id": "ShipExpress",
+        "operation": "DemoShipExpressAC",
+        "deps": {
+          "orderId": {
+            "sourceAcId": "ValidateExpress",
+            "sourcePort": "orderId"
+          },
+          "expressCharge": {
+            "sourceAcId": "ValidateExpress",
+            "sourcePort": "expressCharge"
+          }
+        },
+        "outputs": {
+          "shipment": {}
+        }
+      },
+      {
+        "id": "FinalizeOrder",
+        "operation": "DemoFinalizeOrderAC",
+        "deps": {
+          "shipment": {
+            "oneOf": [
+              {
+                "sourceAcId": "ProcessStandard",
+                "sourcePort": "shipment"
+              },
+              {
+                "sourceAcId": "ShipExpress",
+                "sourcePort": "shipment"
+              }
+            ]
+          }
+        },
+        "outputs": {
+          "confirmation": {}
+        }
+      }
+    ],
+    "outputs": {
+      "confirmation": "FinalizeOrder.confirmation"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-ClassifyOrder",
+        "when": {
+          "type": "ClassifyOrder.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ClassifyOrder.fanout",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ProcessStandard.orderId",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ProcessStandard.amount",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ProcessStandard.orderType",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ValidateExpress.orderId",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ValidateExpress.amount",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ValidateExpress.orderType",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-ProcessStandard",
+        "when": {
+          "type": "ProcessStandard.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FinalizeOrder.shipment",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-ValidateExpress",
+        "when": {
+          "type": "ValidateExpress.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ShipExpress.orderId",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ShipExpress.expressCharge",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-ShipExpress",
+        "when": {
+          "type": "ShipExpress.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FinalizeOrder.shipment",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FinalizeOrder",
+        "when": {
+          "type": "FinalizeOrder.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoSwitchMerge_OrderProcess",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.7
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 220
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "orderId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ClassifyOrder",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 180
+        },
+        "data": {
+          "label": "ClassifyOrder",
+          "operation": "DemoClassifyOrderAC",
+          "functionRef": "DemoClassifyOrderAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "orderId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "orderType",
+              "type": "string"
+            },
+            {
+              "name": "orderId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ProcessStandard",
+        "type": "ewoAc",
+        "position": {
+          "x": 660,
+          "y": 50
+        },
+        "data": {
+          "label": "ProcessStandard",
+          "operation": "DemoProcessStandardAC",
+          "functionRef": "DemoProcessStandardAC",
+          "nodeType": "activity",
+          "guard": ".orderType == \"standard\"",
+          "inputs": [
+            {
+              "name": "orderId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            },
+            {
+              "name": "orderType",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "shipment",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ValidateExpress",
+        "type": "ewoAc",
+        "position": {
+          "x": 660,
+          "y": 350
+        },
+        "data": {
+          "label": "ValidateExpress",
+          "operation": "DemoValidateExpressAC",
+          "functionRef": "DemoValidateExpressAC",
+          "nodeType": "activity",
+          "guard": ".orderType == \"express\"",
+          "inputs": [
+            {
+              "name": "orderId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            },
+            {
+              "name": "orderType",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "orderId",
+              "type": "string"
+            },
+            {
+              "name": "expressCharge",
+              "type": "number"
+            },
+            {
+              "name": "validated",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ShipExpress",
+        "type": "ewoAc",
+        "position": {
+          "x": 980,
+          "y": 370
+        },
+        "data": {
+          "label": "ShipExpress",
+          "operation": "DemoShipExpressAC",
+          "functionRef": "DemoShipExpressAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "orderId",
+              "type": "string"
+            },
+            {
+              "name": "expressCharge",
+              "type": "number"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "shipment",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FinalizeOrder",
+        "type": "ewoAc",
+        "position": {
+          "x": 1300,
+          "y": 200
+        },
+        "data": {
+          "label": "FinalizeOrder",
+          "operation": "DemoFinalizeOrderAC",
+          "functionRef": "DemoFinalizeOrderAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "shipment",
+              "type": "object"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "confirmation",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1600,
+          "y": 220
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "confirmation",
+              "type": "object"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-classify-orderId",
+        "source": "node-start",
+        "target": "node-ClassifyOrder",
+        "sourceHandle": "output-orderId",
+        "targetHandle": "input-orderId"
+      },
+      {
+        "id": "e-start-classify-amount",
+        "source": "node-start",
+        "target": "node-ClassifyOrder",
+        "sourceHandle": "output-amount",
+        "targetHandle": "input-amount"
+      },
+      {
+        "id": "e-classify-standard-orderId",
+        "source": "node-ClassifyOrder",
+        "target": "node-ProcessStandard",
+        "sourceHandle": "output-orderId",
+        "targetHandle": "input-orderId"
+      },
+      {
+        "id": "e-classify-standard-amount",
+        "source": "node-ClassifyOrder",
+        "target": "node-ProcessStandard",
+        "sourceHandle": "output-amount",
+        "targetHandle": "input-amount"
+      },
+      {
+        "id": "e-classify-standard-orderType",
+        "source": "node-ClassifyOrder",
+        "target": "node-ProcessStandard",
+        "sourceHandle": "output-orderType",
+        "targetHandle": "input-orderType"
+      },
+      {
+        "id": "e-classify-express-orderId",
+        "source": "node-ClassifyOrder",
+        "target": "node-ValidateExpress",
+        "sourceHandle": "output-orderId",
+        "targetHandle": "input-orderId"
+      },
+      {
+        "id": "e-classify-express-amount",
+        "source": "node-ClassifyOrder",
+        "target": "node-ValidateExpress",
+        "sourceHandle": "output-amount",
+        "targetHandle": "input-amount"
+      },
+      {
+        "id": "e-classify-express-orderType",
+        "source": "node-ClassifyOrder",
+        "target": "node-ValidateExpress",
+        "sourceHandle": "output-orderType",
+        "targetHandle": "input-orderType"
+      },
+      {
+        "id": "e-validate-ship-orderId",
+        "source": "node-ValidateExpress",
+        "target": "node-ShipExpress",
+        "sourceHandle": "output-orderId",
+        "targetHandle": "input-orderId"
+      },
+      {
+        "id": "e-validate-ship-expressCharge",
+        "source": "node-ValidateExpress",
+        "target": "node-ShipExpress",
+        "sourceHandle": "output-expressCharge",
+        "targetHandle": "input-expressCharge"
+      },
+      {
+        "id": "e-standard-finalize",
+        "source": "node-ProcessStandard",
+        "target": "node-FinalizeOrder",
+        "sourceHandle": "output-shipment",
+        "targetHandle": "input-shipment"
+      },
+      {
+        "id": "e-ship-finalize",
+        "source": "node-ShipExpress",
+        "target": "node-FinalizeOrder",
+        "sourceHandle": "output-shipment",
+        "targetHandle": "input-shipment"
+      },
+      {
+        "id": "e-finalize-end",
+        "source": "node-FinalizeOrder",
+        "target": "node-end",
+        "sourceHandle": "output-confirmation",
+        "targetHandle": "input-confirmation"
+      }
+    ]
+  }
+}

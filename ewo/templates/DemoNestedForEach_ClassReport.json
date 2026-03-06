@@ -1,0 +1,525 @@
+{
+  "id": "DemoNestedForEach_ClassReport",
+  "version": "1.0.0",
+  "name": "DemoNestedForEach_ClassReport",
+  "description": "ネストForEach Zoneパターン: FetchStudents → [StudentZone: FetchGrades → [GradeZone: NormalizeGrade] → SummarizeStudent] → BuildClassReport",
+  "inputs": {
+    "classId": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "FetchStudents",
+        "operation": "DemoFetchStudentsAC",
+        "deps": {
+          "classId": {
+            "sourceAcId": "$input",
+            "sourcePort": "classId"
+          }
+        },
+        "outputs": {
+          "studentIds": {}
+        }
+      },
+      {
+        "id": "FetchGrades",
+        "operation": "DemoFetchGradesAC",
+        "deps": {
+          "studentId": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "student"
+          }
+        },
+        "outputs": {
+          "grades": {},
+          "studentName": {}
+        }
+      },
+      {
+        "id": "NormalizeGrade",
+        "operation": "DemoNormalizeGradeAC",
+        "deps": {
+          "grade": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "gradeItem"
+          }
+        },
+        "outputs": {
+          "normalizedScore": {}
+        }
+      },
+      {
+        "id": "SummarizeStudent",
+        "operation": "DemoSummarizeStudentAC",
+        "deps": {
+          "studentName": {
+            "sourceAcId": "FetchGrades",
+            "sourcePort": "studentName"
+          },
+          "normalizedScores": {
+            "sourceAcId": "$zone:gradeZone",
+            "sourcePort": "normalizedScores"
+          }
+        },
+        "outputs": {
+          "summary": {}
+        }
+      },
+      {
+        "id": "BuildClassReport",
+        "operation": "DemoBuildClassReportAC",
+        "deps": {
+          "summaries": {
+            "sourceAcId": "$zone:studentZone",
+            "sourcePort": "summaries"
+          }
+        },
+        "outputs": {
+          "report": {}
+        }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "studentZone",
+        "collectionSource": {
+          "sourceAcId": "FetchStudents",
+          "sourcePort": "studentIds"
+        },
+        "iterationParam": "student",
+        "nodes": [
+          "FetchGrades",
+          "SummarizeStudent"
+        ],
+        "childZones": [
+          {
+            "id": "gradeZone",
+            "collectionSource": {
+              "sourceAcId": "FetchGrades",
+              "sourcePort": "grades"
+            },
+            "iterationParam": "gradeItem",
+            "nodes": [
+              "NormalizeGrade"
+            ],
+            "outputNodeId": "NormalizeGrade",
+            "outputPort": "normalizedScore",
+            "outputCollection": "normalizedScores"
+          }
+        ],
+        "outputNodeId": "SummarizeStudent",
+        "outputPort": "summary",
+        "outputCollection": "summaries"
+      }
+    ],
+    "outputs": {
+      "report": "BuildClassReport.report"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-FetchStudents",
+        "when": {
+          "type": "FetchStudents.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "$zone:studentZone.input",
+            "wfid": "DemoNestedForEach_ClassReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FetchGrades",
+        "when": {
+          "type": "FetchGrades.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "SummarizeStudent.studentName",
+            "wfid": "DemoNestedForEach_ClassReport",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "$zone:gradeZone.input",
+            "wfid": "DemoNestedForEach_ClassReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-NormalizeGrade",
+        "when": {
+          "type": "NormalizeGrade.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": []
+      },
+      {
+        "id": "R-gradeZone",
+        "when": {
+          "type": "$zone:gradeZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "SummarizeStudent.normalizedScores",
+            "wfid": "DemoNestedForEach_ClassReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-studentZone",
+        "when": {
+          "type": "$zone:studentZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "BuildClassReport.summaries",
+            "wfid": "DemoNestedForEach_ClassReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-BuildClassReport",
+        "when": {
+          "type": "BuildClassReport.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoNestedForEach_ClassReport",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.85
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 200
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "classId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FetchStudents",
+        "type": "ewoAc",
+        "position": {
+          "x": 280,
+          "y": 200
+        },
+        "data": {
+          "label": "FetchStudents",
+          "operation": "DemoFetchStudentsAC",
+          "inputs": [
+            {
+              "name": "classId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "studentIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "region-studentZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 520,
+          "y": 50
+        },
+        "style": {
+          "width": "820px",
+          "height": "380px"
+        },
+        "data": {
+          "label": "StudentZone",
+          "zoneId": "studentZone",
+          "iterationParam": "student",
+          "outputCollection": "summaries"
+        }
+      },
+      {
+        "id": "node-FetchGrades",
+        "type": "ewoAc",
+        "position": {
+          "x": 40,
+          "y": 80
+        },
+        "parentNode": "region-studentZone",
+        "extent": "parent",
+        "data": {
+          "label": "FetchGrades",
+          "operation": "DemoFetchGradesAC",
+          "inputs": [
+            {
+              "name": "studentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "grades",
+              "type": "object[]"
+            },
+            {
+              "name": "studentName",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "region-gradeZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 240,
+          "y": 60
+        },
+        "parentNode": "region-studentZone",
+        "extent": "parent",
+        "style": {
+          "width": "280px",
+          "height": "200px"
+        },
+        "data": {
+          "label": "GradeZone",
+          "zoneId": "gradeZone",
+          "iterationParam": "gradeItem",
+          "outputCollection": "normalizedScores"
+        }
+      },
+      {
+        "id": "node-NormalizeGrade",
+        "type": "ewoAc",
+        "position": {
+          "x": 40,
+          "y": 80
+        },
+        "parentNode": "region-gradeZone",
+        "extent": "parent",
+        "data": {
+          "label": "NormalizeGrade",
+          "operation": "DemoNormalizeGradeAC",
+          "inputs": [
+            {
+              "name": "grade",
+              "type": "object"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "normalizedScore",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-SummarizeStudent",
+        "type": "ewoAc",
+        "position": {
+          "x": 560,
+          "y": 120
+        },
+        "parentNode": "region-studentZone",
+        "extent": "parent",
+        "data": {
+          "label": "SummarizeStudent",
+          "operation": "DemoSummarizeStudentAC",
+          "inputs": [
+            {
+              "name": "studentName",
+              "type": "string"
+            },
+            {
+              "name": "normalizedScores",
+              "type": "object[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "summary",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-BuildClassReport",
+        "type": "ewoAc",
+        "position": {
+          "x": 1400,
+          "y": 200
+        },
+        "data": {
+          "label": "BuildClassReport",
+          "operation": "DemoBuildClassReportAC",
+          "inputs": [
+            {
+              "name": "summaries",
+              "type": "object[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "report",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1650,
+          "y": 230
+        },
+        "data": {
+          "outputs": [
+            {
+              "name": "report",
+              "type": "object"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-fetch",
+        "source": "node-start",
+        "target": "node-FetchStudents",
+        "sourceHandle": "output-classId",
+        "targetHandle": "input-classId"
+      },
+      {
+        "id": "e-fetch-zone",
+        "source": "node-FetchStudents",
+        "target": "region-studentZone",
+        "sourceHandle": "output-studentIds",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-zone-iter",
+        "source": "region-studentZone",
+        "target": "node-FetchGrades",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-studentId"
+      },
+      {
+        "id": "e-grades-innerzone",
+        "source": "node-FetchGrades",
+        "target": "region-gradeZone",
+        "sourceHandle": "output-grades",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-innerzone-iter",
+        "source": "region-gradeZone",
+        "target": "node-NormalizeGrade",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-grade"
+      },
+      {
+        "id": "e-normalize-collect",
+        "source": "node-NormalizeGrade",
+        "target": "region-gradeZone",
+        "sourceHandle": "output-normalizedScore",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-innerzone-summarize",
+        "source": "region-gradeZone",
+        "target": "node-SummarizeStudent",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-normalizedScores"
+      },
+      {
+        "id": "e-grades-summarize-name",
+        "source": "node-FetchGrades",
+        "target": "node-SummarizeStudent",
+        "sourceHandle": "output-studentName",
+        "targetHandle": "input-studentName"
+      },
+      {
+        "id": "e-summarize-collect",
+        "source": "node-SummarizeStudent",
+        "target": "region-studentZone",
+        "sourceHandle": "output-summary",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-zone-report",
+        "source": "region-studentZone",
+        "target": "node-BuildClassReport",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-summaries"
+      },
+      {
+        "id": "e-report-end",
+        "source": "node-BuildClassReport",
+        "target": "node-end",
+        "sourceHandle": "output-report",
+        "targetHandle": "input-report"
+      }
+    ]
+  }
+}

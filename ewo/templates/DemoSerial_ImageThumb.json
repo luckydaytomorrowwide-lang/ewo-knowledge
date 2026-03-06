@@ -1,0 +1,267 @@
+{
+  "id": "DemoSerial_ImageThumb",
+  "version": "1.0.0",
+  "name": "DemoSerial_ImageThumb",
+  "description": "EWO 12.1 直列パターン: 画像メタ取得 → サムネ生成。imageUrl='photo.png' のとき thumbUrl='/thumbs/thumb_480x270.png'。",
+  "inputs": {
+    "imageUrl": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "FetchMeta",
+        "operation": "DemoFetchMetaAC",
+        "deps": {
+          "imageUrl": {
+            "sourceAcId": "$input",
+            "sourcePort": "imageUrl"
+          }
+        },
+        "outputs": {
+          "width": {},
+          "height": {},
+          "format": {},
+          "fileSize": {}
+        }
+      },
+      {
+        "id": "GenThumb",
+        "operation": "DemoGenThumbAC",
+        "deps": {
+          "width": {
+            "sourceAcId": "FetchMeta",
+            "sourcePort": "width"
+          },
+          "height": {
+            "sourceAcId": "FetchMeta",
+            "sourcePort": "height"
+          },
+          "format": {
+            "sourceAcId": "FetchMeta",
+            "sourcePort": "format"
+          }
+        },
+        "outputs": {
+          "thumbUrl": {},
+          "thumbWidth": {},
+          "thumbHeight": {}
+        }
+      }
+    ],
+    "outputs": {
+      "thumbUrl": "GenThumb.thumbUrl"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-FetchMeta",
+        "when": {
+          "type": "FetchMeta.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "GenThumb.width",
+            "wfid": "DemoSerial_ImageThumb",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "GenThumb.height",
+            "wfid": "DemoSerial_ImageThumb",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "GenThumb.format",
+            "wfid": "DemoSerial_ImageThumb",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-GenThumb",
+        "when": {
+          "type": "GenThumb.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoSerial_ImageThumb",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.85
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 150
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "imageUrl",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FetchMeta",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 120
+        },
+        "data": {
+          "label": "FetchMeta",
+          "operation": "DemoFetchMetaAC",
+          "functionRef": "DemoFetchMetaAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "imageUrl",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "width",
+              "type": "number"
+            },
+            {
+              "name": "height",
+              "type": "number"
+            },
+            {
+              "name": "format",
+              "type": "string"
+            },
+            {
+              "name": "fileSize",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-GenThumb",
+        "type": "ewoAc",
+        "position": {
+          "x": 640,
+          "y": 120
+        },
+        "data": {
+          "label": "GenThumb",
+          "operation": "DemoGenThumbAC",
+          "functionRef": "DemoGenThumbAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "width",
+              "type": "number"
+            },
+            {
+              "name": "height",
+              "type": "number"
+            },
+            {
+              "name": "format",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "thumbUrl",
+              "type": "string"
+            },
+            {
+              "name": "thumbWidth",
+              "type": "number"
+            },
+            {
+              "name": "thumbHeight",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 960,
+          "y": 160
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "thumbUrl",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-fetchmeta",
+        "source": "node-start",
+        "target": "node-FetchMeta",
+        "sourceHandle": "output-imageUrl",
+        "targetHandle": "input-imageUrl"
+      },
+      {
+        "id": "e-fetchmeta-genthumb-width",
+        "source": "node-FetchMeta",
+        "target": "node-GenThumb",
+        "sourceHandle": "output-width",
+        "targetHandle": "input-width"
+      },
+      {
+        "id": "e-fetchmeta-genthumb-height",
+        "source": "node-FetchMeta",
+        "target": "node-GenThumb",
+        "sourceHandle": "output-height",
+        "targetHandle": "input-height"
+      },
+      {
+        "id": "e-fetchmeta-genthumb-format",
+        "source": "node-FetchMeta",
+        "target": "node-GenThumb",
+        "sourceHandle": "output-format",
+        "targetHandle": "input-format"
+      },
+      {
+        "id": "e-genthumb-end",
+        "source": "node-GenThumb",
+        "target": "node-end",
+        "sourceHandle": "output-thumbUrl",
+        "targetHandle": "input-thumbUrl"
+      }
+    ]
+  }
+}

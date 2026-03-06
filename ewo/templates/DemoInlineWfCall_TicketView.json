@@ -1,0 +1,343 @@
+{
+  "id": "DemoInlineWfCall_TicketView",
+  "version": "1.0.0",
+  "name": "DemoInlineWfCall_TicketView",
+  "description": "wfCall(boundary=false) テスト: CheckTicket → PurchaseTicket(inline子WF展開) → ViewImage",
+  "inputs": {
+    "userId": {
+      "schema": "string"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "CheckTicket",
+        "operation": "DemoCheckTicketAC",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          }
+        },
+        "outputs": {
+          "hasTicket": {},
+          "ticketId": {}
+        }
+      },
+      {
+        "id": "CallPurchase",
+        "operation": "DemoWF-PurchaseTicket",
+        "deps": {
+          "userId": {
+            "sourceAcId": "$input",
+            "sourcePort": "userId"
+          },
+          "hasTicket": {
+            "sourceAcId": "CheckTicket",
+            "sourcePort": "hasTicket"
+          }
+        },
+        "outputs": {
+          "ticketId": {},
+          "receipt": {}
+        },
+        "guard": ".hasTicket == false",
+        "wfCall": {
+          "callee": "DemoWF-PurchaseTicket",
+          "boundary": false
+        }
+      },
+      {
+        "id": "ViewImage",
+        "operation": "DemoViewImageAC",
+        "deps": {
+          "ticketId": {
+            "oneOf": [
+              {
+                "sourceAcId": "CheckTicket",
+                "sourcePort": "ticketId"
+              },
+              {
+                "sourceAcId": "CallPurchase",
+                "sourcePort": "ticketId"
+              }
+            ]
+          }
+        },
+        "outputs": {
+          "imageUrl": {},
+          "viewedAt": {}
+        }
+      }
+    ],
+    "outputs": {
+      "imageUrl": "ViewImage.imageUrl",
+      "viewedAt": "ViewImage.viewedAt"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-CheckTicket",
+        "when": {
+          "type": "CheckTicket.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "CheckTicket.result",
+            "wfid": "DemoInlineWfCall_TicketView",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "CallPurchase.hasTicket",
+            "wfid": "DemoInlineWfCall_TicketView",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ViewImage.ticketId",
+            "wfid": "DemoInlineWfCall_TicketView",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-CallPurchase",
+        "when": {
+          "type": "CallPurchase.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ViewImage.ticketId",
+            "wfid": "DemoInlineWfCall_TicketView",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-ViewImage",
+        "when": {
+          "type": "ViewImage.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoInlineWfCall_TicketView",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.8
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 200
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-CheckTicket",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 170
+        },
+        "data": {
+          "label": "CheckTicket",
+          "operation": "DemoCheckTicketAC",
+          "functionRef": "DemoCheckTicketAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "hasTicket",
+              "type": "boolean"
+            },
+            {
+              "name": "ticketId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-CallPurchase",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 640,
+          "y": 50
+        },
+        "data": {
+          "label": "CallPurchase",
+          "operation": "DemoWF-PurchaseTicket",
+          "functionRef": "DemoWF-PurchaseTicket",
+          "nodeType": "wfCall",
+          "guard": ".hasTicket == false",
+          "wfCall": {
+            "callee": "DemoWF-PurchaseTicket",
+            "boundary": false
+          },
+          "inputs": [
+            {
+              "name": "userId",
+              "type": "string"
+            },
+            {
+              "name": "hasTicket",
+              "type": "boolean"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ticketId",
+              "type": "string"
+            },
+            {
+              "name": "receipt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-ViewImage",
+        "type": "ewoAc",
+        "position": {
+          "x": 960,
+          "y": 190
+        },
+        "data": {
+          "label": "ViewImage",
+          "operation": "DemoViewImageAC",
+          "functionRef": "DemoViewImageAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "ticketId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "imageUrl",
+              "type": "string"
+            },
+            {
+              "name": "viewedAt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1260,
+          "y": 210
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "imageUrl",
+              "type": "string"
+            },
+            {
+              "name": "viewedAt",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-checkticket",
+        "source": "node-start",
+        "target": "node-CheckTicket",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-checkticket-purchase-hasticket",
+        "source": "node-CheckTicket",
+        "target": "node-CallPurchase",
+        "sourceHandle": "output-hasTicket",
+        "targetHandle": "input-hasTicket"
+      },
+      {
+        "id": "e-start-purchase-userid",
+        "source": "node-start",
+        "target": "node-CallPurchase",
+        "sourceHandle": "output-userId",
+        "targetHandle": "input-userId"
+      },
+      {
+        "id": "e-checkticket-viewimage",
+        "source": "node-CheckTicket",
+        "target": "node-ViewImage",
+        "sourceHandle": "output-ticketId",
+        "targetHandle": "input-ticketId"
+      },
+      {
+        "id": "e-purchase-viewimage",
+        "source": "node-CallPurchase",
+        "target": "node-ViewImage",
+        "sourceHandle": "output-ticketId",
+        "targetHandle": "input-ticketId"
+      },
+      {
+        "id": "e-viewimage-end-imageurl",
+        "source": "node-ViewImage",
+        "target": "node-end",
+        "sourceHandle": "output-imageUrl",
+        "targetHandle": "input-imageUrl"
+      },
+      {
+        "id": "e-viewimage-end-viewedat",
+        "source": "node-ViewImage",
+        "target": "node-end",
+        "sourceHandle": "output-viewedAt",
+        "targetHandle": "input-viewedAt"
+      }
+    ]
+  }
+}

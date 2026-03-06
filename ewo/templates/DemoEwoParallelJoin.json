@@ -1,0 +1,466 @@
+{
+  "id": "DemoEwoParallelJoin",
+  "version": "1.0.0",
+  "name": "DemoEwoParallelJoin",
+  "description": "EWO AC1-AC5パターン（fan-out＋入れ子Join）デモ。x=3, n=5 のとき result=120。",
+  "inputs": {
+    "x": {
+      "schema": "number"
+    },
+    "n": {
+      "schema": "number"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "DemoAC1",
+        "operation": "DemoAC1_ComputeSquareAC",
+        "deps": {
+          "x": {
+            "sourceAcId": "$input",
+            "sourcePort": "x"
+          }
+        },
+        "outputs": {
+          "original": {},
+          "squared": {}
+        }
+      },
+      {
+        "id": "DemoAC2",
+        "operation": "DemoAC2_GenerateRangeAC",
+        "deps": {
+          "n": {
+            "sourceAcId": "$input",
+            "sourcePort": "n"
+          }
+        },
+        "outputs": {
+          "items": {},
+          "count": {}
+        }
+      },
+      {
+        "id": "DemoAC3",
+        "operation": "DemoAC3_SumArrayAC",
+        "deps": {
+          "items": {
+            "sourceAcId": "DemoAC2",
+            "sourcePort": "items"
+          }
+        },
+        "outputs": {
+          "sum": {},
+          "average": {}
+        }
+      },
+      {
+        "id": "DemoAC4",
+        "operation": "DemoAC4_CombineResultsAC",
+        "deps": {
+          "squared": {
+            "sourceAcId": "DemoAC1",
+            "sourcePort": "squared"
+          },
+          "sum": {
+            "sourceAcId": "DemoAC3",
+            "sourcePort": "sum"
+          }
+        },
+        "outputs": {
+          "total": {},
+          "label": {}
+        }
+      },
+      {
+        "id": "DemoAC5",
+        "operation": "DemoAC5_FinalCalcAC",
+        "deps": {
+          "total": {
+            "sourceAcId": "DemoAC4",
+            "sourcePort": "total"
+          },
+          "count": {
+            "sourceAcId": "DemoAC2",
+            "sourcePort": "count"
+          }
+        },
+        "outputs": {
+          "result": {},
+          "summary": {}
+        }
+      }
+    ],
+    "outputs": {
+      "result": "DemoAC5.result"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-DemoAC1",
+        "when": {
+          "type": "DemoAC1.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "DemoAC4.squared",
+            "wfid": "DemoEwoParallelJoin",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-DemoAC2",
+        "when": {
+          "type": "DemoAC2.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "DemoAC2.result",
+            "wfid": "DemoEwoParallelJoin",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "DemoAC3.items",
+            "wfid": "DemoEwoParallelJoin",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "DemoAC5.count",
+            "wfid": "DemoEwoParallelJoin",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-DemoAC3",
+        "when": {
+          "type": "DemoAC3.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "DemoAC4.sum",
+            "wfid": "DemoEwoParallelJoin",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-DemoAC4",
+        "when": {
+          "type": "DemoAC4.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "DemoAC5.total",
+            "wfid": "DemoEwoParallelJoin",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-DemoAC5",
+        "when": {
+          "type": "DemoAC5.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "DemoEwoParallelJoin",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.75
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": 50,
+          "y": 180
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-DemoAC1",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 50
+        },
+        "data": {
+          "label": "DemoAC1",
+          "operation": "DemoAC1_ComputeSquareAC",
+          "functionRef": "DemoAC1_ComputeSquareAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "x",
+              "type": "number"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "original",
+              "type": "number"
+            },
+            {
+              "name": "squared",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-DemoAC2",
+        "type": "ewoAc",
+        "position": {
+          "x": 320,
+          "y": 310
+        },
+        "data": {
+          "label": "DemoAC2",
+          "operation": "DemoAC2_GenerateRangeAC",
+          "functionRef": "DemoAC2_GenerateRangeAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "items",
+              "type": "number[]"
+            },
+            {
+              "name": "count",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-DemoAC3",
+        "type": "ewoAc",
+        "position": {
+          "x": 620,
+          "y": 310
+        },
+        "data": {
+          "label": "DemoAC3",
+          "operation": "DemoAC3_SumArrayAC",
+          "functionRef": "DemoAC3_SumArrayAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "items",
+              "type": "number[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "sum",
+              "type": "number"
+            },
+            {
+              "name": "average",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-DemoAC4",
+        "type": "ewoAc",
+        "position": {
+          "x": 920,
+          "y": 160
+        },
+        "data": {
+          "label": "DemoAC4",
+          "operation": "DemoAC4_CombineResultsAC",
+          "functionRef": "DemoAC4_CombineResultsAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "squared",
+              "type": "number"
+            },
+            {
+              "name": "sum",
+              "type": "number"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "total",
+              "type": "number"
+            },
+            {
+              "name": "label",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-DemoAC5",
+        "type": "ewoAc",
+        "position": {
+          "x": 1220,
+          "y": 210
+        },
+        "data": {
+          "label": "DemoAC5",
+          "operation": "DemoAC5_FinalCalcAC",
+          "functionRef": "DemoAC5_FinalCalcAC",
+          "nodeType": "activity",
+          "inputs": [
+            {
+              "name": "total",
+              "type": "number"
+            },
+            {
+              "name": "count",
+              "type": "number"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "result",
+              "type": "number"
+            },
+            {
+              "name": "summary",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 1520,
+          "y": 230
+        },
+        "data": {
+          "label": "Workflow End",
+          "outputs": [
+            {
+              "name": "result",
+              "type": "number"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-ac1",
+        "source": "node-start",
+        "target": "node-DemoAC1",
+        "sourceHandle": "output-x",
+        "targetHandle": "input-x"
+      },
+      {
+        "id": "e-start-ac2",
+        "source": "node-start",
+        "target": "node-DemoAC2",
+        "sourceHandle": "output-n",
+        "targetHandle": "input-n"
+      },
+      {
+        "id": "e-ac1-ac4",
+        "source": "node-DemoAC1",
+        "target": "node-DemoAC4",
+        "sourceHandle": "output-squared",
+        "targetHandle": "input-squared"
+      },
+      {
+        "id": "e-ac2-ac3",
+        "source": "node-DemoAC2",
+        "target": "node-DemoAC3",
+        "sourceHandle": "output-items",
+        "targetHandle": "input-items"
+      },
+      {
+        "id": "e-ac2-ac5-fanout",
+        "source": "node-DemoAC2",
+        "target": "node-DemoAC5",
+        "sourceHandle": "output-count",
+        "targetHandle": "input-count"
+      },
+      {
+        "id": "e-ac3-ac4",
+        "source": "node-DemoAC3",
+        "target": "node-DemoAC4",
+        "sourceHandle": "output-sum",
+        "targetHandle": "input-sum"
+      },
+      {
+        "id": "e-ac4-ac5",
+        "source": "node-DemoAC4",
+        "target": "node-DemoAC5",
+        "sourceHandle": "output-total",
+        "targetHandle": "input-total"
+      },
+      {
+        "id": "e-ac5-end",
+        "source": "node-DemoAC5",
+        "target": "node-end",
+        "sourceHandle": "output-result",
+        "targetHandle": "input-result"
+      }
+    ]
+  }
+}
