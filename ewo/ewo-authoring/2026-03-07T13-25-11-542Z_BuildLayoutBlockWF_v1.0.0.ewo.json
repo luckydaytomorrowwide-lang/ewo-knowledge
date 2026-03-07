@@ -1,0 +1,2449 @@
+{
+  "id": "BuildLayoutBlockWF",
+  "version": "1.0.0",
+  "name": "BuildLayoutBlockWF",
+  "description": "レイアウトブロックを構築する再帰WF。(1)順序・UCat取得→(2)ガードチェック(UCat!=option)→(3)アンカーキー/行構築→(4)LineZone ForEach[Option検索(OptionZone)→行構築→列処理(ProcessLineColumnsAC)]→(5)RecursiveZone ForEach[自己再帰wfCall]→(6)全結果マージ。",
+  "inputs": {
+    "tableId": {
+      "schema": "string"
+    },
+    "key": {
+      "schema": "string"
+    },
+    "nCat": {
+      "schema": "string"
+    },
+    "parentId": {
+      "schema": "string"
+    },
+    "parentKey": {
+      "schema": "string"
+    },
+    "nodeId": {
+      "schema": "string"
+    },
+    "nodeLabels": {
+      "schema": "string[]"
+    }
+  },
+  "wfDef": {
+    "nodes": [
+      {
+        "id": "SearchOrderLine",
+        "operation": "SearchLineAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "parentId": {
+            "sourceAcId": "$input",
+            "sourcePort": "parentId"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "FirstOrderLineId",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchOrderLine",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "RetrieveOrderCol",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "lineId": {
+            "sourceAcId": "FirstOrderLineId",
+            "sourcePort": "row"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstOrderValue",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveOrderCol",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "RetrieveUCatCol",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "lineId": {
+            "sourceAcId": "$input",
+            "sourcePort": "parentId"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstUCat",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveUCatCol",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "BuildKeyAnchor",
+        "operation": "BuildLayoutBlockKeyWF",
+        "deps": {
+          "parentKey": {
+            "sourceAcId": "$input",
+            "sourcePort": "parentKey"
+          },
+          "blockKey": {
+            "sourceAcId": "$input",
+            "sourcePort": "parentId"
+          }
+        },
+        "outputs": {
+          "blockKey": {}
+        },
+        "wfCall": {
+          "callee": "BuildLayoutBlockKeyWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "BuildRowParent",
+        "operation": "BuildLayoutBlockRowWF",
+        "deps": {
+          "blockKey": {
+            "sourceAcId": "BuildKeyAnchor",
+            "sourcePort": "blockKey"
+          },
+          "propertyValue": {
+            "sourceAcId": "FirstUCat",
+            "sourcePort": "row"
+          },
+          "order": {
+            "sourceAcId": "FirstOrderValue",
+            "sourcePort": "row"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "lineId": {
+            "sourceAcId": "$input",
+            "sourcePort": "parentId"
+          },
+          "nodeId": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeId"
+          },
+          "nodeLabels": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeLabels"
+          }
+        },
+        "outputs": {
+          "layoutRow": {}
+        },
+        "wfCall": {
+          "callee": "BuildLayoutBlockRowWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "SearchLinesForLoop",
+        "operation": "SearchLineAC",
+        "deps": {
+          "key": {
+            "sourceAcId": "$input",
+            "sourcePort": "key"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "parentId": {
+            "sourceAcId": "$input",
+            "sourcePort": "parentId"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "SearchOptionAnchors",
+        "operation": "SearchLineAC",
+        "deps": {
+          "parentId": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "lineItem"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "SearchOptLine",
+        "operation": "SearchLineAC",
+        "deps": {
+          "parentId": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "optAnchorItem"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "FirstOptLineId",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "SearchOptLine",
+            "sourcePort": "lineIds"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "RetrieveOptValue",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "lineId": {
+            "sourceAcId": "FirstOptLineId",
+            "sourcePort": "row"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstOptValue",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveOptValue",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "ParseOptArray",
+        "operation": "ParseToArrayAC",
+        "deps": {
+          "text": {
+            "sourceAcId": "FirstOptValue",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "array": {}
+        }
+      },
+      {
+        "id": "BuildKeyLine",
+        "operation": "BuildLayoutBlockKeyWF",
+        "deps": {
+          "parentKey": {
+            "sourceAcId": "BuildKeyAnchor",
+            "sourcePort": "blockKey"
+          }
+        },
+        "outputs": {
+          "blockKey": {}
+        },
+        "wfCall": {
+          "callee": "BuildLayoutBlockKeyWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "BuildRowLine",
+        "operation": "BuildLayoutBlockRowWF",
+        "deps": {
+          "blockKey": {
+            "sourceAcId": "BuildKeyLine",
+            "sourcePort": "blockKey"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "nodeId": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeId"
+          },
+          "nodeLabels": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeLabels"
+          },
+          "propertyValue": {
+            "sourceAcId": "FirstUCat",
+            "sourcePort": "row"
+          }
+        },
+        "outputs": {
+          "layoutRow": {}
+        },
+        "wfCall": {
+          "callee": "BuildLayoutBlockRowWF",
+          "boundary": true
+        }
+      },
+      {
+        "id": "RetrieveKeyCellCol",
+        "operation": "RetrieveColumnAC",
+        "deps": {
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          }
+        },
+        "outputs": {
+          "columns": {}
+        }
+      },
+      {
+        "id": "FirstKeyCell",
+        "operation": "FirstRowAC",
+        "deps": {
+          "rows": {
+            "sourceAcId": "RetrieveKeyCellCol",
+            "sourcePort": "columns"
+          }
+        },
+        "outputs": {
+          "row": {}
+        }
+      },
+      {
+        "id": "ProcessLineColumns",
+        "operation": "ProcessLineColumnsAC",
+        "deps": {
+          "keyCell": {
+            "sourceAcId": "FirstKeyCell",
+            "sourcePort": "row"
+          },
+          "blockKeyLine": {
+            "sourceAcId": "BuildKeyLine",
+            "sourcePort": "blockKey"
+          },
+          "optionValues": {
+            "sourceAcId": "$zone:optionZone",
+            "sourcePort": "optionValues"
+          },
+          "anchorUcat": {
+            "sourceAcId": "FirstUCat",
+            "sourcePort": "row"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "nodeId": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeId"
+          },
+          "nodeLabels": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeLabels"
+          }
+        },
+        "outputs": {
+          "layoutRows": {}
+        }
+      },
+      {
+        "id": "AssembleLineResults",
+        "operation": "AssembleLineResultsAC",
+        "deps": {
+          "lineRow": {
+            "sourceAcId": "BuildRowLine",
+            "sourcePort": "layoutRow"
+          },
+          "columnRows": {
+            "sourceAcId": "ProcessLineColumns",
+            "sourcePort": "layoutRows"
+          }
+        },
+        "outputs": {
+          "lineLayoutRows": {}
+        }
+      },
+      {
+        "id": "SearchAnchorsForRecursion",
+        "operation": "SearchLineAC",
+        "deps": {
+          "nCat": {
+            "sourceAcId": "$input",
+            "sourcePort": "nCat"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "key": {
+            "sourceAcId": "$input",
+            "sourcePort": "key"
+          },
+          "parentId": {
+            "sourceAcId": "$input",
+            "sourcePort": "parentId"
+          }
+        },
+        "outputs": {
+          "lineIds": {}
+        }
+      },
+      {
+        "id": "RecursiveCall",
+        "operation": "BuildLayoutBlockWF",
+        "deps": {
+          "parentId": {
+            "sourceAcId": "$zoneInput",
+            "sourcePort": "anchorItem"
+          },
+          "parentKey": {
+            "sourceAcId": "BuildKeyAnchor",
+            "sourcePort": "blockKey"
+          },
+          "tableId": {
+            "sourceAcId": "$input",
+            "sourcePort": "tableId"
+          },
+          "key": {
+            "sourceAcId": "$input",
+            "sourcePort": "key"
+          },
+          "nCat": {
+            "sourceAcId": "$input",
+            "sourcePort": "nCat"
+          },
+          "nodeId": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeId"
+          },
+          "nodeLabels": {
+            "sourceAcId": "$input",
+            "sourcePort": "nodeLabels"
+          }
+        },
+        "outputs": {
+          "layoutRows": {}
+        },
+        "wfCall": {
+          "callee": "BuildLayoutBlockWF",
+          "boundary": true,
+          "recursive": true,
+          "policy": {
+            "maxRecursionDepth": 20
+          }
+        }
+      },
+      {
+        "id": "MergeAllResults",
+        "operation": "MergeLayoutRowsAC",
+        "deps": {
+          "parentRow": {
+            "sourceAcId": "BuildRowParent",
+            "sourcePort": "layoutRow"
+          },
+          "lineResults": {
+            "sourceAcId": "$zone:lineZone",
+            "sourcePort": "allLineResults"
+          },
+          "recursiveResults": {
+            "sourceAcId": "$zone:recursiveZone",
+            "sourcePort": "allRecursiveResults"
+          }
+        },
+        "outputs": {
+          "layoutRows": {}
+        }
+      }
+    ],
+    "forEachZones": [
+      {
+        "id": "lineZone",
+        "collectionSource": {
+          "sourceAcId": "SearchLinesForLoop",
+          "sourcePort": "lineIds"
+        },
+        "iterationParam": "lineItem",
+        "nodes": [
+          "SearchOptionAnchors",
+          "BuildKeyLine",
+          "BuildRowLine",
+          "RetrieveKeyCellCol",
+          "FirstKeyCell",
+          "ProcessLineColumns",
+          "AssembleLineResults"
+        ],
+        "outputNodeId": "AssembleLineResults",
+        "outputPort": "lineLayoutRows",
+        "outputCollection": "allLineResults",
+        "mode": "parallel",
+        "childZones": [
+          {
+            "id": "optionZone",
+            "collectionSource": {
+              "sourceAcId": "SearchOptionAnchors",
+              "sourcePort": "lineIds"
+            },
+            "iterationParam": "optAnchorItem",
+            "nodes": [
+              "SearchOptLine",
+              "FirstOptLineId",
+              "RetrieveOptValue",
+              "FirstOptValue",
+              "ParseOptArray"
+            ],
+            "outputNodeId": "ParseOptArray",
+            "outputPort": "array",
+            "outputCollection": "optionValues",
+            "mode": "parallel"
+          }
+        ]
+      },
+      {
+        "id": "recursiveZone",
+        "collectionSource": {
+          "sourceAcId": "SearchAnchorsForRecursion",
+          "sourcePort": "lineIds"
+        },
+        "iterationParam": "anchorItem",
+        "nodes": [
+          "RecursiveCall"
+        ],
+        "outputNodeId": "RecursiveCall",
+        "outputPort": "layoutRows",
+        "outputCollection": "allRecursiveResults",
+        "mode": "parallel"
+      }
+    ],
+    "outputs": {
+      "layoutRows": "MergeAllResults.layoutRows"
+    }
+  },
+  "wiring": {
+    "version": 1,
+    "routes": [
+      {
+        "id": "R-SearchOrderLine",
+        "when": {
+          "type": "SearchOrderLine.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstOrderLineId.rows",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstOrderLineId",
+        "when": {
+          "type": "FirstOrderLineId.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "RetrieveOrderCol.lineId",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveOrderCol",
+        "when": {
+          "type": "RetrieveOrderCol.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstOrderValue.rows",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveUCatCol",
+        "when": {
+          "type": "RetrieveUCatCol.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstUCat.rows",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-BuildKeyAnchor",
+        "when": {
+          "type": "BuildKeyAnchor.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "BuildKeyAnchor.result",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildRowParent.blockKey",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildKeyLine.parentKey",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "RecursiveCall.parentKey",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstUCat",
+        "when": {
+          "type": "FirstUCat.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstUCat.result",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildRowParent.propertyValue",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildRowLine.propertyValue",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ProcessLineColumns.anchorUcat",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstOrderValue",
+        "when": {
+          "type": "FirstOrderValue.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "BuildRowParent.order",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchOptLine",
+        "when": {
+          "type": "SearchOptLine.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstOptLineId.rows",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstOptLineId",
+        "when": {
+          "type": "FirstOptLineId.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "RetrieveOptValue.lineId",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveOptValue",
+        "when": {
+          "type": "RetrieveOptValue.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstOptValue.rows",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstOptValue",
+        "when": {
+          "type": "FirstOptValue.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ParseOptArray.text",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-BuildKeyLine",
+        "when": {
+          "type": "BuildKeyLine.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "BuildKeyLine.result",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "BuildRowLine.blockKey",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          },
+          {
+            "type": "ProcessLineColumns.blockKeyLine",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-RetrieveKeyCellCol",
+        "when": {
+          "type": "RetrieveKeyCellCol.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "FirstKeyCell.rows",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-FirstKeyCell",
+        "when": {
+          "type": "FirstKeyCell.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ProcessLineColumns.keyCell",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-BuildRowLine",
+        "when": {
+          "type": "BuildRowLine.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "AssembleLineResults.lineRow",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-ProcessLineColumns",
+        "when": {
+          "type": "ProcessLineColumns.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "AssembleLineResults.columnRows",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-BuildRowParent",
+        "when": {
+          "type": "BuildRowParent.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "MergeAllResults.parentRow",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchLinesForLoop",
+        "when": {
+          "type": "SearchLinesForLoop.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "$zone:lineZone.input",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-$zone:lineZone",
+        "when": {
+          "type": "$zone:lineZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "MergeAllResults.lineResults",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchOptionAnchors",
+        "when": {
+          "type": "SearchOptionAnchors.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "$zone:optionZone.input",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-$zone:optionZone",
+        "when": {
+          "type": "$zone:optionZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "ProcessLineColumns.optionValues",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-SearchAnchorsForRecursion",
+        "when": {
+          "type": "SearchAnchorsForRecursion.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "$zone:recursiveZone.input",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-$zone:recursiveZone",
+        "when": {
+          "type": "$zone:recursiveZone.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "MergeAllResults.recursiveResults",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      },
+      {
+        "id": "R-MergeAllResults",
+        "when": {
+          "type": "MergeAllResults.done"
+        },
+        "correlate": {
+          "by": [
+            "correlationid"
+          ]
+        },
+        "emit": [
+          {
+            "type": "wf.completed",
+            "wfid": "BuildLayoutBlockWF",
+            "map": "outputRef->payloadRef"
+          }
+        ]
+      }
+    ]
+  },
+  "layout": {
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.8
+    },
+    "nodes": [
+      {
+        "id": "node-start",
+        "type": "ewoStart",
+        "position": {
+          "x": -206.32144187572862,
+          "y": 523.8921899591327
+        },
+        "data": {
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "nCat",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            },
+            {
+              "name": "parentKey",
+              "type": "string"
+            },
+            {
+              "name": "nodeId",
+              "type": "string"
+            },
+            {
+              "name": "nodeLabels",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-SearchOrderLine",
+        "type": "ewoAc",
+        "position": {
+          "x": 300,
+          "y": 150
+        },
+        "data": {
+          "label": "SearchOrderLine",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "nCat",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstOrderLineId",
+        "type": "ewoAc",
+        "position": {
+          "x": 540,
+          "y": 150
+        },
+        "data": {
+          "label": "FirstOrderLineId",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-RetrieveOrderCol",
+        "type": "ewoAc",
+        "position": {
+          "x": 780,
+          "y": 150
+        },
+        "data": {
+          "label": "RetrieveOrderCol",
+          "operation": "RetrieveColumnAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "column",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "any[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstOrderValue",
+        "type": "ewoAc",
+        "position": {
+          "x": 1020,
+          "y": 150
+        },
+        "data": {
+          "label": "FirstOrderValue",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-RetrieveUCatCol",
+        "type": "ewoAc",
+        "position": {
+          "x": 288.51301673477906,
+          "y": 992.9180732631346
+        },
+        "data": {
+          "label": "RetrieveUCatCol",
+          "operation": "RetrieveColumnAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "column",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "any[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-FirstUCat",
+        "type": "ewoAc",
+        "position": {
+          "x": 540,
+          "y": 700
+        },
+        "data": {
+          "label": "FirstUCat",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-BuildKeyAnchor",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 1294.2565083673894,
+          "y": 152.4775199958322
+        },
+        "data": {
+          "label": "BuildKeyAnchor",
+          "operation": "BuildLayoutBlockKeyWF",
+          "inputs": [
+            {
+              "name": "parentKey",
+              "type": "string"
+            },
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "wfCall": {
+            "callee": "BuildLayoutBlockKeyWF",
+            "boundary": true
+          }
+        }
+      },
+      {
+        "id": "node-BuildRowParent",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 1317.2304748978315,
+          "y": 779.196938937447
+        },
+        "data": {
+          "label": "BuildRowParent",
+          "operation": "BuildLayoutBlockRowWF",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "blockKey",
+              "type": "string"
+            },
+            {
+              "name": "propertyValue",
+              "type": "any"
+            },
+            {
+              "name": "order",
+              "type": "any"
+            },
+            {
+              "name": "nodeId",
+              "type": "string"
+            },
+            {
+              "name": "nodeLabels",
+              "type": "string[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "layoutRow",
+              "type": "object"
+            }
+          ],
+          "wfCall": {
+            "callee": "BuildLayoutBlockRowWF",
+            "boundary": true
+          }
+        }
+      },
+      {
+        "id": "node-SearchLinesForLoop",
+        "type": "ewoAc",
+        "position": {
+          "x": 1300,
+          "y": 450
+        },
+        "data": {
+          "label": "SearchLinesForLoop",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "nCat",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "region-lineZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 1865,
+          "y": -36
+        },
+        "data": {
+          "label": "LineZone (lines iterate)",
+          "zoneId": "lineZone",
+          "iterationParam": "lineItem",
+          "outputCollection": "allLineResults"
+        },
+        "style": {
+          "width": "1500px",
+          "height": "750px"
+        }
+      },
+      {
+        "id": "node-SearchOptionAnchors",
+        "type": "ewoAc",
+        "position": {
+          "x": 40,
+          "y": 80
+        },
+        "data": {
+          "label": "SearchOptionAnchors",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "region-optionZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 280,
+          "y": 50
+        },
+        "data": {
+          "label": "OptionZone (options iterate)",
+          "zoneId": "optionZone",
+          "iterationParam": "optAnchorItem",
+          "outputCollection": "optionValues"
+        },
+        "style": {
+          "width": "680px",
+          "height": "280px"
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-SearchOptLine",
+        "type": "ewoAc",
+        "position": {
+          "x": 30,
+          "y": 70
+        },
+        "data": {
+          "label": "SearchOptLine",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "parentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        },
+        "parentNode": "region-optionZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-FirstOptLineId",
+        "type": "ewoAc",
+        "position": {
+          "x": 180,
+          "y": 70
+        },
+        "data": {
+          "label": "FirstOptLineId",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        },
+        "parentNode": "region-optionZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-RetrieveOptValue",
+        "type": "ewoAc",
+        "position": {
+          "x": 310,
+          "y": 70
+        },
+        "data": {
+          "label": "RetrieveOptValue",
+          "operation": "RetrieveColumnAC",
+          "inputs": [
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "column",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "any[]"
+            }
+          ]
+        },
+        "parentNode": "region-optionZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-FirstOptValue",
+        "type": "ewoAc",
+        "position": {
+          "x": 440,
+          "y": 70
+        },
+        "data": {
+          "label": "FirstOptValue",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        },
+        "parentNode": "region-optionZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-ParseOptArray",
+        "type": "ewoAc",
+        "position": {
+          "x": 560,
+          "y": 70
+        },
+        "data": {
+          "label": "ParseOptArray",
+          "operation": "ParseToArrayAC",
+          "inputs": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "array",
+              "type": "any[]"
+            }
+          ]
+        },
+        "parentNode": "region-optionZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-BuildKeyLine",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 40,
+          "y": 400
+        },
+        "data": {
+          "label": "BuildKeyLine",
+          "operation": "BuildLayoutBlockKeyWF",
+          "inputs": [
+            {
+              "name": "parentKey",
+              "type": "string"
+            },
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "wfCall": {
+            "callee": "BuildLayoutBlockKeyWF",
+            "boundary": true
+          }
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-BuildRowLine",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 280,
+          "y": 400
+        },
+        "data": {
+          "label": "BuildRowLine",
+          "operation": "BuildLayoutBlockRowWF",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "blockKey",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "layoutRow",
+              "type": "object"
+            }
+          ],
+          "wfCall": {
+            "callee": "BuildLayoutBlockRowWF",
+            "boundary": true
+          }
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-RetrieveKeyCellCol",
+        "type": "ewoAc",
+        "position": {
+          "x": 540,
+          "y": 400
+        },
+        "data": {
+          "label": "RetrieveKeyCellCol",
+          "operation": "RetrieveColumnAC",
+          "inputs": [
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "column",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "columns",
+              "type": "any[]"
+            }
+          ]
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-FirstKeyCell",
+        "type": "ewoAc",
+        "position": {
+          "x": 720,
+          "y": 400
+        },
+        "data": {
+          "label": "FirstKeyCell",
+          "operation": "FirstRowAC",
+          "inputs": [
+            {
+              "name": "rows",
+              "type": "any[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "row",
+              "type": "any"
+            }
+          ]
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-ProcessLineColumns",
+        "type": "ewoAc",
+        "position": {
+          "x": 900,
+          "y": 400
+        },
+        "data": {
+          "label": "ProcessLineColumns",
+          "operation": "ProcessLineColumnsAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "lineId",
+              "type": "string"
+            },
+            {
+              "name": "blockKeyLine",
+              "type": "string"
+            },
+            {
+              "name": "keyCell",
+              "type": "string"
+            },
+            {
+              "name": "anchorUcat",
+              "type": "string"
+            },
+            {
+              "name": "optionValues",
+              "type": "any[]"
+            },
+            {
+              "name": "nodeId",
+              "type": "string"
+            },
+            {
+              "name": "nodeLabels",
+              "type": "string[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "layoutRows",
+              "type": "object[]"
+            }
+          ]
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-AssembleLineResults",
+        "type": "ewoAc",
+        "position": {
+          "x": 1172.5,
+          "y": 351.5
+        },
+        "data": {
+          "label": "AssembleLineResults",
+          "operation": "AssembleLineResultsAC",
+          "inputs": [
+            {
+              "name": "lineRow",
+              "type": "object"
+            },
+            {
+              "name": "columnRows",
+              "type": "object[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineLayoutRows",
+              "type": "object[]"
+            }
+          ]
+        },
+        "parentNode": "region-lineZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-SearchAnchorsForRecursion",
+        "type": "ewoAc",
+        "position": {
+          "x": 1313.7843799182651,
+          "y": 1112.0370619574635
+        },
+        "data": {
+          "label": "SearchAnchorsForRecursion",
+          "operation": "SearchLineAC",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "nCat",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lineIds",
+              "type": "string[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "region-recursiveZone",
+        "type": "ewoForEachRegion",
+        "position": {
+          "x": 1650,
+          "y": 850
+        },
+        "data": {
+          "label": "RecursiveZone (anchors iterate)",
+          "zoneId": "recursiveZone",
+          "iterationParam": "anchorItem",
+          "outputCollection": "allRecursiveResults"
+        },
+        "style": {
+          "width": "400px",
+          "height": "250px"
+        }
+      },
+      {
+        "id": "node-RecursiveCall",
+        "type": "ewoWfCall",
+        "position": {
+          "x": 50,
+          "y": 70
+        },
+        "data": {
+          "label": "RecursiveCall",
+          "operation": "BuildLayoutBlockWF",
+          "inputs": [
+            {
+              "name": "tableId",
+              "type": "string"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "nCat",
+              "type": "string"
+            },
+            {
+              "name": "parentId",
+              "type": "string"
+            },
+            {
+              "name": "parentKey",
+              "type": "string"
+            },
+            {
+              "name": "nodeId",
+              "type": "string"
+            },
+            {
+              "name": "nodeLabels",
+              "type": "string[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "layoutRows",
+              "type": "object[]"
+            }
+          ],
+          "wfCall": {
+            "callee": "BuildLayoutBlockWF",
+            "boundary": true,
+            "recursive": true,
+            "policy": {
+              "maxRecursionDepth": 20
+            }
+          }
+        },
+        "parentNode": "region-recursiveZone",
+        "extent": "parent"
+      },
+      {
+        "id": "node-MergeAllResults",
+        "type": "ewoAc",
+        "position": {
+          "x": 3250,
+          "y": 450
+        },
+        "data": {
+          "label": "MergeAllResults",
+          "operation": "MergeLayoutRowsAC",
+          "inputs": [
+            {
+              "name": "parentRow",
+              "type": "object"
+            },
+            {
+              "name": "lineResults",
+              "type": "object[][]"
+            },
+            {
+              "name": "recursiveResults",
+              "type": "object[][]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "layoutRows",
+              "type": "object[]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-end",
+        "type": "ewoEnd",
+        "position": {
+          "x": 3550,
+          "y": 480
+        },
+        "data": {
+          "outputs": [
+            {
+              "name": "layoutRows",
+              "type": "object[]"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-start-searchOrder",
+        "source": "node-start",
+        "target": "node-SearchOrderLine",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-searchOrder-pid",
+        "source": "node-start",
+        "target": "node-SearchOrderLine",
+        "sourceHandle": "output-parentId",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-searchOrder-first",
+        "source": "node-SearchOrderLine",
+        "target": "node-FirstOrderLineId",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-first-retrieveOrder",
+        "source": "node-FirstOrderLineId",
+        "target": "node-RetrieveOrderCol",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-retrieveOrder-firstVal",
+        "source": "node-RetrieveOrderCol",
+        "target": "node-FirstOrderValue",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-start-retrieveUCat",
+        "source": "node-start",
+        "target": "node-RetrieveUCatCol",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-retrieveUCat-pid",
+        "source": "node-start",
+        "target": "node-RetrieveUCatCol",
+        "sourceHandle": "output-parentId",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-retrieveUCat-first",
+        "source": "node-RetrieveUCatCol",
+        "target": "node-FirstUCat",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-start-buildKeyAnc",
+        "source": "node-start",
+        "target": "node-BuildKeyAnchor",
+        "sourceHandle": "output-parentKey",
+        "targetHandle": "input-parentKey"
+      },
+      {
+        "id": "e-start-buildKeyAnc-blk",
+        "source": "node-start",
+        "target": "node-BuildKeyAnchor",
+        "sourceHandle": "output-parentId",
+        "targetHandle": "input-blockKey"
+      },
+      {
+        "id": "e-buildKeyAnc-buildRow",
+        "source": "node-BuildKeyAnchor",
+        "target": "node-BuildRowParent",
+        "sourceHandle": "output-blockKey",
+        "targetHandle": "input-blockKey"
+      },
+      {
+        "id": "e-firstUCat-buildRow",
+        "source": "node-FirstUCat",
+        "target": "node-BuildRowParent",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-propertyValue"
+      },
+      {
+        "id": "e-firstOrderVal-buildRow",
+        "source": "node-FirstOrderValue",
+        "target": "node-BuildRowParent",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-order"
+      },
+      {
+        "id": "e-buildRow-merge",
+        "source": "node-BuildRowParent",
+        "target": "node-MergeAllResults",
+        "sourceHandle": "output-layoutRow",
+        "targetHandle": "input-parentRow"
+      },
+      {
+        "id": "e-start-searchLines",
+        "source": "node-start",
+        "target": "node-SearchLinesForLoop",
+        "sourceHandle": "output-key",
+        "targetHandle": "input-key"
+      },
+      {
+        "id": "e-searchLines-lineZone",
+        "source": "node-SearchLinesForLoop",
+        "target": "region-lineZone",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-lineZone-searchOpt",
+        "source": "region-lineZone",
+        "target": "node-SearchOptionAnchors",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-searchOpt-optionZone",
+        "source": "node-SearchOptionAnchors",
+        "target": "region-optionZone",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-optionZone-searchOptLine",
+        "source": "region-optionZone",
+        "target": "node-SearchOptLine",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-searchOptLine-firstOptLn",
+        "source": "node-SearchOptLine",
+        "target": "node-FirstOptLineId",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-firstOptLn-retrieveOpt",
+        "source": "node-FirstOptLineId",
+        "target": "node-RetrieveOptValue",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-retrieveOpt-firstOptVal",
+        "source": "node-RetrieveOptValue",
+        "target": "node-FirstOptValue",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-firstOptVal-parse",
+        "source": "node-FirstOptValue",
+        "target": "node-ParseOptArray",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-text"
+      },
+      {
+        "id": "e-parse-collect-opt",
+        "source": "node-ParseOptArray",
+        "target": "region-optionZone",
+        "sourceHandle": "output-array",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-buildKeyAnc-buildKeyLine",
+        "source": "node-BuildKeyAnchor",
+        "target": "node-BuildKeyLine",
+        "sourceHandle": "output-blockKey",
+        "targetHandle": "input-parentKey"
+      },
+      {
+        "id": "e-buildKeyLine-buildRowLine",
+        "source": "node-BuildKeyLine",
+        "target": "node-BuildRowLine",
+        "sourceHandle": "output-blockKey",
+        "targetHandle": "input-blockKey"
+      },
+      {
+        "id": "e-buildRowLine-assemble",
+        "source": "node-BuildRowLine",
+        "target": "node-AssembleLineResults",
+        "sourceHandle": "output-layoutRow",
+        "targetHandle": "input-lineRow"
+      },
+      {
+        "id": "e-retrieveKeyCell-firstKey",
+        "source": "node-RetrieveKeyCellCol",
+        "target": "node-FirstKeyCell",
+        "sourceHandle": "output-columns",
+        "targetHandle": "input-rows"
+      },
+      {
+        "id": "e-firstKey-process",
+        "source": "node-FirstKeyCell",
+        "target": "node-ProcessLineColumns",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-keyCell"
+      },
+      {
+        "id": "e-buildKeyLine-process",
+        "source": "node-BuildKeyLine",
+        "target": "node-ProcessLineColumns",
+        "sourceHandle": "output-blockKey",
+        "targetHandle": "input-blockKeyLine"
+      },
+      {
+        "id": "e-optionZone-process",
+        "source": "region-optionZone",
+        "target": "node-ProcessLineColumns",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-optionValues"
+      },
+      {
+        "id": "e-firstUCat-process",
+        "source": "node-FirstUCat",
+        "target": "node-ProcessLineColumns",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-anchorUcat"
+      },
+      {
+        "id": "e-process-assemble",
+        "source": "node-ProcessLineColumns",
+        "target": "node-AssembleLineResults",
+        "sourceHandle": "output-layoutRows",
+        "targetHandle": "input-columnRows"
+      },
+      {
+        "id": "e-assemble-collect-line",
+        "source": "node-AssembleLineResults",
+        "target": "region-lineZone",
+        "sourceHandle": "output-lineLayoutRows",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-lineZone-merge",
+        "source": "region-lineZone",
+        "target": "node-MergeAllResults",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-lineResults"
+      },
+      {
+        "id": "e-start-searchRecursion",
+        "source": "node-start",
+        "target": "node-SearchAnchorsForRecursion",
+        "sourceHandle": "output-nCat",
+        "targetHandle": "input-nCat"
+      },
+      {
+        "id": "e-searchRecursion-recZone",
+        "source": "node-SearchAnchorsForRecursion",
+        "target": "region-recursiveZone",
+        "sourceHandle": "output-lineIds",
+        "targetHandle": "input-collection"
+      },
+      {
+        "id": "e-recZone-recCall",
+        "source": "region-recursiveZone",
+        "target": "node-RecursiveCall",
+        "sourceHandle": "iter-out",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-buildKeyAnc-recCall",
+        "source": "node-BuildKeyAnchor",
+        "target": "node-RecursiveCall",
+        "sourceHandle": "output-blockKey",
+        "targetHandle": "input-parentKey"
+      },
+      {
+        "id": "e-recCall-collect-rec",
+        "source": "node-RecursiveCall",
+        "target": "region-recursiveZone",
+        "sourceHandle": "output-layoutRows",
+        "targetHandle": "collect-in"
+      },
+      {
+        "id": "e-recZone-merge",
+        "source": "region-recursiveZone",
+        "target": "node-MergeAllResults",
+        "sourceHandle": "output-results",
+        "targetHandle": "input-recursiveResults"
+      },
+      {
+        "id": "e-merge-end",
+        "source": "node-MergeAllResults",
+        "target": "node-end",
+        "sourceHandle": "output-layoutRows",
+        "targetHandle": "input-layoutRows"
+      },
+      {
+        "id": "e-start-retrieveOrderCol-tid",
+        "source": "node-start",
+        "target": "node-RetrieveOrderCol",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-buildRowParent-tid",
+        "source": "node-start",
+        "target": "node-BuildRowParent",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-buildRowParent-lid",
+        "source": "node-start",
+        "target": "node-BuildRowParent",
+        "sourceHandle": "output-parentId",
+        "targetHandle": "input-lineId"
+      },
+      {
+        "id": "e-start-buildRowParent-nid",
+        "source": "node-start",
+        "target": "node-BuildRowParent",
+        "sourceHandle": "output-nodeId",
+        "targetHandle": "input-nodeId"
+      },
+      {
+        "id": "e-start-buildRowParent-nlb",
+        "source": "node-start",
+        "target": "node-BuildRowParent",
+        "sourceHandle": "output-nodeLabels",
+        "targetHandle": "input-nodeLabels"
+      },
+      {
+        "id": "e-start-searchLines-tid",
+        "source": "node-start",
+        "target": "node-SearchLinesForLoop",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-searchLines-pid",
+        "source": "node-start",
+        "target": "node-SearchLinesForLoop",
+        "sourceHandle": "output-parentId",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-start-searchOptAnc-tid",
+        "source": "node-start",
+        "target": "node-SearchOptionAnchors",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-searchOptLine-tid",
+        "source": "node-start",
+        "target": "node-SearchOptLine",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-retrieveOptVal-tid",
+        "source": "node-start",
+        "target": "node-RetrieveOptValue",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-buildRowLine-tid",
+        "source": "node-start",
+        "target": "node-BuildRowLine",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-buildRowLine-nid",
+        "source": "node-start",
+        "target": "node-BuildRowLine",
+        "sourceHandle": "output-nodeId",
+        "targetHandle": "input-nodeId"
+      },
+      {
+        "id": "e-start-buildRowLine-nlb",
+        "source": "node-start",
+        "target": "node-BuildRowLine",
+        "sourceHandle": "output-nodeLabels",
+        "targetHandle": "input-nodeLabels"
+      },
+      {
+        "id": "e-firstUCat-buildRowLine",
+        "source": "node-FirstUCat",
+        "target": "node-BuildRowLine",
+        "sourceHandle": "output-row",
+        "targetHandle": "input-propertyValue"
+      },
+      {
+        "id": "e-start-retrieveKeyCell-tid",
+        "source": "node-start",
+        "target": "node-RetrieveKeyCellCol",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-processLineCols-tid",
+        "source": "node-start",
+        "target": "node-ProcessLineColumns",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-processLineCols-nid",
+        "source": "node-start",
+        "target": "node-ProcessLineColumns",
+        "sourceHandle": "output-nodeId",
+        "targetHandle": "input-nodeId"
+      },
+      {
+        "id": "e-start-processLineCols-nlb",
+        "source": "node-start",
+        "target": "node-ProcessLineColumns",
+        "sourceHandle": "output-nodeLabels",
+        "targetHandle": "input-nodeLabels"
+      },
+      {
+        "id": "e-start-searchRecursion-tid",
+        "source": "node-start",
+        "target": "node-SearchAnchorsForRecursion",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-searchRecursion-key",
+        "source": "node-start",
+        "target": "node-SearchAnchorsForRecursion",
+        "sourceHandle": "output-key",
+        "targetHandle": "input-key"
+      },
+      {
+        "id": "e-start-searchRecursion-pid",
+        "source": "node-start",
+        "target": "node-SearchAnchorsForRecursion",
+        "sourceHandle": "output-parentId",
+        "targetHandle": "input-parentId"
+      },
+      {
+        "id": "e-start-recCall-tid",
+        "source": "node-start",
+        "target": "node-RecursiveCall",
+        "sourceHandle": "output-tableId",
+        "targetHandle": "input-tableId"
+      },
+      {
+        "id": "e-start-recCall-key",
+        "source": "node-start",
+        "target": "node-RecursiveCall",
+        "sourceHandle": "output-key",
+        "targetHandle": "input-key"
+      },
+      {
+        "id": "e-start-recCall-nCat",
+        "source": "node-start",
+        "target": "node-RecursiveCall",
+        "sourceHandle": "output-nCat",
+        "targetHandle": "input-nCat"
+      },
+      {
+        "id": "e-start-recCall-nid",
+        "source": "node-start",
+        "target": "node-RecursiveCall",
+        "sourceHandle": "output-nodeId",
+        "targetHandle": "input-nodeId"
+      },
+      {
+        "id": "e-start-recCall-nlb",
+        "source": "node-start",
+        "target": "node-RecursiveCall",
+        "sourceHandle": "output-nodeLabels",
+        "targetHandle": "input-nodeLabels"
+      }
+    ]
+  }
+}
