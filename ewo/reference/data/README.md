@@ -4,8 +4,11 @@
 
 例
 
-- master/*master_name.md
-- table/*table_name.md
+- master/*master_name.xlsx
+- table/tpl/*table_name.xlsx
+- table/inst/*table_name.xlsx
+- table/ewo/*table_name.xlsx
+- table/config/*table_name.xlsx
 - layout/*layout_name.md
 
 これらは参考情報であり
