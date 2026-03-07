@@ -10,6 +10,7 @@
 - table/ewo/*table_name.xlsx
 - table/config/*table_name.xlsx
 - layout/*layout_name.md
+- ewo/*ewo_name.json
 
 これらは参考情報であり
 実装と一致しない可能性があります。
