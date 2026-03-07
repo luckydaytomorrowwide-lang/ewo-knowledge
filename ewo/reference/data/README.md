@@ -4,9 +4,9 @@
 
 例
 
-- table structure
-- TtlTableCore
-- rdb store
+- master/*master_name.md
+- table/*table_name.md
+- layout/*layout_name.md
 
 これらは参考情報であり
 実装と一致しない可能性があります。
